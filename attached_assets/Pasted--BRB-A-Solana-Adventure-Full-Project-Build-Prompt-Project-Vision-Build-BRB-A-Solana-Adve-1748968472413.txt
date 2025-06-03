@@ -1,0 +1,346 @@
+# BRB: A Solana Adventure - Full Project Build Prompt
+
+**Project Vision:**
+Build "BRB: A Solana Adventure," a gamified educational platform that teaches Solana development. It will function like CryptoZombies, but with a unique cypher-punk Western theme. Users will learn Rust (Anchor) and Python (Seahorse) by completing interactive coding challenges within an in-browser IDE, seeing immediate and visually stunning results on their virtual "Shadow Ranch."
+
+**Core Principles:**
+1.  **Immersive Theme:** A consistent cypher-punk Western aesthetic throughout the UI and game world.
+2.  **Interactive Challenges:** Each lesson broken into small, verifiable steps with clear objectives.
+3.  **Immediate Feedback:** Textual console output and dynamic visual effects on the game canvas for every successful (or failed) code submission.
+4.  **Backend Verification (Simulated):** The backend will use pattern matching to verify user code for each challenge step, providing specific success/failure messages.
+5.  **PIXI.js for Visuals:** The game canvas will utilize PIXI.js for high-performance 2D rendering, allowing for rich sprites, animations, and particle effects.
+6.  **Custom Icons:** Placeholder for custom image assets to be integrated.
+
+---
+
+**Instructions for Replit Agent (Build from Scratch):**
+
+**Phase 1: Project Setup & Core Structure**
+
+1.  **Initialize New Replit Project:** Start a new React project (Vite template).
+2.  **Create Monorepo-like Structure:** Organize the project with the following root directories:
+    * `client/` (for the React frontend)
+    * `server/` (for the Node.js Express backend)
+    * `shared/` (for shared interfaces/types, like `schema.ts`)
+    * `attached_assets/` (for placeholder custom images and other assets)
+3.  **Configure `vite.config.ts`:**
+    * Ensure React plugin is enabled.
+    * Add path aliases for `@/`, `@shared/`, `@assets/`.
+    * Set `root` to `client/` and `build.outDir` to `dist/public`.
+4.  **Configure `tsconfig.json`:**
+    * Include `client/src/**/*`, `shared/**/*`, `server/**/*`.
+    * Define paths for `@/*` and `@shared/*`.
+5.  **Configure `package.json` (Root Level):**
+    * Add `type: "module"`.
+    * Include scripts: `dev`, `build`, `start`, `check`.
+    * Add dependencies: `react`, `react-dom`, `express`, `wouter`, `@tanstack/react-query`, `clsx`, `tailwind-merge`, `lucide-react`, `zustand`, `pixi.js`, `@pixi/react`, `framer-motion`, `date-fns`, `react-day-picker`, `cmdk`, `input-otp`, `next-themes`, `passport`, `passport-local`, `memorystore`, `connect-pg-simple`, `zod`, `drizzle-orm`, `drizzle-zod`, `@neondatabase/serverless`, `ws`, `embla-carousel-react`, `recharts`, `react-resizable-panels`, `vaul`, `tw-animate-css`.
+    * Add devDependencies: `@vitejs/plugin-react`, `typescript`, `tailwindcss`, `postcss`, `autoprefixer`, `@tailwindcss/typography`, `@tailwindcss/vite`, `tsx`, `drizzle-kit`, `@types/node`, `@types/react`, `@types/react-dom`, `@types/express`, `@types/ws`, `@types/passport`, `@types/passport-local`, `@types/connect-pg-simple`, `@types/pg`.
+6.  **Configure `postcss.config.js` and `tailwind.config.ts`:**
+    * Set up Tailwind CSS with `darkMode: ["class"]`.
+    * Define custom `content` paths for `client/index.html` and `client/src/**/*.{js,jsx,ts,tsx}`.
+    * **Crucially, implement the custom color palette and fonts:**
+        * **Colors:** `desert`, `sunset`, `rust`, `sage`, `leather`, `mystic` (using HSL values for easy integration with your existing `index.css` variables).
+        * **Fonts:** `western` (Rye), `saloon` (Creepster), `deputy` (Fredoka One), `mono` (Fira Code).
+        * Add custom keyframes and animations (`fade-in`, `slide-up`, `dust-swirl`, `sheriff-star`, `glow-pulse`, `animate-glow`).
+        * Define custom `btn-tech-primary`, `btn-tech-secondary`, `tech-card` styles in `index.css` as provided in the original files.
+7.  **Create Basic `client/index.html`:** Standard HTML5 boilerplate with `#root` div and `src="/src/main.tsx"` script.
+8.  **Create Basic `client/src/index.css`:** Import Tailwind base, components, utilities. Define `:root` and `.dark` CSS variables for your custom HSL color palette. Include custom typography and utility classes as provided in the original `index.css`.
+9.  **Create `shared/schema.ts`:** Define Drizzle ORM schemas for `users`, `ranches`, `lessons`, `userProgress`, `characters`, `buildings`, and their `Insert` types, exactly as provided in the user's `shared/schema.ts` file.
+
+---
+
+**Phase 2: Backend Setup (Node.js/Express)**
+
+1.  **Create `server/index.ts`:**
+    * Set up Express app, use `express.json()` and `express.urlencoded()`.
+    * Implement basic request logging middleware.
+    * Call `registerRoutes(app)` and `setupVite(app, server)` (for dev) or `serveStatic(app)` (for prod).
+    * Listen on port 5000.
+2.  **Create `server/vite.ts`:**
+    * Implement `setupVite` (for dev server) and `serveStatic` (for prod static files) functions.
+    * Include `log` utility function.
+3.  **Create `server/db.ts`:**
+    * Mock this file for now. It should export a `db` object that simulates Drizzle ORM operations, but for this MVP, it won't connect to a real database.
+    * Example: `export const db = { users: [], ranches: [], ... };` (or simply omit `db` and use `MemStorage` directly).
+4.  **Create `server/storage.ts`:**
+    * Implement `IStorage` interface and `MemStorage` class exactly as provided in the user's `server/storage.ts` file. This will serve as your in-memory database.
+    * Ensure `MemStorage` initializes with the default lesson data.
+5.  **Create `server/routes.ts`:**
+    * Implement `registerRoutes(app)` function.
+    * Add placeholder API routes for `users`, `ranches`, `lesson-progress`, `characters`, `buildings` (POST, GET, PUT) that interact with `storage` (MemStorage).
+    * Add placeholder `api/compile` and `api/validate` routes that initially simulate responses (as in the user's provided `server/routes.ts`).
+
+---
+
+**Phase 3: Frontend Core Components & Pages**
+
+1.  **Create `client/src/App.tsx`:**
+    * Set up `QueryClientProvider`, `TooltipProvider`, `WalletProvider`, `MainLayout`, `Toaster`.
+    * Implement `Router` using `wouter` `Switch` and `Route` for `/`, `/lessons`, `/lessons/:id`, `/ranch`, `/playground`, and `not-found`.
+2.  **Create `client/src/main.tsx`:**
+    * Render `App` into `#root`.
+    * **Add Google Fonts imports for custom fonts:** `Rye`, `Creepster`, `Fredoka One`, `Fira Code`.
+3.  **Create `client/src/lib/utils.ts`:**
+    * Implement `cn`, `formatWalletAddress`, `formatRanchCoin`, `getRarityColor`, `getRarityBorder`, `sleep`.
+4.  **Create `client/src/lib/queryClient.ts`:**
+    * Implement `throwIfResNotOk`, `apiRequest`, `getQueryFn`, `queryClient` exactly as provided.
+5.  **Create `client/src/hooks/use-wallet.ts`:**
+    * Implement `useWallet` with mocked `connected`, `address`, `connecting` states, and `connect`/`disconnect` functions using `localStorage` and `setTimeout` for simulation.
+6.  **Create `client/src/hooks/use-toast.ts`:**
+    * Implement `useToast` and `toast` functions exactly as provided.
+7.  **Create `client/src/hooks/use-mobile.tsx`:**
+    * Implement `useIsMobile`.
+8.  **Create `client/src/hooks/use-lesson-store.ts`:**
+    * Implement `useLessonStore` with `progress`, `currentLesson` states, and `getLessonProgress`, `completeLesson`, `updateLessonAttempt`, `getOverallProgress`, `isLessonUnlocked`, `getCompletedLessonsCount` functions, using `localStorage` for persistence.
+9.  **Create `client/src/hooks/use-game-store.ts`:**
+    * Implement `useGameStore` with `ranchData`, `characters`, `buildings` states, and `addCharacter`, `addBuilding`, `spendRanchCoin`, `earnRanchCoin`, `addExperience` functions. Initialize with some mock data (e.g., `ranchData`, `characters`, `buildings` as provided in user's file).
+    * **Crucially, add new transient states for visual effects:**
+        * `networkPingActive: boolean`
+        * `sparkleActive: boolean`
+        * `coinFallActive: boolean`
+        * `lastStoredMessage: string | null`
+        * `transactionActive: boolean`
+    * Add corresponding `triggerXxxAnimation` or `setLastStoredMessage` actions to update these states temporarily.
+10. **Create UI Components (Shadcn/ui base with custom styling):**
+    * `client/src/components/ui/accordion.tsx`
+    * `client/src/components/ui/alert-dialog.tsx`
+    * `client/src/components/ui/alert.tsx`
+    * `client/src/components/ui/aspect-ratio.tsx`
+    * `client/src/components/ui/avatar.tsx`
+    * `client/src/components/ui/badge.tsx`
+    * `client/src/components/ui/breadcrumb.tsx`
+    * `client/src/components/ui/button.tsx`
+    * `client/src/components/ui/calendar.tsx`
+    * `client/src/components/ui/card.tsx`
+    * `client/src/components/ui/carousel.tsx`
+    * `client/src/components/ui/chart.tsx`
+    * `client/src/components/ui/checkbox.tsx`
+    * `client/src/components/ui/collapsible.tsx`
+    * `client/src/components/ui/command.tsx`
+    * `client/src/components/ui/context-menu.tsx`
+    * `client/src/components/ui/dialog.tsx`
+    * `client/src/components/ui/drawer.tsx`
+    * `client/src/components/ui/dropdown-menu.tsx`
+    * `client/src/components/ui/form.tsx`
+    * `client/src/components/ui/hover-card.tsx`
+    * `client/src/components/ui/input-otp.tsx`
+    * `client/src/components/ui/input.tsx`
+    * `client/src/components/ui/label.tsx`
+    * `client/src/components/ui/menubar.tsx`
+    * `client/src/components/ui/navigation-menu.tsx`
+    * `client/src/components/ui/pagination.tsx`
+    * `client/src/components/ui/popover.tsx`
+    * `client/src/components/ui/progress.tsx`
+    * `client/src/components/ui/radio-group.tsx`
+    * `client/src/components/ui/resizable.tsx`
+    * `client/src/components/ui/scroll-area.tsx`
+    * `client/src/components/ui/select.tsx`
+    * `client/src/components/ui/separator.tsx`
+    * `client/src/components/ui/sheet.tsx`
+    * `client/src/components/ui/sidebar.tsx`
+    * `client/src/components/ui/skeleton.tsx`
+    * `client/src/components/ui/slider.tsx`
+    * `client/src/components/ui/switch.tsx`
+    * `client/src/components/ui/table.tsx`
+    * `client/src/components/ui/tabs.tsx`
+    * `client/src/components/ui/textarea.tsx`
+    * `client/src/components/ui/toast.tsx`
+    * `client/src/components/ui/toaster.tsx`
+    * `client/src/components/ui/toggle-group.tsx`
+    * `client/src/components/ui/toggle.tsx`
+    * `client/src/components/ui/tooltip.tsx`
+    * **Custom Western UI Components:**
+        * `client/src/components/ui/WesternButton.tsx`: Implement with `primary`, `secondary`, `tertiary`, `ghost`, `outline` variants, and `glow` prop, using custom Tailwind classes defined in `index.css`.
+        * `client/src/components/ui/WesternCard.tsx`: Implement with `default`, `leather`, `gold`, `mystical` variants, and `glow` prop, using custom Tailwind classes.
+        * `client/src/components/ui/WesternModal.tsx`: Implement as a wrapper around `Dialog` with custom Western styling.
+11. **Create `client/src/components/wallet/WalletButton.tsx` and `client/src/components/wallet/WalletProvider.tsx`:** Use `useWallet` hook.
+12. **Create `client/src/components/layout/MainLayout.tsx`:**
+    * Implement the main layout with a background gradient, fixed dust particles, and a theme toggle button (light/dark mode).
+    * Include a basic footer.
+    * **Crucially, pass all visual effect states from `useGameStore` to `GameCanvas` as props.**
+13. **Create `client/src/components/layout/Header.tsx`:**
+    * Implement the header with logo/title, navigation links (`Home`, `Lessons`, `Playground`, `My Ranch`), and `WalletButton`.
+14. **Create `client/src/components/lessons/NarrativeBox.tsx`:**
+    * Implement a styled box for narrative text with `story`, `challenge`, `success`, `warning` variants.
+15. **Create `client/src/components/lessons/LessonLayout.tsx`:**
+    * Layout for individual lesson pages, including progress bar, title, description, and navigation buttons.
+16. **Create `client/src/components/lessons/LessonProgress.tsx`:**
+    * Visual progress bar and lesson trail.
+17. **Create `client/src/components/editor/MonacoEditor.tsx`:**
+    * **Mock Editor:** For this MVP, simulate Monaco Editor using a `<textarea>` element styled to look like an editor. It should accept `value`, `onChange`, `language`, `height`, `onRun`, `onValidate` props.
+    * **Real API Call:** The `handleRun` function inside `MonacoEditor.tsx` **MUST** make a `fetch` POST request to `/api/compile` sending `code`, `language`, `lessonId`, and `currentStep` (these last two will be passed from `LessonDetailPage`).
+    * The `onRun` prop should be called with the full `data` received from the backend.
+18. **Create `client/src/components/editor/LanguageSelector.tsx`:**
+    * Component to switch between Rust and Python.
+19. **Create `client/src/components/editor/CodeValidator.tsx`:**
+    * Component to display validation results (success, warning, error) from the backend.
+20. **Create `client/src/components/game/RanchBuilder.tsx`:**
+    * UI for building structures on the ranch.
+21. **Create `client/src/components/game/CharacterCollection.tsx`:**
+    * UI for viewing and minting characters.
+22. **Create `client/src/components/game/GameCanvas.tsx`:**
+    * **PIXI.js Integration:** This component **MUST** use `PIXI.Application` to render the game world.
+    * **Initial Scene:** Draw a basic Western landscape (sky, ground, mountains, fence, ranch sign) using PIXI.js Graphics.
+    * **Dynamic Elements:** Draw placeholder buildings and characters using PIXI.js Graphics or simple `PIXI.Text` emojis for now.
+    * **Accept Visual Effect Props:** Accept `networkPingActive`, `sparkleActive`, `coinFallActive`, `lastStoredMessage`, `transactionActive` as props.
+    * **Render Visual Effects:** Implement drawing logic within PIXI.js for each of these props:
+        * `networkPingActive`: A temporary, pulsing green circle/wave.
+        * `sparkleActive`: Temporary, small yellow/white circles appearing and fading.
+        * `coinFallActive`: Temporary, falling golden circles/emojis.
+        * `lastStoredMessage`: A persistent, static message board with the text.
+        * `transactionActive`: A temporary, moving "bounty bag" emoji/circle.
+    * **Pass `ranchData`, `characters`, `buildings`:** Ensure these are passed to update the PIXI.js scene (e.g., add/remove sprites).
+23. **Create Pages:**
+    * `client/src/pages/HomePage.tsx`: Landing page with calls to action.
+    * `client/src/pages/LessonsPage.tsx`: Overview of all lessons.
+    * `client/src/pages/LessonDetailPage.tsx`:
+        * Manages `currentStep` state.
+        * Loads `initialCodeTemplateKey` from `lessons.ts` for the current step.
+        * Passes `lessonId` and `currentStep` to `MonacoEditor`.
+        * Receives backend response from `MonacoEditor`'s `onRun`.
+        * If `challenge_success: true`, increments `currentStep` and triggers the corresponding `visualEffectTrigger` from `useGameStore`.
+        * If `challenge_success: false`, displays `failureMessage` in console.
+        * Dynamically renders `NarrativeBox` content based on `currentStep`.
+    * `client/src/pages/RanchPage.tsx`: Dashboard for the ranch.
+    * `client/src/pages/PlaygroundPage.tsx`: Free-form code editor.
+    * `client/src/pages/not-found.tsx`: 404 page.
+
+---
+
+**Phase 4: Lesson Content & Backend Verification (CryptoZombies Style)**
+
+1.  **Create `client/src/data/lessons.ts`:**
+    * Define `LessonData` and `LessonStep` interfaces.
+    * Populate the `lessons` array with **at least Lesson 1 and Lesson 2**, each containing a `content.steps` array.
+    * Each `LessonStep` object must include:
+        * `id: number` (unique within the lesson)
+        * `title: string` (e.g., "Define Ranch Owner Field")
+        * `challenge: string` (clear instructions)
+        * `expectedCodePattern: { rust?: string; python?: string; }` (regex string for backend verification)
+        * `successMessage: string`
+        * `failureMessage: string`
+        * `initialCodeTemplateKey: string` (references a key in `code-templates.ts`)
+        * `visualEffectTrigger?: 'blueprint' | 'sparkle' | 'coinFall' | 'messageBoard' | 'transaction'`
+    * **Lesson 1: Solana Basics & Wallet Setup** (1 step for now)
+        * **Step 1: Ping the Blockchain**
+            * `challenge`: "Write `get_network_status()` to check Devnet health."
+            * `expectedCodePattern`: `{ rust: 'get_network_status\\(\\)', python: 'get_network_status\\(\\)' }`
+            * `successMessage`: "Network Status: Connected! Ping: {ping}ms | Current Slot: {slot}"
+            * `failureMessage`: "Command not recognized. Ensure you typed `get_network_status()` exactly."
+            * `initialCodeTemplateKey`: `default`
+            * `visualEffectTrigger`: `networkPing`
+    * **Lesson 2: Creating Your Ranch Account** (2 steps for now)
+        * **Step 1: Define Ranch Owner Field**
+            * `challenge`: "In the `Ranch` struct (Rust) or `Ranch` class (Python), add a `pubkey` field named `owner`. Don't forget the comma for Rust!"
+            * `expectedCodePattern`: `{ rust: 'pub\\s+owner:\\s*Pubkey,', python: 'owner:\\s*Pubkey' }`
+            * `successMessage`: "Excellent! The `owner` field has been added. Your ranch now knows who its rightful owner is!"
+            * `failureMessage`: "Not quite. Make sure you've added `pub owner: Pubkey,` (Rust) or `owner: Pubkey` (Python) exactly inside the Ranch definition. Check for typos and correct capitalization!"
+            * `initialCodeTemplateKey`: `ranch_management_initial`
+            * `visualEffectTrigger`: `blueprint`
+        * **Step 2: Initialize Owner in `initialize_ranch`**
+            * `challenge`: "Now, inside the `initialize_ranch` function, assign the `owner` field of your `ranch` account to the `user.key()` (Rust) or `owner.key()` (Python). Remember `ranch.owner = ctx.accounts.user.key();` or `ranch.owner = owner.key()`."
+            * `expectedCodePattern`: `{ rust: 'ranch\\.owner\\s*=\\s*ctx\\.accounts\\.user\\.key\\(\\);', python: 'ranch\\.owner\\s*=\\s*owner\\.key\\(\\)' }`
+            * `successMessage`: "Owner successfully initialized! Your ranch deed is now registered to you!"
+            * `failureMessage`: "The owner assignment is incorrect. Double-check the syntax for assigning the owner's key to the ranch account."
+            * `initialCodeTemplateKey`: `ranch_management_step1_complete` (this template will include the `owner` field from Step 1)
+            * `visualEffectTrigger`: `sparkle`
+
+2.  **Create `client/src/data/code-templates.ts`:**
+    * Define `rustTemplates` and `pythonTemplates` objects.
+    * Include a `default` template.
+    * Add `ranch_management_initial` template (the starting code for Lesson 2).
+    * Add `ranch_management_step1_complete` template (the code *after* Step 1 is done, for Step 2's starting point).
+
+3.  **Implement `server/routes.ts` (`/api/compile` - Verification Logic):**
+    * **Signature:** `app.post("/api/compile", async (req, res) => { const { code, language, lessonId, currentStep } = req.body; ... });`
+    * **Priority:** Place specific lesson step verification logic *before* generic challenge logic.
+    * **Lesson Step Verification:**
+        * Use `if (lessonId === X && currentStep === Y)` blocks.
+        * Inside each block, define `expectedRustPattern` and `expectedPythonPattern` using `RegExp`.
+        * Perform `pattern.test(code)`.
+        * Set `challengeMet: boolean`, `feedbackMessage: string`, `console_output: string`.
+        * **Crucially, send a JSON response and `return;` immediately if a step is matched.**
+            ```typescript
+            // Example for Lesson 2, Step 1
+            if (lessonId === 2 && currentStep === 1) {
+                const expectedRustPattern = /pub\s+owner:\s*Pubkey,/;
+                const expectedPythonPattern = /owner:\s*Pubkey/;
+                let challengeMet = false;
+                let feedbackMessage = "";
+
+                if (language === 'rust' && expectedRustPattern.test(code)) {
+                    challengeMet = true;
+                    feedbackMessage = "Excellent! The `owner` field has been added. Your ranch now knows who its rightful owner is!";
+                } else if (language === 'python' && expectedPythonPattern.test(code)) {
+                    challengeMet = true;
+                    feedbackMessage = "Excellent! The `owner` field has been added. Your ranch now knows who its rightful owner is!";
+                } else {
+                    feedbackMessage = "Not quite. Make sure you've added 'pub owner: Pubkey,' (Rust) or 'owner: Pubkey' (Python) exactly inside the Ranch definition. Check for typos and correct capitalization!";
+                }
+
+                res.json({
+                    success: true,
+                    challenge_id: `${lessonId}.${currentStep}`,
+                    challenge_success: challengeMet,
+                    result: {
+                        compiled: true, // Simulate compilation success for this step
+                        programId: "N/A",
+                        deploymentAddress: "N/A",
+                        logs: [feedbackMessage],
+                        console_output: feedbackMessage
+                    }
+                });
+                return;
+            }
+            // ... other lesson steps
+            ```
+    * **Generic Challenge Verification (the 5 simple challenges):**
+        * After all specific lesson steps, add `else if` blocks for the 5 general challenges (Ping, Keygen, Faucet, Message, Transaction).
+        * Each should check for its specific command pattern and return `challenge_id` (e.g., `1`, `2`, `3`, `4`, `5`) and `challenge_success` based on the pattern match.
+        * Generate mock data for `ping`, `slot`, `newPublicKey`, `amountReceived`, `messageStored`, `transactionId` as discussed previously.
+        * **Example for Ping:**
+            ```typescript
+            else if (code.includes('get_network_status()')) {
+                const mockPing = Math.floor(Math.random() * 100) + 50;
+                const mockSlot = Math.floor(Math.random() * 100000000) + 100000000;
+                res.json({
+                    success: true,
+                    challenge_id: 1,
+                    challenge_success: true,
+                    result: {
+                        compiled: true,
+                        programId: "NetworkCheckProgram",
+                        deploymentAddress: "N/A",
+                        logs: ["Querying Solana Devnet status..."],
+                        console_output: `Network Status: Connected | Ping: ${mockPing}ms | Current Slot: ${mockSlot}`
+                    }
+                });
+                return;
+            }
+            // ... other generic challenges
+            ```
+    * **Final Fallback:** If no specific lesson step or generic challenge is matched, fall through to your original `Math.random() > 0.1` compilation simulation.
+
+---
+
+**Phase 5: Visual Intrigue & Custom Assets (Integration)**
+
+1.  **Custom Icon Integration:**
+    * **For UI components (`Header.tsx`, `RanchPage.tsx`, `LessonsPage.tsx`, etc.):** Replace `lucide-react` components (e.g., `<Home />`, `<Users />`) with `<img>` tags.
+        * **Placeholder Paths:** Use placeholder paths like `'/assets/images/my-custom-home-icon.png'`. (The user will manually place these images in `client/public/assets/images/`).
+        * Ensure `className` attributes (especially `w-X h-Y`) are transferred to the `<img>` tags for correct sizing.
+    * **For `GameCanvas.tsx` (PIXI.js):**
+        * Modify the `GameCanvas` to load textures from `'/assets/images/my-custom-cowboy.png'`, `'/assets/images/my-custom-barn.png'`, etc.
+        * Instead of drawing basic shapes or emojis for characters and buildings, create `PIXI.Sprite` instances from these loaded textures.
+        * Position and scale the sprites appropriately to form the ranch scene.
+2.  **Framer Motion Integration:**
+    * Apply `framer-motion` to key UI elements for smooth transitions and hover effects.
+    * **Example:** In `client/src/components/ui/WesternButton.tsx`, wrap the `Button` with `motion.div` and add `whileHover={{ scale: 1.05 }}`.
+    * **Example:** In `client/src/pages/HomePage.tsx`, use `motion.div` for sections to animate their entrance.
+3.  **Enhanced Visual Effects on Canvas:**
+    * Refine the temporary visual effects (`networkPing`, `sparkle`, `coinFall`, `transaction`) in `GameCanvas.tsx` to use more sophisticated PIXI.js particle emitters or custom sprite animations instead of simple `ctx.arc` or `ctx.fillText`.
+    * For `lastStoredMessage`, ensure the message board is a detailed sprite, and the text is rendered cleanly on it.
+
+---
+
+This prompt is designed to be comprehensive. The Replit agent should be able to follow these instructions to build the entire application with the specified features and visual style. Remember that complex visual assets (detailed sprites) will need to be provided by you and placed in the `client/public/assets/images/` directory for the PIXI.js part to truly shine.
