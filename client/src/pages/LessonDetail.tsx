@@ -1,11 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRoute } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { WesternCard, WesternCardContent, WesternCardHeader, WesternCardTitle } from "@/components/ui/WesternCard";
-import { WesternButton } from "@/components/ui/WesternButton";
+import { TechCard } from "@/components/ui/TechCard";
+import { TechButton } from "@/components/ui/TechButton";
 import { NarrativeBox } from "@/components/lessons/NarrativeBox";
 import { LessonLayout } from "@/components/lessons/LessonLayout";
 import { MonacoEditor } from "@/components/editor/MonacoEditor";
+import { HintCharacter, type HintCharacterRef } from "@/components/lessons/HintCharacter";
 import { useLessonStore } from "@/hooks/use-lesson-store";
 import { useGameStore } from "@/hooks/use-game-store";
 import { useToast } from "@/hooks/use-toast";
@@ -127,11 +128,11 @@ export default function LessonDetail() {
   if (!lesson) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <WesternCard className="p-8 text-center">
-          <i className="fas fa-exclamation-triangle text-4xl text-sunset-400 mb-4" />
-          <h2 className="font-deputy text-2xl text-gray-300 mb-4">Lesson Not Found</h2>
-          <p className="font-mono text-gray-400">The requested lesson could not be found.</p>
-        </WesternCard>
+        <TechCard className="p-8 text-center">
+          <span className="text-4xl mb-4 block">⚠️</span>
+          <h2 className="font-tech text-2xl text-gray-300 mb-4">LESSON NOT FOUND</h2>
+          <p className="font-code text-gray-400">The requested lesson could not be found.</p>
+        </TechCard>
       </div>
     );
   }
@@ -148,24 +149,68 @@ export default function LessonDetail() {
       canGoNext={canGoNext}
       isCompleted={isCompleted}
     >
-      <div className="grid lg:grid-cols-3 gap-8 h-[calc(100vh-300px)]">
-        {/* Left Panel: Narrative & Instructions */}
-        <div className="lg:col-span-1">
-          <WesternCard className="h-full">
-            <WesternCardContent className="p-6 overflow-y-auto h-full">
+      <div className="grid grid-cols-1 xl:grid-cols-5 gap-8 h-[calc(100vh-300px)]">
+        {/* Primary Content: Code Editor */}
+        <div className="xl:col-span-3 space-y-8">
+          <TechCard variant="cyan" className="h-full">
+            <div className="p-6 h-full">
+              <MonacoEditor
+                value={code}
+                onChange={setCode}
+                language={language}
+                onLanguageChange={setLanguage}
+                height="700px"
+                onRun={handleCodeRun}
+                onValidate={handleCodeValidate}
+                lessonId={lessonId}
+                currentStep={currentStep}
+              />
+            </div>
+          </TechCard>
+
+          {/* Validation Results */}
+          {validationResults && (
+            <TechCard variant={validationResults.success ? "neutral" : "pink"} className="p-4">
+              <div className={`text-sm font-code ${
+                validationResults.success 
+                  ? 'text-green-300'
+                  : 'text-red-300'
+              }`}>
+                <div className="flex items-center mb-2">
+                  <span className="mr-2">{validationResults.success ? '✅' : '❌'}</span>
+                  {validationResults.message}
+                </div>
+                {validationResults.errors && validationResults.errors.length > 0 && (
+                  <ul className="text-xs space-y-1 ml-6">
+                    {validationResults.errors.map((error: string, index: number) => (
+                      <li key={index}>• {error}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </TechCard>
+          )}
+        </div>
+
+        {/* Side Panel: Instructions & Status */}
+        <div className="xl:col-span-2 space-y-6">
+          <TechCard variant="purple" className="overflow-hidden">
+            <div className="p-6 overflow-y-auto max-h-96">
               {currentStepData && (
                 <>
-                  <NarrativeBox variant="story">
+                  <NarrativeBox variant="story" icon="📋" title="Mission Brief">
                     {currentStepData.narrative}
                   </NarrativeBox>
 
-                  <NarrativeBox variant="challenge" icon="fa-target" title="Challenge Objectives">
+                  <NarrativeBox variant="challenge" icon="🎯" title="System Requirements">
                     <ul className="space-y-2">
                       {currentStepData.instructions.map((instruction, index) => (
                         <li key={index} className="flex items-start">
-                          <i className={`fas ${
-                            validationResults?.results?.[index]?.passed ? 'fa-check-circle text-sage-400' : 'far fa-circle text-gray-500'
-                          } mr-2 mt-1`} />
+                          <span className={`mr-2 mt-1 ${
+                            validationResults?.results?.[index]?.passed ? 'text-tech-cyan-400' : 'text-gray-500'
+                          }`}>
+                            {validationResults?.results?.[index]?.passed ? '✓' : '○'}
+                          </span>
                           <span>{instruction}</span>
                         </li>
                       ))}
@@ -173,21 +218,22 @@ export default function LessonDetail() {
                   </NarrativeBox>
 
                   {currentStepData.hints.length > 0 && (
-                    <div className="bg-gradient-to-r from-mystic-800/30 to-mystic-700/30 border border-mystic-600 p-4 rounded-lg">
-                      <button 
-                        className="flex items-center justify-between w-full text-left"
+                    <div className="bg-gradient-to-r from-tech-pink-800/30 to-tech-pink-700/30 border border-tech-pink-600 p-4 rounded-lg">
+                      <TechButton 
+                        variant="ghost"
+                        className="flex items-center justify-between w-full text-left p-0"
                         onClick={() => setHintVisible(!hintVisible)}
                       >
-                        <h4 className="font-deputy text-mystic-400 flex items-center">
-                          <i className="fas fa-lightbulb mr-2" />
-                          Need a Hint?
+                        <h4 className="font-tech text-tech-pink-400 flex items-center uppercase tracking-wider">
+                          <span className="mr-2">💡</span>
+                          AI ASSISTANCE
                         </h4>
-                        <i className={`fas fa-chevron-${hintVisible ? 'up' : 'down'} text-mystic-400`} />
-                      </button>
+                        <span className="text-tech-pink-400">{hintVisible ? '⬆️' : '⬇️'}</span>
+                      </TechButton>
                       {hintVisible && (
                         <div className="mt-3 space-y-2">
                           {currentStepData.hints.map((hint, index) => (
-                            <div key={index} className="text-sm text-gray-300 font-mono">
+                            <div key={index} className="text-sm text-gray-300 font-code">
                               • {hint}
                             </div>
                           ))}
@@ -197,106 +243,62 @@ export default function LessonDetail() {
                   )}
                 </>
               )}
-            </WesternCardContent>
-          </WesternCard>
-        </div>
+            </div>
+          </TechCard>
 
-        {/* Middle Panel: Code Editor */}
-        <div className="lg:col-span-1">
-          <WesternCard className="h-full">
-            <WesternCardContent className="p-6 h-full">
-              <MonacoEditor
-                value={code}
-                onChange={setCode}
-                language={language}
-                onLanguageChange={setLanguage}
-                height="100%"
-                onRun={handleCodeRun}
-                onValidate={handleCodeValidate}
-                lessonId={lessonId}
-                currentStep={currentStep}
-              />
-            </WesternCardContent>
-          </WesternCard>
-        </div>
-
-        {/* Right Panel: Game Canvas */}
-        <div className="lg:col-span-1">
-          <WesternCard className="h-full">
-            <WesternCardContent className="p-6 h-full">
-              <h3 className="font-deputy text-xl text-rust-400 mb-4 flex items-center">
-                <i className="fas fa-tv mr-2" />
-                Shadow Ranch Live
-              </h3>
+          {/* Lab Status */}
+          <TechCard variant="cyan" className="p-6">
+            <h3 className="font-tech text-xl text-tech-cyan-400 mb-4 flex items-center uppercase tracking-wider">
+              <span className="mr-2">🔬</span>
+              SOLANA LAB
+            </h3>
+            
+            {/* Mock lab scene */}
+            <div className="bg-gradient-to-b from-tech-purple-800 to-tech-purple-900 rounded-lg h-64 relative overflow-hidden border-2 border-tech-cyan-600 mb-6">
+              <div className="absolute inset-0 bg-gradient-to-b from-tech-cyan-400/20 to-transparent" />
               
-              {/* Mock ranch scene */}
-              <div className="bg-gradient-to-b from-desert-800 to-desert-900 rounded-lg h-64 relative overflow-hidden border-2 border-desert-600 mb-6">
-                <div className="absolute inset-0 bg-gradient-to-b from-sunset-400/20 to-transparent" />
-                
-                {/* Ranch buildings */}
-                <div className="absolute bottom-4 left-4 w-16 h-12 bg-leather-700 rounded-t-lg border border-leather-600">
-                  <div className="w-full h-3 bg-rust-600 rounded-t-lg" />
-                </div>
-                <div className="absolute bottom-4 right-4 w-20 h-16 bg-sage-700 rounded border border-sage-600">
-                  <div className="w-full h-4 bg-sage-600 rounded-t" />
-                </div>
-                
-                {/* Character */}
-                <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-6 h-8 bg-desert-600 rounded-full">
-                  <div className="w-4 h-4 bg-leather-600 rounded-full mx-auto mt-1" />
-                </div>
-                
-                {/* Status overlay */}
-                <div className="absolute top-4 left-4 bg-black/70 rounded px-2 py-1">
-                  <div className="text-xs text-desert-400 font-mono">Ranch Coins: {formatRanchCoin(gameStore.ranchData.coins)}</div>
-                  <div className="text-xs text-sage-400 font-mono">XP: {gameStore.ranchData.experience}</div>
-                </div>
-                
-                {/* Success animation area */}
-                {validationResults?.success && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="bg-green-500/90 text-white px-4 py-2 rounded-lg font-deputy animate-bounce">
-                      <i className="fas fa-check-circle mr-2" />
-                      Code Validated Successfully!
-                    </div>
-                  </div>
-                )}
+              {/* Lab equipment */}
+              <div className="absolute bottom-4 left-4 w-16 h-12 bg-tech-purple-700 rounded border border-tech-purple-600">
+                <div className="w-full h-3 bg-tech-cyan-600 rounded-t" />
               </div>
-
-              {/* Ranch Stats */}
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <div className="bg-gradient-to-r from-desert-800/50 to-desert-700/50 p-3 rounded border border-desert-600">
-                  <div className="text-xs text-desert-400 font-mono mb-1">Buildings</div>
-                  <div className="text-lg font-deputy text-white">{gameStore.buildings.length}</div>
-                </div>
-                <div className="bg-gradient-to-r from-sage-800/50 to-sage-700/50 p-3 rounded border border-sage-600">
-                  <div className="text-xs text-sage-400 font-mono mb-1">Characters</div>
-                  <div className="text-lg font-deputy text-white">{gameStore.characters.length}</div>
-                </div>
+              <div className="absolute bottom-4 right-4 w-20 h-16 bg-tech-cyan-700 rounded border border-tech-cyan-600">
+                <div className="w-full h-4 bg-tech-cyan-500 rounded-t" />
               </div>
-
-              {/* Validation Results */}
-              {validationResults && (
-                <div className={`p-3 rounded border text-sm font-mono ${
-                  validationResults.success 
-                    ? 'bg-green-800/30 border-green-600 text-green-300'
-                    : 'bg-red-800/30 border-red-600 text-red-300'
-                }`}>
-                  <div className="flex items-center mb-2">
-                    <i className={`fas ${validationResults.success ? 'fa-check-circle' : 'fa-exclamation-circle'} mr-2`} />
-                    {validationResults.message}
+              
+              {/* Character */}
+              <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-6 h-8 bg-tech-purple-600 rounded-full">
+                <div className="w-4 h-4 bg-tech-cyan-600 rounded-full mx-auto mt-1" />
+              </div>
+              
+              {/* Status overlay */}
+              <div className="absolute top-4 left-4 bg-black/70 rounded px-2 py-1">
+                <div className="text-xs text-tech-cyan-400 font-code">SOL Tokens: {formatRanchCoin(gameStore.ranchData.coins)}</div>
+                <div className="text-xs text-tech-purple-400 font-code">XP: {gameStore.ranchData.experience}</div>
+              </div>
+              
+              {/* Success animation area */}
+              {validationResults?.success && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="bg-green-500/90 text-white px-4 py-2 rounded-lg font-tech animate-bounce">
+                    <span className="mr-2">✅</span>
+                    CODE VALIDATED SUCCESSFULLY!
                   </div>
-                  {validationResults.errors && validationResults.errors.length > 0 && (
-                    <ul className="text-xs space-y-1">
-                      {validationResults.errors.map((error: string, index: number) => (
-                        <li key={index}>• {error}</li>
-                      ))}
-                    </ul>
-                  )}
                 </div>
               )}
-            </WesternCardContent>
-          </WesternCard>
+            </div>
+
+            {/* Lab Stats */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-gradient-to-r from-tech-purple-800/50 to-tech-purple-700/50 p-3 rounded border border-tech-purple-600">
+                <div className="text-xs text-tech-purple-400 font-code mb-1">MODULES</div>
+                <div className="text-lg font-tech text-white">{gameStore.buildings.length}</div>
+              </div>
+              <div className="bg-gradient-to-r from-tech-cyan-800/50 to-tech-cyan-700/50 p-3 rounded border border-tech-cyan-600">
+                <div className="text-xs text-tech-cyan-400 font-code mb-1">AGENTS</div>
+                <div className="text-lg font-tech text-white">{gameStore.characters.length}</div>
+              </div>
+            </div>
+          </TechCard>
         </div>
       </div>
     </LessonLayout>
