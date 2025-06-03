@@ -1,6 +1,8 @@
 import { ReactNode } from "react";
 import { WesternCard } from "@/components/ui/WesternCard";
 import { WesternButton } from "@/components/ui/WesternButton";
+import { TechCard } from "@/components/ui/TechCard";
+import { TechButton } from "@/components/ui/TechButton";
 import { LessonProgress } from "./LessonProgress";
 import { useLocation } from "wouter";
 
