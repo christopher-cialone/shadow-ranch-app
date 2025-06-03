@@ -62,43 +62,55 @@ export function LessonLayout({
 
         {children}
 
-        {/* Navigation */}
-        <WesternCard className="mt-6">
-          <div className="p-6">
-            <div className="flex items-center justify-between">
-              <WesternButton
-                variant="secondary"
-                onClick={onPrevious}
-                disabled={currentStep <= 1}
-              >
-                <i className="fas fa-arrow-left mr-2" />
-                Previous
-              </WesternButton>
-              
-              <div className="flex space-x-3">
-                {isCompleted ? (
-                  <WesternButton
-                    variant="primary"
-                    onClick={onComplete}
-                    glow
-                  >
-                    <i className="fas fa-star mr-2" />
-                    Complete Lesson
-                  </WesternButton>
-                ) : (
-                  <WesternButton
-                    variant="primary"
-                    onClick={onNext}
-                    disabled={!canGoNext || currentStep >= totalSteps}
-                  >
-                    Next Step
-                    <i className="fas fa-arrow-right ml-2" />
-                  </WesternButton>
-                )}
+      </div>
+
+      {/* Fixed Bottom Navigation */}
+      <div className="fixed bottom-16 left-0 right-0 z-40 px-4">
+        <div className="container mx-auto max-w-6xl">
+          <TechCard variant="purple" className="backdrop-blur-lg bg-tech-purple-900/80 border-tech-purple-600">
+            <div className="p-4">
+              <div className="flex items-center justify-between">
+                <TechButton
+                  variant="secondary"
+                  onClick={onPrevious}
+                  disabled={currentStep <= 1}
+                  size="sm"
+                >
+                  <span className="mr-2">←</span>
+                  PREVIOUS
+                </TechButton>
+                
+                <div className="flex items-center space-x-4">
+                  <div className="text-center">
+                    <div className="font-tech text-xs text-gray-400 uppercase tracking-wider">PROGRESS</div>
+                    <div className="font-code text-sm text-tech-cyan-400">{currentStep} / {totalSteps}</div>
+                  </div>
+                  
+                  {isCompleted ? (
+                    <TechButton
+                      variant="accent"
+                      onClick={onComplete}
+                      size="sm"
+                    >
+                      <span className="mr-2">⭐</span>
+                      COMPLETE LESSON
+                    </TechButton>
+                  ) : (
+                    <TechButton
+                      variant="primary"
+                      onClick={onNext}
+                      disabled={!canGoNext || currentStep >= totalSteps}
+                      size="sm"
+                    >
+                      NEXT STEP
+                      <span className="ml-2">→</span>
+                    </TechButton>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        </WesternCard>
+          </TechCard>
+        </div>
       </div>
     </div>
   );
