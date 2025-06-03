@@ -22,6 +22,8 @@ export default function LessonDetail() {
   const [code, setCode] = useState("");
   const [hintVisible, setHintVisible] = useState(false);
   const [validationResults, setValidationResults] = useState<any>(null);
+  
+  const hintCharacterRef = useRef<HintCharacterRef>(null);
 
   const { data: lesson, isLoading } = useQuery<Lesson>({
     queryKey: [`/api/lessons/${lessonId}`],
@@ -220,25 +222,16 @@ export default function LessonDetail() {
                   {currentStepData.hints.length > 0 && (
                     <div className="bg-gradient-to-r from-tech-pink-800/30 to-tech-pink-700/30 border border-tech-pink-600 p-4 rounded-lg">
                       <TechButton 
-                        variant="ghost"
-                        className="flex items-center justify-between w-full text-left p-0"
-                        onClick={() => setHintVisible(!hintVisible)}
+                        variant="accent"
+                        className="w-full"
+                        onClick={() => {
+                          const hintMessage = currentStepData.hints.join(" ");
+                          hintCharacterRef.current?.showHint(hintMessage);
+                        }}
                       >
-                        <h4 className="font-tech text-tech-pink-400 flex items-center uppercase tracking-wider">
-                          <span className="mr-2">💡</span>
-                          AI ASSISTANCE
-                        </h4>
-                        <span className="text-tech-pink-400">{hintVisible ? '⬆️' : '⬇️'}</span>
+                        <span className="mr-2">🤖</span>
+                        REQUEST AI ASSISTANCE
                       </TechButton>
-                      {hintVisible && (
-                        <div className="mt-3 space-y-2">
-                          {currentStepData.hints.map((hint, index) => (
-                            <div key={index} className="text-sm text-gray-300 font-code">
-                              • {hint}
-                            </div>
-                          ))}
-                        </div>
-                      )}
                     </div>
                   )}
                 </>
@@ -301,6 +294,9 @@ export default function LessonDetail() {
           </TechCard>
         </div>
       </div>
+
+      {/* Hint Character */}
+      <HintCharacter ref={hintCharacterRef} />
     </LessonLayout>
   );
 }

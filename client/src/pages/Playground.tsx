@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { WesternCard, WesternCardContent, WesternCardHeader, WesternCardTitle } from "@/components/ui/WesternCard";
-import { WesternButton } from "@/components/ui/WesternButton";
+import { TechCard } from "@/components/ui/TechCard";
+import { TechButton } from "@/components/ui/TechButton";
 import { MonacoEditor } from "@/components/editor/MonacoEditor";
 import { useToast } from "@/hooks/use-toast";
 import { useGameStore } from "@/hooks/use-game-store";
@@ -176,55 +176,90 @@ export default function Playground() {
   };
 
   return (
-    <div className="py-20 bg-gradient-to-b from-gray-900 to-gray-800">
+    <div className="py-20 bg-gradient-to-b from-tech-purple-900 to-tech-cyan-900">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h1 className="font-western text-4xl md:text-5xl text-sunset-400 mb-6">Code Playground</h1>
-          <p className="font-deputy text-lg text-gray-300 max-w-2xl mx-auto">
-            Experiment freely with Solana development! Try out code snippets, test your ideas, and earn rewards for exploration.
+          <h1 className="font-titulo text-4xl md:text-5xl bg-gradient-to-r from-tech-cyan-400 to-tech-purple-400 bg-clip-text text-transparent mb-6">
+            CODE LABORATORY
+          </h1>
+          <p className="font-tech text-lg text-gray-300 max-w-2xl mx-auto uppercase tracking-wider">
+            Experiment with blockchain protocols! Test algorithms, validate concepts, and earn rewards for innovation.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-4 gap-8">
-          {/* Template Selector */}
-          <div className="lg:col-span-1">
-            <WesternCard className="h-fit">
-              <WesternCardHeader>
-                <WesternCardTitle className="text-lg">Code Templates</WesternCardTitle>
-              </WesternCardHeader>
-              <WesternCardContent>
+        <div className="grid grid-cols-1 xl:grid-cols-5 gap-8 h-[calc(100vh-400px)]">
+          {/* Primary Content: Code Editor */}
+          <div className="xl:col-span-3 space-y-6">
+            <TechCard variant="cyan" className="h-full">
+              <div className="p-6 h-full flex flex-col">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="font-tech text-xl text-tech-cyan-400 uppercase tracking-wider">MAIN TERMINAL</h2>
+                  <div className="flex space-x-2">
+                    <TechButton variant="primary" size="sm" onClick={handleRunCode} disabled={isRunning}>
+                      <span className="mr-1">⚡</span>
+                      {isRunning ? "EXECUTING..." : "RUN"}
+                    </TechButton>
+                    <TechButton variant="secondary" size="sm" onClick={handleSave}>
+                      <span className="mr-1">💾</span>
+                      SAVE
+                    </TechButton>
+                    <TechButton variant="outline" size="sm" onClick={handleClear}>
+                      <span className="mr-1">🗑️</span>
+                      CLEAR
+                    </TechButton>
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <MonacoEditor
+                    value={code}
+                    onChange={setCode}
+                    language={language}
+                    onLanguageChange={setLanguage}
+                    height="600px"
+                    onRun={handleCodeRun}
+                  />
+                </div>
+              </div>
+            </TechCard>
+          </div>
+
+          {/* Side Panel: Templates & Console */}
+          <div className="xl:col-span-2 space-y-6">
+            {/* Template Selector */}
+            <TechCard variant="purple" className="overflow-hidden">
+              <div className="p-6">
+                <h3 className="font-tech text-lg text-tech-purple-400 mb-4 uppercase tracking-wider">PROTOCOL TEMPLATES</h3>
                 <div className="space-y-3">
                   {codeTemplates.map((template, index) => (
-                    <button
+                    <TechButton
                       key={index}
+                      variant={selectedTemplate === index ? "primary" : "outline"}
+                      className="w-full text-left p-3 h-auto"
                       onClick={() => handleTemplateSelect(index)}
-                      className={`w-full text-left p-3 rounded-lg border transition-all ${
-                        selectedTemplate === index
-                          ? 'bg-desert-600/30 border-desert-500 text-desert-400'
-                          : 'bg-gray-800 border-gray-600 text-gray-300 hover:border-gray-500'
-                      }`}
                     >
-                      <div className="flex items-center mb-2">
-                        <i className={`fas ${template.icon} mr-2`} />
-                        <span className="font-deputy font-semibold">{template.name}</span>
+                      <div className="flex flex-col items-start">
+                        <div className="flex items-center mb-2">
+                          <span className="mr-2">{template.icon === 'fa-code' ? '💻' : template.icon === 'fa-anchor' ? '⚓' : '🪙'}</span>
+                          <span className="font-tech font-semibold">{template.name}</span>
+                        </div>
+                        <p className="text-xs font-code text-gray-400">
+                          {template.description}
+                        </p>
+                        <div className="mt-2">
+                          <span className={`text-xs px-2 py-1 rounded font-code ${
+                            template.language === 'rust' 
+                              ? 'bg-tech-purple-600/30 text-tech-purple-400' 
+                              : 'bg-tech-cyan-600/30 text-tech-cyan-400'
+                          }`}>
+                            {template.language === 'rust' ? 'Rust' : 'Python'}
+                          </span>
+                        </div>
                       </div>
-                      <p className="text-xs font-mono text-gray-400">
-                        {template.description}
-                      </p>
-                      <div className="mt-2">
-                        <span className={`text-xs px-2 py-1 rounded font-mono ${
-                          template.language === 'rust' 
-                            ? 'bg-rust-600/30 text-rust-400' 
-                            : 'bg-sage-600/30 text-sage-400'
-                        }`}>
-                          {template.language === 'rust' ? 'Rust' : 'Python'}
-                        </span>
-                      </div>
-                    </button>
+                    </TechButton>
                   ))}
                 </div>
-              </WesternCardContent>
-            </WesternCard>
+              </div>
+            </TechCard>
 
             {/* Quick Actions */}
             <WesternCard className="mt-6">
