@@ -11,7 +11,7 @@ interface LessonProgress {
 }
 
 interface LessonStore {
-  progress: Map<number, LessonProgress>;
+  progress: Record<number, LessonProgress>;
   currentLesson: number | null;
   
   // Actions
@@ -27,70 +27,76 @@ interface LessonStore {
 export const useLessonStore = create<LessonStore>()(
   persist(
     (set, get) => ({
-      progress: new Map(),
+      progress: {},
       currentLesson: null,
 
       getLessonProgress: (lessonId: number) => {
-        return get().progress.get(lessonId);
+        const state = get();
+        return state.progress[lessonId];
       },
 
       completeLesson: (lessonId: number) => {
         set((state) => {
-          const newProgress = new Map(state.progress);
-          const existing = newProgress.get(lessonId);
+          const existing = state.progress[lessonId];
           
-          newProgress.set(lessonId, {
-            ...existing,
-            lessonId,
-            currentStep: existing?.currentStep || 1,
-            isCompleted: true,
-            attempts: existing?.attempts || 1,
-            lastAttemptAt: new Date(),
-            completedAt: new Date()
-          });
-          
-          return { progress: newProgress };
+          return { 
+            progress: {
+              ...state.progress,
+              [lessonId]: {
+                ...existing,
+                lessonId,
+                currentStep: existing?.currentStep || 1,
+                isCompleted: true,
+                attempts: existing?.attempts || 1,
+                lastAttemptAt: new Date(),
+                completedAt: new Date()
+              }
+            }
+          };
         });
       },
 
       updateLessonAttempt: (lessonId: number, step: number) => {
         set((state) => {
-          const newProgress = new Map(state.progress);
-          const existing = newProgress.get(lessonId);
+          const existing = state.progress[lessonId];
           
-          newProgress.set(lessonId, {
-            lessonId,
-            currentStep: step,
-            isCompleted: existing?.isCompleted || false,
-            attempts: (existing?.attempts || 0) + 1,
-            lastAttemptAt: new Date(),
-            completedAt: existing?.completedAt
-          });
-          
-          return { progress: newProgress };
+          return {
+            progress: {
+              ...state.progress,
+              [lessonId]: {
+                ...existing,
+                lessonId,
+                currentStep: step,
+                isCompleted: existing?.isCompleted || false,
+                attempts: (existing?.attempts || 0) + 1,
+                lastAttemptAt: new Date(),
+                completedAt: existing?.completedAt
+              }
+            }
+          };
         });
       },
 
       getOverallProgress: () => {
         const progress = get().progress;
-        const completed = Array.from(progress.values()).filter(p => p.isCompleted).length;
-        const total = progress.size || 1;
+        const completed = Object.values(progress).filter(p => p.isCompleted).length;
+        const total = Object.keys(progress).length || 1;
         return Math.round((completed / total) * 100);
       },
 
       isLessonUnlocked: (lessonId: number, requiredLessons: number[]) => {
-        if (requiredLessons.length === 0) return true;
-        
         const progress = get().progress;
+        if (lessonId === 1) return true;
+        
         return requiredLessons.every(reqId => {
-          const reqProgress = progress.get(reqId);
-          return reqProgress?.isCompleted === true;
+          const lessonProgress = progress[reqId];
+          return lessonProgress?.isCompleted || false;
         });
       },
 
       getCompletedLessonsCount: () => {
         const progress = get().progress;
-        return Array.from(progress.values()).filter(p => p.isCompleted).length;
+        return Object.values(progress).filter(p => p.isCompleted).length;
       },
 
       setCurrentLesson: (lessonId: number | null) => {
@@ -98,18 +104,7 @@ export const useLessonStore = create<LessonStore>()(
       }
     }),
     {
-      name: 'lesson-store',
-      serialize: (state) => JSON.stringify({
-        ...state,
-        progress: Array.from(state.progress.entries())
-      }),
-      deserialize: (str) => {
-        const parsed = JSON.parse(str);
-        return {
-          ...parsed,
-          progress: new Map(parsed.progress || [])
-        };
-      }
+      name: 'lesson-progress-storage'
     }
   )
 );
