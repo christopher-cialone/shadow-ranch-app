@@ -18,12 +18,14 @@ export function Header({ onThemeToggle, currentTheme }: HeaderProps) {
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-gray-900/95 dark:bg-gray-900/95 backdrop-blur-sm border-b border-desert-600/30">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-tech-purple-900/95 backdrop-blur-sm border-b border-tech-cyan-600/30">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <Link href="/">
           <div className="flex items-center space-x-4 cursor-pointer">
-            <i className="fas fa-star text-desert-400 text-2xl animate-sheriff-star" />
-            <h1 className="font-western text-2xl text-desert-400">BRB: A Solana Adventure</h1>
+            <span className="text-tech-cyan-400 text-2xl animate-tech-pulse">⚡</span>
+            <h1 className="font-titulo text-2xl bg-gradient-to-r from-tech-cyan-400 to-tech-purple-400 bg-clip-text text-transparent">
+              BRB: A SOLANA ADVENTURE
+            </h1>
           </div>
         </Link>
         
@@ -32,8 +34,8 @@ export function Header({ onThemeToggle, currentTheme }: HeaderProps) {
             <Link key={item.href} href={item.href}>
               <a
                 className={cn(
-                  "font-deputy text-gray-300 hover:text-desert-400 transition-colors",
-                  location === item.href && "text-desert-400"
+                  "font-tech text-gray-300 hover:text-tech-cyan-400 transition-colors uppercase tracking-wider",
+                  location === item.href && "text-tech-cyan-400"
                 )}
               >
                 {item.label}
@@ -46,10 +48,10 @@ export function Header({ onThemeToggle, currentTheme }: HeaderProps) {
           <WalletButton />
           <button
             onClick={onThemeToggle}
-            className="p-2 text-gray-400 hover:text-desert-400 transition-colors"
+            className="p-2 text-gray-400 hover:text-tech-cyan-400 transition-colors"
             aria-label="Toggle theme"
           >
-            <i className={`fas ${currentTheme === 'dark' ? 'fa-sun' : 'fa-moon'}`} />
+            <span className="text-lg">{currentTheme === 'dark' ? '🌙' : '☀️'}</span>
           </button>
         </div>
       </div>
