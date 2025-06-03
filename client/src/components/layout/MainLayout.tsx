@@ -84,51 +84,20 @@ export function MainLayout({ children }: MainLayoutProps) {
         lastStoredMessage={gameState.lastStoredMessage}
       />
 
-      {/* Footer */}
-      <footer className="bg-tech-purple-900/50 border-t border-tech-cyan-600/30 py-12 backdrop-blur-sm">
+      {/* Compact Footer */}
+      <footer className="bg-tech-purple-900/30 border-t border-tech-cyan-600/20 py-4 backdrop-blur-sm mt-auto">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="font-titulo text-xl text-tech-cyan-400 mb-4">⚡ SOLANA LAB</h3>
-              <p className="text-gray-400 font-tech text-sm">
-                Master blockchain development through immersive cypher-punk challenges and real-world coding.
-              </p>
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-2 md:space-y-0">
+            <div className="flex items-center space-x-4">
+              <span className="font-titulo text-sm text-tech-cyan-400">⚡ SOLANA LAB</span>
+              <span className="text-gray-500 font-code text-xs">|</span>
+              <span className="text-gray-400 font-code text-xs">Blockchain Development Platform</span>
             </div>
-            <div>
-              <h4 className="font-tech text-lg text-tech-purple-400 mb-4">PROTOCOLS</h4>
-              <ul className="space-y-2 text-gray-400 font-code text-sm">
-                <li><a href="#" className="hover:text-tech-cyan-400 transition-colors">Rust Basics</a></li>
-                <li><a href="#" className="hover:text-tech-cyan-400 transition-colors">Anchor Framework</a></li>
-                <li><a href="#" className="hover:text-tech-cyan-400 transition-colors">Python Seahorse</a></li>
-              </ul>
+            <div className="flex items-center space-x-6">
+              <a href="#" className="text-gray-400 hover:text-tech-cyan-400 transition-colors font-code text-xs">PROTOCOLS</a>
+              <a href="#" className="text-gray-400 hover:text-tech-cyan-400 transition-colors font-code text-xs">NETWORK</a>
+              <a href="#" className="text-gray-400 hover:text-tech-cyan-400 transition-colors font-code text-xs">DOCS</a>
             </div>
-            <div>
-              <h4 className="font-tech text-lg text-tech-purple-400 mb-4">NETWORK</h4>
-              <ul className="space-y-2 text-gray-400 font-code text-sm">
-                <li><a href="#" className="hover:text-tech-cyan-400 transition-colors">Discord</a></li>
-                <li><a href="#" className="hover:text-tech-cyan-400 transition-colors">GitHub</a></li>
-                <li><a href="#" className="hover:text-tech-cyan-400 transition-colors">Twitter</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-tech text-lg text-tech-purple-400 mb-4">CONNECT</h4>
-              <div className="flex space-x-4">
-                <a href="#" className="text-gray-400 hover:text-tech-cyan-400 transition-colors">
-                  <span className="text-xl">💻</span>
-                </a>
-                <a href="#" className="text-gray-400 hover:text-tech-cyan-400 transition-colors">
-                  <span className="text-xl">🔗</span>
-                </a>
-                <a href="#" className="text-gray-400 hover:text-tech-cyan-400 transition-colors">
-                  <span className="text-xl">⚡</span>
-                </a>
-              </div>
-            </div>
-          </div>
-          <div className="border-t border-tech-purple-800 mt-8 pt-8 text-center">
-            <p className="text-gray-500 font-code text-sm">
-              © 2024 BRB: A Solana Adventure. Powered by cypher-punk innovation 🤖
-            </p>
           </div>
         </div>
       </footer>
