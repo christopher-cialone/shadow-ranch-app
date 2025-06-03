@@ -38,79 +38,90 @@ export function LessonLayout({
   };
 
   return (
-    <div className="min-h-screen py-8">
-      <div className="container mx-auto px-4">
-        <WesternCard className="mb-6">
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h1 className="font-western text-3xl text-desert-400">{title}</h1>
-              <WesternButton
-                variant="ghost"
-                size="icon"
-                onClick={handleExit}
-                className="text-gray-400 hover:text-white"
-              >
-                <i className="fas fa-times" />
-              </WesternButton>
+    <div className="min-h-screen flex flex-col">
+      {/* Fixed Header */}
+      <div className="sticky top-0 z-40 bg-tech-purple-900/80 backdrop-blur-sm border-b border-tech-cyan-600/20">
+        <div className="container mx-auto px-4 py-4">
+          <TechCard variant="purple" className="bg-tech-purple-900/60 border-tech-purple-600">
+            <div className="p-4">
+              <div className="flex items-center justify-between mb-3">
+                <h1 className="font-titulo text-2xl bg-gradient-to-r from-tech-cyan-400 to-tech-purple-400 bg-clip-text text-transparent">
+                  {title}
+                </h1>
+                <TechButton
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleExit}
+                  className="text-gray-400 hover:text-white"
+                >
+                  <span className="text-lg">✕</span>
+                </TechButton>
+              </div>
+              
+              <LessonProgress
+                currentStep={currentStep}
+                totalSteps={totalSteps}
+                progress={progress}
+              />
             </div>
-            
-            <LessonProgress
-              currentStep={currentStep}
-              totalSteps={totalSteps}
-              progress={progress}
-            />
-          </div>
-        </WesternCard>
-
-        {children}
-
+          </TechCard>
+        </div>
       </div>
 
-      {/* Bottom Navigation - positioned in normal flow */}
-      <div className="mt-8 mb-8">
-        <TechCard variant="purple" className="bg-tech-purple-900/60 border-tech-purple-600">
-          <div className="p-4">
-            <div className="flex items-center justify-between">
-              <TechButton
-                variant="secondary"
-                onClick={onPrevious}
-                disabled={currentStep <= 1}
-                size="sm"
-              >
-                <span className="mr-2">←</span>
-                PREVIOUS
-              </TechButton>
-              
-              <div className="flex items-center space-x-4">
-                <div className="text-center">
-                  <div className="font-tech text-xs text-gray-400 uppercase tracking-wider">PROGRESS</div>
-                  <div className="font-code text-sm text-tech-cyan-400">{currentStep} / {totalSteps}</div>
-                </div>
+      {/* Main Content - Scrollable */}
+      <div className="flex-grow overflow-y-auto">
+        <div className="container mx-auto px-4 py-6">
+          {children}
+        </div>
+      </div>
+
+      {/* Bottom Navigation - Sticky at bottom */}
+      <div className="sticky bottom-0 z-30 bg-tech-purple-900/80 backdrop-blur-sm border-t border-tech-cyan-600/20">
+        <div className="container mx-auto px-4 py-4">
+          <TechCard variant="purple" className="bg-tech-purple-900/60 border-tech-purple-600">
+            <div className="p-3">
+              <div className="flex items-center justify-between">
+                <TechButton
+                  variant="secondary"
+                  onClick={onPrevious}
+                  disabled={currentStep <= 1}
+                  size="sm"
+                >
+                  <span className="mr-2">←</span>
+                  PREVIOUS
+                </TechButton>
                 
-                {isCompleted ? (
-                  <TechButton
-                    variant="accent"
-                    onClick={onComplete}
-                    size="sm"
-                  >
-                    <span className="mr-2">⭐</span>
-                    COMPLETE LESSON
-                  </TechButton>
-                ) : (
-                  <TechButton
-                    variant="primary"
-                    onClick={onNext}
-                    disabled={!canGoNext || currentStep >= totalSteps}
-                    size="sm"
-                  >
-                    NEXT STEP
-                    <span className="ml-2">→</span>
-                  </TechButton>
-                )}
+                <div className="flex items-center space-x-4">
+                  <div className="text-center">
+                    <div className="font-tech text-xs text-gray-400 uppercase tracking-wider">STEP</div>
+                    <div className="font-code text-sm text-tech-cyan-400">{currentStep} / {totalSteps}</div>
+                  </div>
+                  
+                  {isCompleted ? (
+                    <TechButton
+                      variant="accent"
+                      onClick={onComplete}
+                      size="sm"
+                    >
+                      <span className="mr-2">⭐</span>
+                      COMPLETE LESSON
+                    </TechButton>
+                  ) : (
+                    <TechButton
+                      variant="primary"
+                      onClick={onNext}
+                      disabled={!canGoNext || currentStep >= totalSteps}
+                      size="sm"
+                    >
+                      NEXT STEP
+                      <span className="ml-2">→</span>
+                    </TechButton>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        </TechCard>
+          </TechCard>
+        </div>
       </div>
     </div>
   );

@@ -53,7 +53,7 @@ export function MainLayout({ children }: MainLayoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-tech-purple-900 via-slate-900 to-tech-cyan-900 text-gray-100 overflow-x-hidden relative">
+    <div className="min-h-screen bg-gradient-to-br from-tech-purple-900 via-slate-900 to-tech-cyan-900 text-gray-100 overflow-x-hidden relative flex flex-col">
       {/* Tech circuit pattern background */}
       <div className="absolute inset-0 opacity-5 bg-repeat" style={{
         backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%238b5cf6' stroke-width='1'%3E%3Cpath d='M10 10h20v20H10z'/%3E%3Ccircle cx='20' cy='20' r='3'/%3E%3Cpath d='M20 0v10M40 20H30M20 40V30M0 20h10'/%3E%3C/g%3E%3C/svg%3E")`,
@@ -71,7 +71,7 @@ export function MainLayout({ children }: MainLayoutProps) {
 
       <Header onThemeToggle={toggleTheme} currentTheme={theme} />
       
-      <main className="pt-20">
+      <main className="pt-20 flex-grow">
         {children}
       </main>
 
