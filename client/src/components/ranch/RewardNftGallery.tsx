@@ -132,7 +132,11 @@ export function RewardNftGallery({ rewards }: RewardNftGalleryProps) {
         <div className="flex justify-between items-center text-sm mt-1">
           <span className="font-code text-gray-400">Latest Reward:</span>
           <span className="font-code text-gray-300">
-            {rewards.length > 0 ? new Date(rewards[0].awardedAt).toLocaleDateString() : 'None'}
+            {rewards.length > 0 ? (
+              typeof rewards[0].awardedAt === 'string' ? 
+                new Date(rewards[0].awardedAt).toLocaleDateString() : 
+                rewards[0].awardedAt.toLocaleDateString()
+            ) : 'None'}
           </span>
         </div>
       </div>
