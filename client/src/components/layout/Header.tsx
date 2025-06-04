@@ -13,7 +13,6 @@ export function Header({ onThemeToggle, currentTheme }: HeaderProps) {
   const navItems = [
     { href: "/", label: "Home" },
     { href: "/lessons", label: "Lessons" },
-    { href: "/playground", label: "Playground" },
     { href: "/ranch", label: "My Ranch" },
   ];
 
