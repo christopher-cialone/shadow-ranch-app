@@ -1,0 +1,122 @@
+# BRB: A Solana Adventure - Challenge Reward System
+
+**Project Goal:** Implement a visually stunning congratulatory reward system that activates upon successful completion of a challenge step. This system will display a "CORRECT" text animation and an animated NFT image, using the provided 'brb-nft-ai-robot.png' as the reward visual.
+
+**Current State Analysis (from Replit codebase):**
+* Challenges provide textual success messages.
+* Basic visual effects (like blueprint, sparkle) are triggered on the `GameCanvas`.
+* There's no dedicated full-screen congratulatory animation for successful challenge completion.
+
+---
+
+**Instructions for Replit Agent (Reward System Implementation):**
+
+**Phase 1: Create the `ChallengeReward` Display Component**
+
+* **File:** `client/src/components/game/ChallengeReward.tsx` (new file)
+* **Action:** Build a full-screen overlay component that displays a dynamic "CORRECT" message and an animated NFT image.
+* **Implementation:**
+    1.  **Basic Structure:**
+        * Create a React functional component named `ChallengeReward`.
+        * It should accept `isVisible: boolean` and `nftImageUrl: string | null` as props.
+        * Use `useState` for `showContent: boolean` to control the animation sequence.
+        * The outermost `div` should be `fixed inset-0 z-[100] flex items-center justify-center pointer-events-none`.
+        * Apply a semi-transparent background (e.g., `bg-black/70 backdrop-blur-sm`).
+        * Conditionally render the content based on `isVisible`.
+    2.  **Framer Motion Animations:**
+        * Import `motion` from `framer-motion`.
+        * **"CORRECT" Text:**
+            * Wrap the text "CORRECT" in a `motion.div`.
+            * Apply a large, bold, tech-themed font (e.g., `font-titulo text-tech-cyan`).
+            * Use `initial={{ opacity: 0, scale: 0.5 }}` and `animate={{ opacity: 1, scale: 1 }}` for entrance.
+            * Add a subtle `transition={{ duration: 0.5, ease: "easeOut" }}`.
+            * Consider a "matrix-y" effect: a subtle text shadow or `text-shadow` CSS property that gives a digital glow. You might need to add a custom `text-shadow` utility in `tailwind.config.ts` and `index.css`.
+                ```css
+                /* In client/src/index.css */
+                .text-shadow-matrix {
+                  text-shadow: 0 0 5px hsl(var(--tech-cyan)), 0 0 10px hsl(var(--tech-purple));
+                }
+                ```html
+                <!-- In ChallengeReward.tsx -->
+                <motion.h1
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
+                  className="text-8xl font-titulo text-tech-cyan text-shadow-matrix mb-8"
+                >
+                  CORRECT
+                </motion.h1>
+                ```
+        * **NFT Image:**
+            * Wrap the `<img>` tag for the NFT in a `motion.div`.
+            * Apply `initial={{ opacity: 0, y: 50 }}` and `animate={{ opacity: 1, y: 0, transition: { delay: 0.3, duration: 0.5, ease: "easeOut" } }}` for a slight delay and slide-up.
+            * Add a `whileHover={{ scale: 1.05 }}` for interactivity.
+            * Ensure the image is sized appropriately (e.g., `w-64 h-64`).
+            * Use the provided image: `src="/assets/images/brb-nft-ai-robot.png"`. Make sure this image is placed in `client/public/assets/images/`.
+    3.  **Visibility Control:**
+        * Use `useEffect` to set `showContent` to `true` when `isVisible` becomes `true`, and `false` when `isVisible` becomes `false`.
+        * Add a `setTimeout` within the `useEffect` (when `isVisible` is true) to hide the reward after a few seconds (e.g., 3-4 seconds).
+
+**Phase 2: Integrate Reward State into `useGameStore.ts`**
+
+* **File:** `client/src/hooks/use-game-store.ts`
+* **Action:** Add state variables and an action to control the `ChallengeReward` component.
+* **Implementation:**
+    1.  Add new state variables:
+        ```typescript
+        const [showChallengeReward, setShowChallengeReward] = useState(false);
+        const [currentRewardNftUrl, setCurrentRewardNftUrl] = useState<string | null>(null);
+        ```
+    2.  Add a new action:
+        ```typescript
+        const triggerChallengeReward = (nftUrl: string) => {
+          setCurrentRewardNftUrl(nftUrl);
+          setShowChallengeReward(true);
+          // The ChallengeReward component itself will handle its own timeout to hide
+        };
+        ```
+    3.  Return `showChallengeReward`, `currentRewardNftUrl`, and `triggerChallengeReward` from the `useGameStore` hook.
+
+**Phase 3: Trigger Reward from `LessonDetailPage.tsx`**
+
+* **File:** `client/src/pages/LessonDetailPage.tsx`
+* **Action:** Call the `triggerChallengeReward` action when a challenge step is successfully completed.
+* **Implementation:**
+    1.  Import `ChallengeReward` and `useGameStore`.
+    2.  Destructure `triggerChallengeReward` from `useGameStore()`.
+    3.  Render the `ChallengeReward` component at the top level of `LessonDetailPage.tsx` (or within `MainLayout.tsx` for global visibility, but for now, within `LessonDetailPage` is fine):
+        ```html
+        <ChallengeReward
+          isVisible={showChallengeReward}
+          nftImageUrl={currentRewardNftUrl}
+        />
+        ```
+        (You'll need to destructure `showChallengeReward` and `currentRewardNftUrl` from `useGameStore()` as well).
+    4.  In the `handleValidate` function, inside the `if (data.success && data.challenge_success)` block, add the call to trigger the reward:
+        ```typescript
+        // ... inside handleValidate, after setting consoleOutput and triggering other visuals ...
+        if (data.success && data.challenge_success) {
+          // ... existing logic ...
+          triggerChallengeReward('/assets/images/brb-nft-ai-robot.png'); // Use the path to your reward image
+          // ... existing logic ...
+        }
+        ```
+
+**Phase 4: Preload Reward Image (Optional but Recommended)**
+
+* **File:** `client/src/App.tsx` or `client/src/components/layout/MainLayout.tsx`
+* **Action:** Preload the reward NFT image to ensure it appears instantly without a flicker when the reward is triggered.
+* **Implementation:**
+    * In `App.tsx` or `MainLayout.tsx`, use a `useEffect` and `Image` object to preload the image:
+        ```typescript
+        // In App.tsx or MainLayout.tsx
+        useEffect(() => {
+          const img = new Image();
+          img.src = '/assets/images/brb-nft-ai-robot.png';
+        }, []);
+        ```
+
+**Visual Intrigue Enhancements:**
+* **"CORRECT" Text:** Experiment with `text-shadow` in `index.css` for a glowing, matrix-like effect. You could also add `framer-motion` `keyframes` for a subtle flicker or pulse.
+* **NFT Animation:** Beyond fade-in and scale, consider a slight rotation, a subtle bounce, or a "glitch" effect (briefly changing opacity or position) as the NFT appears.
+* **Sound Effect (Future):** After this visual is implemented, consider adding a short, satisfying "ding" or "unlock" sound effect using `Tone.js` (if integrated) when the reward appears.

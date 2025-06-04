@@ -41,6 +41,10 @@ interface GameStore {
   lastStoredMessage: string | null;
   transactionActive: boolean;
   
+  // Challenge reward states
+  showChallengeReward: boolean;
+  currentRewardNftUrl: string | null;
+  
   // Actions
   addCharacter: (character: Omit<Character, 'id'>) => void;
   addBuilding: (building: Omit<Building, 'id'>) => void;
@@ -54,6 +58,9 @@ interface GameStore {
   triggerCoinFall: () => void;
   setLastStoredMessage: (message: string) => void;
   triggerTransactionAnimation: () => void;
+  
+  // Challenge reward actions
+  triggerChallengeReward: (nftUrl: string) => void;
 }
 
 export const useGameStore = create<GameStore>()(

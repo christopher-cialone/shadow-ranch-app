@@ -192,3 +192,38 @@
 .animate-glow-pulse { animation: glow-pulse 2s ease-in-out infinite alternate; }
 .animate-fade-in { animation: fade-in 0.5s ease-out; }
 .animate-slide-up { animation: slide-up 0.5s ease-out; }
+
+/* Matrix-style text shadow for challenge rewards */
+.text-shadow-matrix {
+  text-shadow: 
+    0 0 5px hsl(var(--tech-cyan)),
+    0 0 10px hsl(var(--tech-purple)),
+    0 0 15px hsl(var(--tech-cyan)),
+    0 0 20px hsl(var(--tech-purple));
+}
+
+.text-shadow-matrix-glow {
+  text-shadow: 
+    0 0 10px hsl(var(--tech-cyan)),
+    0 0 20px hsl(var(--tech-cyan)),
+    0 0 30px hsl(var(--tech-cyan)),
+    0 0 40px hsl(var(--tech-cyan));
+  animation: matrix-pulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes matrix-pulse {
+  from {
+    text-shadow: 
+      0 0 10px hsl(var(--tech-cyan)),
+      0 0 20px hsl(var(--tech-cyan)),
+      0 0 30px hsl(var(--tech-cyan)),
+      0 0 40px hsl(var(--tech-cyan));
+  }
+  to {
+    text-shadow: 
+      0 0 5px hsl(var(--tech-cyan)),
+      0 0 10px hsl(var(--tech-cyan)),
+      0 0 15px hsl(var(--tech-cyan)),
+      0 0 20px hsl(var(--tech-cyan));
+  }
+}
