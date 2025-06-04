@@ -12,6 +12,7 @@ import { useLessonStore } from "@/hooks/use-lesson-store";
 import { useGameStore } from "@/hooks/use-enhanced-game-store";
 import { useToast } from "@/hooks/use-toast";
 import { formatRanchCoin } from "@/lib/utils";
+import nftRobotUrl from "@assets/brb-nft-ai-robot.png";
 import type { Lesson } from "@shared/schema";
 
 export default function LessonDetail() {
@@ -90,7 +91,7 @@ export default function LessonDetail() {
       
       // Trigger challenge reward animation for successful completion
       triggerChallengeReward(
-        '/assets/images/brb-nft-ai-robot.png',
+        nftRobotUrl,
         lessonId,
         `${lesson?.title} - Step ${currentStep} Completion Badge`
       );

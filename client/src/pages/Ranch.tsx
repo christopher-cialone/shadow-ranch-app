@@ -125,6 +125,13 @@ export default function Ranch() {
           </p>
         </div>
 
+        {/* NFT Reward Collection */}
+        {gameStore.rewardNfts.length > 0 && (
+          <div className="mb-8">
+            <RewardNftGallery rewards={gameStore.rewardNfts} />
+          </div>
+        )}
+
         {/* Tab Navigation */}
         <div className="flex justify-center mb-8">
           <div className="flex bg-gray-800 rounded-lg p-1">
