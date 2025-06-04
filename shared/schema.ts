@@ -142,6 +142,7 @@ export type Lesson = typeof lessons.$inferSelect;
 export type UserProgress = typeof userProgress.$inferSelect;
 export type Character = typeof characters.$inferSelect;
 export type Building = typeof buildings.$inferSelect;
+export type RewardNft = typeof rewardNfts.$inferSelect;
 
 // Insert types
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -150,3 +151,4 @@ export type InsertLesson = z.infer<typeof insertLessonSchema>;
 export type InsertUserProgress = z.infer<typeof insertUserProgressSchema>;
 export type InsertCharacter = z.infer<typeof insertCharacterSchema>;
 export type InsertBuilding = z.infer<typeof insertBuildingSchema>;
+export type InsertRewardNft = z.infer<typeof insertRewardNftSchema>;
