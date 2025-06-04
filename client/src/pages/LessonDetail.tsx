@@ -39,7 +39,10 @@ export default function LessonDetail() {
     showChallengeReward,
     currentRewardNftUrl,
     earnRanchCoin,
-    addExperience
+    addExperience,
+    ranchData,
+    buildings,
+    characters
   } = useGameStore();
   const { toast } = useToast();
 
@@ -61,6 +64,12 @@ export default function LessonDetail() {
       }
     }
   }, [lesson, lessonId, currentStep]);
+
+  // Preload the NFT reward image for instant display
+  useEffect(() => {
+    const img = new Image();
+    img.src = '/assets/images/brb-nft-ai-robot.png';
+  }, []);
 
   const progressPercentage = lesson ? (currentStep / lesson.steps.length) * 100 : 0;
   const canGoNext = validationResults?.success || false;
@@ -282,8 +291,8 @@ export default function LessonDetail() {
               
               {/* Status overlay */}
               <div className="absolute top-4 left-4 bg-black/70 rounded px-2 py-1">
-                <div className="text-xs text-tech-cyan-400 font-code">SOL Tokens: {formatRanchCoin(gameStore.ranchData.coins)}</div>
-                <div className="text-xs text-tech-purple-400 font-code">XP: {gameStore.ranchData.experience}</div>
+                <div className="text-xs text-tech-cyan-400 font-code">SOL Tokens: {formatRanchCoin(ranchData.coins)}</div>
+                <div className="text-xs text-tech-purple-400 font-code">XP: {ranchData.experience}</div>
               </div>
               
               {/* Success animation area */}
@@ -301,11 +310,11 @@ export default function LessonDetail() {
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-gradient-to-r from-tech-purple-800/50 to-tech-purple-700/50 p-3 rounded border border-tech-purple-600">
                 <div className="text-xs text-tech-purple-400 font-code mb-1">MODULES</div>
-                <div className="text-lg font-tech text-white">{gameStore.buildings.length}</div>
+                <div className="text-lg font-tech text-white">{buildings.length}</div>
               </div>
               <div className="bg-gradient-to-r from-tech-cyan-800/50 to-tech-cyan-700/50 p-3 rounded border border-tech-cyan-600">
                 <div className="text-xs text-tech-cyan-400 font-code mb-1">AGENTS</div>
-                <div className="text-lg font-tech text-white">{gameStore.characters.length}</div>
+                <div className="text-lg font-tech text-white">{characters.length}</div>
               </div>
             </div>
           </TechCard>
@@ -314,6 +323,12 @@ export default function LessonDetail() {
 
       {/* Hint Character */}
       <HintCharacter ref={hintCharacterRef} />
+      
+      {/* Challenge Reward Overlay */}
+      <ChallengeReward
+        isVisible={showChallengeReward}
+        nftImageUrl={currentRewardNftUrl}
+      />
     </LessonLayout>
   );
 }
