@@ -7,6 +7,7 @@ export const users = pgTable("users", {
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
   walletAddress: text("wallet_address"),
+  pfpUrl: text("pfp_url"), // Profile picture URL
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -69,6 +70,16 @@ export const buildings = pgTable("buildings", {
   builtAt: timestamp("built_at").defaultNow().notNull(),
 });
 
+export const rewardNfts = pgTable("reward_nfts", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").notNull(), // Firebase user ID
+  lessonId: integer("lesson_id").notNull(),
+  nftImageUrl: text("nft_image_url").notNull(),
+  mintAddress: text("mint_address"), // Optional: if it's a real minted NFT
+  rewardName: text("reward_name").notNull(),
+  awardedAt: timestamp("awarded_at").defaultNow().notNull(),
+});
+
 // Types for lesson steps
 export interface LessonStep {
   id: number;
@@ -117,6 +128,11 @@ export const insertCharacterSchema = createInsertSchema(characters).omit({
 export const insertBuildingSchema = createInsertSchema(buildings).omit({
   id: true,
   builtAt: true,
+});
+
+export const insertRewardNftSchema = createInsertSchema(rewardNfts).omit({
+  id: true,
+  awardedAt: true,
 });
 
 // Select types

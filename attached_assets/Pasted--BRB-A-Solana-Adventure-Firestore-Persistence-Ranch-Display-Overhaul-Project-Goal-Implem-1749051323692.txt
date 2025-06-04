@@ -1,0 +1,796 @@
+# BRB: A Solana Adventure - Firestore Persistence & Ranch Display Overhaul
+
+**Project Goal:** Implement robust data persistence using Google Firestore to save user profiles, game progress, and collected challenge rewards across sessions and pages. The "Shadow Ranch" page should visually update to reflect these saved achievements, specifically displaying collected NFT rewards.
+
+**Current State Analysis (from Replit codebase):**
+* Data persistence relies on `localStorage` in `useLessonStore.ts` and `useGameStore.ts`. This is insufficient for cross-session and multi-user data.
+* The backend's `server/db.ts` uses Drizzle with Neon, but `server/storage.ts` uses `MemStorage` (in-memory). We need to replace `MemStorage` with Firestore.
+* The `ChallengeReward` component displays a temporary NFT image. This image needs to be permanently associated with the user and displayed on the `RanchPage.tsx`.
+* User profiles are currently basic (wallet address, username). We need to expand this to include a profile picture (PFP) and link to collected rewards.
+
+---
+
+**Instructions for Replit Agent (Comprehensive Firestore Integration & Ranch Display):**
+
+**Phase 1: Firebase Initialization & Authentication (Frontend)**
+
+* **Objective:** Set up Firebase and authenticate users (anonymously if `__initial_auth_token` is not available) within the `MainLayout.tsx` to ensure `userId` is available globally.
+
+1.  **Modify `client/src/App.tsx`:**
+    * **Action:** Import necessary Firebase modules.
+    * **Implementation:**
+        ```typescript
+        // client/src/App.tsx
+        import { initializeApp } from 'firebase/app';
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from 'firebase/auth';
+        import { getFirestore } from 'firebase/firestore';
+        // ... other imports ...
+
+        // Declare global Firebase instances (will be initialized in MainLayout)
+        let app: any;
+        let auth: any;
+        let db: any;
+
+        function App() {
+          // ... existing code ...
+        }
+        export default App;
+        ```
+
+2.  **Modify `client/src/components/layout/MainLayout.tsx`:**
+    * **Action:** Initialize Firebase, handle authentication, and provide `db`, `auth`, `userId` to children via context or props (for simplicity, we'll use states passed down).
+    * **Implementation:**
+        ```typescript
+        // client/src/components/layout/MainLayout.tsx
+        import React, { ReactNode, useEffect, useState } from 'react';
+        // Import Firebase instances from App.tsx (ensure they are declared globally there)
+        import { app, auth, db } from '../../App'; // This import might need adjustment based on global declaration
+
+        // If app, auth, db are not globally declared in App.tsx, you'll need to initialize them here:
+        // const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        // const appInstance = initializeApp(firebaseConfig);
+        // const authInstance = getAuth(appInstance);
+        // const dbInstance = getFirestore(appInstance);
+
+        interface MainLayoutProps {
+          children: ReactNode;
+          className?: string;
+        }
+
+        export function MainLayout({ children, className }: MainLayoutProps) {
+          // ... existing states (mounted, theme) ...
+          const [firestoreDb, setFirestoreDb] = useState<any>(null);
+          const [firebaseAuth, setFirebaseAuth] = useState<any>(null);
+          const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+          const [isAuthReady, setIsAuthReady] = useState(false); // New state to track auth readiness
+
+          useEffect(() => {
+            setMounted(true);
+            // ... existing theme logic ...
+
+            // Initialize Firebase (if not already global)
+            const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+            const appInstance = initializeApp(firebaseConfig);
+            const authInstance = getAuth(appInstance);
+            const dbInstance = getFirestore(appInstance);
+
+            setFirestoreDb(dbInstance);
+            setFirebaseAuth(authInstance);
+
+            const unsubscribe = onAuthStateChanged(authInstance, async (user) => {
+              if (user) {
+                setCurrentUserId(user.uid);
+              } else {
+                // Sign in anonymously if no user and no custom token
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                  try {
+                    await signInWithCustomToken(authInstance, __initial_auth_token);
+                    setCurrentUserId(authInstance.currentUser?.uid || crypto.randomUUID());
+                  } catch (error) {
+                    console.error("Error signing in with custom token:", error);
+                    await signInAnonymously(authInstance);
+                    setCurrentUserId(authInstance.currentUser?.uid || crypto.randomUUID());
+                  }
+                } else {
+                  await signInAnonymously(authInstance);
+                  setCurrentUserId(authInstance.currentUser?.uid || crypto.randomUUID());
+                }
+              }
+              setIsAuthReady(true); // Auth state is now ready
+            });
+
+            return () => unsubscribe();
+          }, []);
+
+          // Pass db, auth, userId, isAuthReady to children via context or props
+          // For simplicity in this prompt, we'll assume children can access these via a global context
+          // or that useGameStore/useLessonStore will handle their own Firebase instances.
+          // For now, let's just ensure they are initialized.
+
+          return (
+            <div className={cn(
+              // ... existing classes ...
+            )}>
+              {/* ... existing MainLayout content ... */}
+              {isAuthReady && children} {/* Render children only when auth is ready */}
+              {/* ... existing footer ... */}
+            </div>
+          );
+        }
+        ```
+
+**Phase 2: Data Schema & Firestore Storage Implementation**
+
+* **Objective:** Update the shared schema for rewards and replace `MemStorage` with a Firestore-based storage.
+
+1.  **Modify `shared/schema.ts`:**
+    * **Action:** Add a new schema for `rewardNfts` and update `users` to potentially link to a PFP.
+    * **Implementation:**
+        ```typescript
+        // shared/schema.ts
+        // ... existing imports ...
+
+        export const users = pgTable("users", {
+          id: serial("id").primaryKey(),
+          walletAddress: text("wallet_address").notNull().unique(),
+          username: text("username").notNull(),
+          email: text("email"),
+          pfpUrl: text("pfp_url"), // New: URL for profile picture
+          createdAt: timestamp("created_at").defaultNow().notNull(),
+        });
+
+        export const rewardNfts = pgTable("reward_nfts", { // New table for collected NFTs
+          id: serial("id").primaryKey(),
+          userId: integer("user_id").references(() => users.id).notNull(),
+          lessonId: integer("lesson_id").notNull(), // Which lesson gave this reward
+          nftImageUrl: text("nft_image_url").notNull(),
+          mintAddress: text("mint_address"), // Optional: if it's a real minted NFT
+          rewardName: text("reward_name").notNull(), // e.g., "Ranch Founder Badge"
+          awardedAt: timestamp("awarded_at").defaultNow().notNull(),
+        });
+
+        // ... existing ranches, lessons, userProgress, characters, buildings ...
+
+        // Insert schemas
+        // ... existing insertUserSchema ...
+        export const insertRewardNftSchema = createInsertSchema(rewardNfts).pick({ // New insert schema
+          userId: true,
+          lessonId: true,
+          nftImageUrl: true,
+          mintAddress: true,
+          rewardName: true,
+        });
+
+        // Types
+        // ... existing User, InsertUser ...
+        export type RewardNft = typeof rewardNfts.$inferSelect; // New type
+        export type InsertRewardNft = z.infer<typeof insertRewardNftSchema>; // New type
+        // ... existing Ranch, Lesson, UserProgress, Character, Building types ...
+        ```
+
+2.  **Replace `server/storage.ts` with Firestore Implementation:**
+    * **File:** `server/storage.ts`
+    * **Action:** Replace the `MemStorage` class with a `FirestoreStorage` class that interacts with Firestore.
+    * **Implementation:**
+        * **Remove `MemStorage` class entirely.**
+        * **Create `FirestoreStorage` class:**
+            ```typescript
+            // server/storage.ts
+            import { 
+              // ... import all schema types from "@shared/schema" ...
+              users, ranches, lessons, userProgress, characters, buildings, rewardNfts,
+              type User, type InsertUser, type Ranch, type InsertRanch, type Lesson,
+              type UserProgress, type InsertUserProgress, type Character, type InsertCharacter,
+              type Building, type InsertBuilding, type RewardNft, type InsertRewardNft
+            } from "@shared/schema";
+            import { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, collection, query, where, getDocs } from "firebase/firestore";
+            import { initializeApp } from "firebase/app"; // Import here for server-side init
+            import { __firebase_config, __app_id } from "./index"; // Assuming these are passed from index.ts or globally available
+
+            // Initialize Firebase on the server side (if not already done globally)
+            const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+            const app = initializeApp(firebaseConfig);
+            const firestoreDb = getFirestore(app);
+
+            // Define base paths for Firestore collections
+            const ARTIFACTS_PATH = `artifacts/${typeof __app_id !== 'undefined' ? __app_id : 'default-app-id'}`;
+
+            export class FirestoreStorage implements IStorage {
+              private db: any; // Firestore instance
+
+              constructor() {
+                this.db = firestoreDb; // Use the initialized firestoreDb
+                this.initializeLessons(); // Still initialize lessons if they are static data
+              }
+
+              // Helper to get user-specific collection path
+              private getUserCollectionRef(userId: string, collectionName: string) {
+                return collection(this.db, `${ARTIFACTS_PATH}/users/${userId}/${collectionName}`);
+              }
+
+              // Helper to get public collection path
+              private getPublicCollectionRef(collectionName: string) {
+                return collection(this.db, `${ARTIFACTS_PATH}/public/data/${collectionName}`);
+              }
+
+              // Initialize lessons (static data, can be pre-loaded or fetched once)
+              private async initializeLessons() {
+                const lessonsRef = this.getPublicCollectionRef('lessons');
+                const snapshot = await getDocs(lessonsRef);
+                if (snapshot.empty) {
+                  const defaultLessons: Omit<Lesson, 'id' | 'createdAt'>[] = [
+                    // ... your existing default lesson data from MemStorage ...
+                    // Ensure the content structure matches the new LessonStep interface
+                    // For now, copy the existing defaultLessons array content here.
+                  ];
+                  for (const lessonData of defaultLessons) {
+                    await addDoc(lessonsRef, lessonData);
+                  }
+                }
+              }
+
+              // --- User operations ---
+              async getUser(id: number): Promise<User | undefined> {
+                // Firestore uses string IDs, so this method might need adjustment or be replaced by getUserByWalletAddress/userId
+                const q = query(this.getPublicCollectionRef('users'), where('id', '==', id));
+                const snapshot = await getDocs(q);
+                return snapshot.docs[0]?.data() as User | undefined;
+              }
+
+              async getUserByUsername(username: string): Promise<User | undefined> {
+                const q = query(this.getPublicCollectionRef('users'), where('username', '==', username));
+                const snapshot = await getDocs(q);
+                return snapshot.docs[0]?.data() as User | undefined;
+              }
+
+              async getUserByWalletAddress(walletAddress: string): Promise<User | undefined> {
+                const q = query(this.getPublicCollectionRef('users'), where('walletAddress', '==', walletAddress));
+                const snapshot = await getDocs(q);
+                return snapshot.docs[0]?.data() as User | undefined;
+              }
+
+              async createUser(insertUser: InsertUser): Promise<User> {
+                const docRef = await addDoc(this.getPublicCollectionRef('users'), {
+                  ...insertUser,
+                  createdAt: new Date(),
+                  // Firestore auto-generates ID, so 'id' from schema needs to be handled
+                });
+                const newUser = (await getDoc(docRef)).data() as User;
+                return { ...newUser, id: parseInt(docRef.id) }; // Mock numeric ID if needed, or use docRef.id as string
+              }
+
+              // --- Ranch operations --- (Adjust to use user-specific collections)
+              async getRanch(id: number): Promise<Ranch | undefined> { /* ... */ }
+              async getRanchByUserId(userId: number): Promise<Ranch | undefined> {
+                const q = query(this.getUserCollectionRef(userId.toString(), 'ranches'), where('ownerId', '==', userId));
+                const snapshot = await getDocs(q);
+                return snapshot.docs[0]?.data() as Ranch | undefined;
+              }
+              async createRanch(insertRanch: InsertRanch): Promise<Ranch> { /* ... */ }
+              async updateRanch(id: number, updates: Partial<Omit<Ranch, 'id' | 'ownerId' | 'createdAt'>>): Promise<Ranch> { /* ... */ }
+
+              // --- Lesson operations --- (Public data)
+              async getAllLessons(): Promise<Lesson[]> {
+                const snapshot = await getDocs(this.getPublicCollectionRef('lessons'));
+                return snapshot.docs.map(doc => ({ ...doc.data(), id: parseInt(doc.id) })) as Lesson[];
+              }
+              async getLessonById(id: number): Promise<Lesson | undefined> {
+                const docRef = doc(this.getPublicCollectionRef('lessons'), id.toString());
+                const docSnap = await getDoc(docRef);
+                return docSnap.data() as Lesson | undefined;
+              }
+              async createLesson(lessonData: Omit<Lesson, 'id' | 'createdAt'>): Promise<Lesson> { /* ... */ }
+
+              // --- Lesson progress operations --- (User-specific data)
+              async getLessonProgress(id: number): Promise<UserProgress | undefined> { /* ... */ }
+              async getLessonProgressByUserId(userId: number): Promise<UserProgress[]> {
+                const q = query(this.getUserCollectionRef(userId.toString(), 'userProgress'));
+                const snapshot = await getDocs(q);
+                return snapshot.docs.map(doc => ({ ...doc.data(), id: parseInt(doc.id) })) as UserProgress[];
+              }
+              async getLessonProgressByUserAndLesson(userId: number, lessonId: number): Promise<UserProgress | undefined> {
+                const q = query(this.getUserCollectionRef(userId.toString(), 'userProgress'), where('lessonId', '==', lessonId));
+                const snapshot = await getDocs(q);
+                return snapshot.docs[0]?.data() as UserProgress | undefined;
+              }
+              async createLessonProgress(insertProgress: InsertUserProgress): Promise<UserProgress> { /* ... */ }
+              async updateLessonProgress(id: number, updates: Partial<Omit<UserProgress, 'id' | 'userId' | 'lessonId' | 'createdAt'>>): Promise<UserProgress> { /* ... */ }
+
+              // --- Character operations --- (User-specific data)
+              async getCharacter(id: number): Promise<Character | undefined> { /* ... */ }
+              async getCharactersByUserId(userId: number): Promise<Character[]> {
+                const q = query(this.getUserCollectionRef(userId.toString(), 'characters'));
+                const snapshot = await getDocs(q);
+                return snapshot.docs.map(doc => ({ ...doc.data(), id: parseInt(doc.id) })) as Character[];
+              }
+              async createCharacter(insertCharacter: InsertCharacter): Promise<Character> { /* ... */ }
+              async updateCharacter(id: number, updates: Partial<Omit<Character, 'id' | 'ownerId' | 'createdAt'>>): Promise<Character> { /* ... */ }
+
+              // --- Building operations --- (Ranch-specific data, linked to user)
+              async getBuilding(id: number): Promise<Building | undefined> { /* ... */ }
+              async getBuildingsByRanchId(ranchId: number): Promise<Building[]> {
+                // This needs to be adjusted to fetch from user's ranch's subcollection
+                // For simplicity, let's assume buildings are directly under user's collection for now
+                const q = query(this.getPublicCollectionRef('buildings'), where('ranchId', '==', ranchId));
+                const snapshot = await getDocs(q);
+                return snapshot.docs.map(doc => ({ ...doc.data(), id: parseInt(doc.id) })) as Building[];
+              }
+              async createBuilding(insertBuilding: InsertBuilding): Promise<Building> { /* ... */ }
+              async updateBuilding(id: number, updates: Partial<Omit<Building, 'id' | 'ranchId' | 'createdAt'>>): Promise<Building> { /* ... */ }
+
+              // --- New: Reward NFT operations ---
+              async getRewardNftsByUserId(userId: number): Promise<RewardNft[]> {
+                const q = query(this.getUserCollectionRef(userId.toString(), 'rewardNfts'));
+                const snapshot = await getDocs(q);
+                return snapshot.docs.map(doc => ({ ...doc.data(), id: parseInt(doc.id) })) as RewardNft[];
+              }
+
+              async createRewardNft(insertReward: InsertRewardNft): Promise<RewardNft> {
+                const docRef = await addDoc(this.getUserCollectionRef(insertReward.userId.toString(), 'rewardNfts'), {
+                  ...insertReward,
+                  awardedAt: new Date(),
+                });
+                const newReward = (await getDoc(docRef)).data() as RewardNft;
+                return { ...newReward, id: parseInt(docRef.id) };
+              }
+            }
+
+            export const storage = new FirestoreStorage();
+            ```
+        * **Note:** The `id: serial("id").primaryKey()` from Drizzle schema doesn't directly map to Firestore's auto-generated string IDs. For simplicity in this prompt, I've used `parseInt(docRef.id)` as a mock numeric ID. In a real Drizzle/Firestore integration, you'd typically use the Firestore document ID as the primary key string. For this MVP, this mock conversion is acceptable.
+
+**Phase 3: Frontend Data Store Migration to Firestore**
+
+* **Objective:** Modify `useLessonStore` and `useGameStore` to read from and write to Firestore instead of `localStorage`.
+
+1.  **Modify `client/src/hooks/use-lesson-store.ts`:**
+    * **Action:** Replace `localStorage` calls with Firestore operations.
+    * **Implementation:**
+        ```typescript
+        // client/src/hooks/use-lesson-store.ts
+        import { useState, useEffect } from 'react';
+        import { lessons, type LessonData } from '../data/lessons';
+        import { getFirestore, collection, query, where, onSnapshot, doc, setDoc, addDoc, getDocs } from 'firebase/firestore';
+        import { getAuth } from 'firebase/auth'; // To get current user ID
+
+        export interface LessonProgress {
+          // ... existing fields ...
+          id?: string; // Firestore uses string IDs
+        }
+
+        export function useLessonStore() {
+          const [progress, setProgress] = useState<LessonProgress[]>([]);
+          const [currentLesson, setCurrentLesson] = useState<number>(1);
+          const [userId, setUserId] = useState<string | null>(null);
+          const [isStoreReady, setIsStoreReady] = useState(false); // New state to track Firestore readiness
+
+          useEffect(() => {
+            const auth = getAuth();
+            const firestoreDb = getFirestore();
+
+            const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
+              const currentUid = user?.uid || crypto.randomUUID(); // Use actual UID or a random one
+              setUserId(currentUid);
+
+              if (firestoreDb && currentUid) {
+                // Fetch current_lesson from Firestore or default to 1
+                const userDocRef = doc(firestoreDb, `artifacts/${__app_id}/users/${currentUid}/profile/data`);
+                const userDocSnap = await getDoc(userDocRef);
+                if (userDocSnap.exists()) {
+                  const userData = userDocSnap.data();
+                  setCurrentLesson(userData.currentLesson || 1);
+                } else {
+                  // Create basic user profile if it doesn't exist
+                  await setDoc(userDocRef, { currentLesson: 1, createdAt: new Date() }, { merge: true });
+                  setCurrentLesson(1);
+                }
+
+                // Set up real-time listener for user progress
+                const q = query(collection(firestoreDb, `artifacts/${__app_id}/users/${currentUid}/userProgress`));
+                const unsubscribeProgress = onSnapshot(q, (snapshot) => {
+                  const fetchedProgress: LessonProgress[] = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data() as Omit<LessonProgress, 'id'>,
+                    completedAt: doc.data().completedAt?.toDate(), // Convert Firestore Timestamp to Date
+                  }));
+                  setProgress(fetchedProgress);
+                  setIsStoreReady(true);
+                });
+
+                return () => unsubscribeProgress(); // Cleanup listener
+              }
+              setIsStoreReady(true); // Mark ready even if no user/db yet
+            });
+
+            return () => unsubscribeAuth();
+          }, []);
+
+          // ... (remove localStorage reads in initial useEffect) ...
+
+          const saveProgress = async (newProgressItem: LessonProgress) => {
+            if (!userId || !firestoreDb) return;
+            const progressRef = collection(firestoreDb, `artifacts/${__app_id}/users/${userId}/userProgress`);
+            if (newProgressItem.id) {
+              await setDoc(doc(progressRef, newProgressItem.id), newProgressItem, { merge: true });
+            } else {
+              await addDoc(progressRef, newProgressItem);
+            }
+          };
+
+          const getLessonProgress = (lessonId: number): LessonProgress | undefined => {
+            return progress.find(p => p.lessonId === lessonId);
+          };
+
+          const completeLesson = async (lessonId: number, score: number, timeSpent: number) => {
+            if (!userId || !firestoreDb) return;
+            const existingProgress = progress.find(p => p.lessonId === lessonId);
+            const progressRef = collection(firestoreDb, `artifacts/${__app_id}/users/${userId}/userProgress`);
+
+            const newProgressData = {
+              lessonId,
+              completed: true,
+              score: Math.max(score, existingProgress?.score || 0),
+              timeSpent: (existingProgress?.timeSpent || 0) + timeSpent,
+              attempts: (existingProgress?.attempts || 0) + 1,
+              completedAt: new Date(),
+              userId: userId, // Ensure userId is saved
+            };
+
+            if (existingProgress?.id) {
+              await setDoc(doc(progressRef, existingProgress.id), newProgressData, { merge: true });
+            } else {
+              await addDoc(progressRef, newProgressData);
+            }
+
+            // Update current_lesson in user profile
+            const userDocRef = doc(firestoreDb, `artifacts/${__app_id}/users/${userId}/profile/data`);
+            const nextLesson = lessonId + 1;
+            await setDoc(userDocRef, { currentLesson: nextLesson }, { merge: true });
+            setCurrentLesson(nextLesson);
+          };
+
+          const updateLessonAttempt = async (lessonId: number, timeSpent: number) => {
+            if (!userId || !firestoreDb) return;
+            const existingProgress = progress.find(p => p.lessonId === lessonId);
+            const progressRef = collection(firestoreDb, `artifacts/${__app_id}/users/${userId}/userProgress`);
+
+            const newProgressData = {
+              lessonId,
+              completed: false,
+              score: existingProgress?.score || 0,
+              timeSpent: (existingProgress?.timeSpent || 0) + timeSpent,
+              attempts: (existingProgress?.attempts || 0) + 1,
+              userId: userId,
+            };
+
+            if (existingProgress?.id) {
+              await setDoc(doc(progressRef, existingProgress.id), newProgressData, { merge: true });
+            } else {
+              await addDoc(progressRef, newProgressData);
+            }
+          };
+
+          // ... (existing getOverallProgress, isLessonUnlocked, getCompletedLessonsCount) ...
+
+          return {
+            progress,
+            currentLesson,
+            getLessonProgress,
+            completeLesson,
+            updateLessonAttempt,
+            getOverallProgress,
+            isLessonUnlocked,
+            getCompletedLessonsCount,
+            isStoreReady, // Return readiness state
+            userId, // Return userId
+          };
+        }
+        ```
+
+2.  **Modify `client/src/hooks/use-game-store.ts`:**
+    * **Action:** Replace `useState` with Firestore listeners for `ranchData`, `characters`, `buildings`, and add `rewardNfts`.
+    * **Implementation:**
+        ```typescript
+        // client/src/hooks/use-game-store.ts
+        import { useState, useEffect } from 'react';
+        import { getFirestore, collection, query, where, onSnapshot, doc, setDoc, addDoc, getDoc } from 'firebase/firestore';
+        import { getAuth } from 'firebase/auth'; // To get current user ID
+        import { __app_id } from '../App'; // Assuming __app_id is globally available
+
+        // ... existing interfaces (Character, Building, RanchData) ...
+
+        export interface RewardNftData { // New interface for collected NFTs
+          id?: string;
+          lessonId: number;
+          nftImageUrl: string;
+          rewardName: string;
+          awardedAt: Date;
+        }
+
+        export function useGameStore() {
+          const [ranchData, setRanchData] = useState<RanchData>({ /* initial mock data */ });
+          const [characters, setCharacters] = useState<Character[]>([]);
+          const [buildings, setBuildings] = useState<Building[]>([]);
+          const [rewardNfts, setRewardNfts] = useState<RewardNftData[]>([]); // New state for collected NFTs
+          const [userId, setUserId] = useState<string | null>(null);
+          const [isStoreReady, setIsStoreReady] = useState(false);
+
+          // ... existing transient states (showChallengeReward, currentRewardNftUrl, networkPingActive, etc.) ...
+
+          useEffect(() => {
+            const auth = getAuth();
+            const firestoreDb = getFirestore();
+
+            const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
+              const currentUid = user?.uid || crypto.randomUUID();
+              setUserId(currentUid);
+
+              if (firestoreDb && currentUid) {
+                const userRanchRef = doc(firestoreDb, `artifacts/${__app_id}/users/${currentUid}/ranch/data`);
+                const userRanchSnap = await getDoc(userRanchRef);
+
+                if (userRanchSnap.exists()) {
+                  setRanchData(userRanchSnap.data() as RanchData);
+                } else {
+                  // Create default ranch if it doesn't exist
+                  const defaultRanch: RanchData = {
+                    ranchName: 'Shadow Ranch', level: 1, ranchCoinBalance: 500,
+                    buildingCount: 0, characterCount: 0, experience: 0,
+                  };
+                  await setDoc(userRanchRef, defaultRanch);
+                  setRanchData(defaultRanch);
+                }
+
+                // Real-time listeners for game data
+                const unsubscribeCharacters = onSnapshot(collection(firestoreDb, `artifacts/${__app_id}/users/${currentUid}/characters`), (snapshot) => {
+                  setCharacters(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() as Omit<Character, 'id'> })) as Character[]);
+                });
+                const unsubscribeBuildings = onSnapshot(collection(firestoreDb, `artifacts/${__app_id}/users/${currentUid}/buildings`), (snapshot) => {
+                  setBuildings(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() as Omit<Building, 'id'> })) as Building[]);
+                });
+                const unsubscribeRewardNfts = onSnapshot(collection(firestoreDb, `artifacts/${__app_id}/users/${currentUid}/rewardNfts`), (snapshot) => {
+                  setRewardNfts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() as Omit<RewardNftData, 'id'>, awardedAt: doc.data().awardedAt?.toDate() })) as RewardNftData[]);
+                });
+
+                setIsStoreReady(true);
+                return () => {
+                  unsubscribeCharacters();
+                  unsubscribeBuildings();
+                  unsubscribeRewardNfts();
+                };
+              }
+              setIsStoreReady(true);
+            });
+
+            return () => unsubscribeAuth();
+          }, []);
+
+          // --- CRUD Operations (Update to Firestore) ---
+          const updateRanchData = async (updates: Partial<RanchData>) => {
+            if (!userId || !firestoreDb) return;
+            const ranchDocRef = doc(firestoreDb, `artifacts/${__app_id}/users/${userId}/ranch/data`);
+            await updateDoc(ranchDocRef, updates);
+          };
+
+          const addCharacter = async (character: Omit<Character, 'id'>) => {
+            if (!userId || !firestoreDb) return;
+            await addDoc(collection(firestoreDb, `artifacts/${__app_id}/users/${userId}/characters`), character);
+            updateRanchData({ characterCount: characters.length + 1 });
+          };
+
+          const addBuilding = async (building: Omit<Building, 'id'>) => {
+            if (!userId || !firestoreDb) return;
+            await addDoc(collection(firestoreDb, `artifacts/${__app_id}/users/${userId}/buildings`), building);
+            updateRanchData({ buildingCount: buildings.length + 1 });
+          };
+
+          const spendRanchCoin = (amount: number) => {
+            updateRanchData({ ranchCoinBalance: Math.max(0, ranchData.ranchCoinBalance - amount) });
+          };
+
+          const earnRanchCoin = (amount: number) => {
+            updateRanchData({ ranchCoinBalance: ranchData.ranchCoinBalance + amount });
+          };
+
+          const addExperience = (amount: number) => {
+            const newExp = ranchData.experience + amount;
+            const newLevel = Math.floor(newExp / 500) + 1;
+            updateRanchData({ experience: newExp, level: Math.max(ranchData.level, newLevel) });
+          };
+
+          const addRewardNft = async (reward: Omit<RewardNftData, 'id' | 'awardedAt'>) => { // New action to save NFT reward
+            if (!userId || !firestoreDb) return;
+            await addDoc(collection(firestoreDb, `artifacts/${__app_id}/users/${userId}/rewardNfts`), { ...reward, awardedAt: new Date() });
+          };
+
+          // ... existing transient state triggers (triggerChallengeReward, networkPingActive, etc.) ...
+
+          return {
+            ranchData, characters, buildings, rewardNfts,
+            addCharacter, addBuilding, spendRanchCoin, earnRanchCoin, addExperience,
+            addRewardNft, // New: Return addRewardNft
+            showChallengeReward, currentRewardNftUrl, triggerChallengeReward,
+            networkPingActive, triggerNetworkPingAnimation,
+            sparkleActive, triggerSparkleAnimation,
+            coinFallActive, triggerCoinFallAnimation,
+            lastStoredMessage, setLastStoredMessage,
+            transactionActive, triggerTransactionAnimation,
+            userId, // Return userId
+            isStoreReady, // Return readiness state
+          };
+        }
+        ```
+
+**Phase 4: Display Collected Rewards on Ranch Page**
+
+* **Objective:** Fetch and display the user's collected NFT rewards on the `RanchPage.tsx`.
+
+1.  **Modify `client/src/pages/RanchPage.tsx`:**
+    * **Action:** Fetch `rewardNfts` from `useGameStore` and render them in a new section.
+    * **Implementation:**
+        ```typescript
+        // client/src/pages/RanchPage.tsx
+        import { useState, useEffect } from 'react';
+        import { useGameStore } from '@/hooks/use-game-store';
+        import { useLessonStore } from '@/hooks/use-lesson-store';
+        // ... other imports ...
+        import { Sparkles, Image as ImageIcon } from 'lucide-react'; // Import new icons
+
+        export function RanchPage() {
+          const { ranchData, characters, buildings, rewardNfts, isStoreReady } = useGameStore(); // Destructure rewardNfts and isStoreReady
+          const { getOverallProgress } = useLessonStore();
+          const { completionPercentage, completedLessons } = getOverallProgress();
+
+          if (!isStoreReady) {
+            return (
+              <div className="min-h-screen flex items-center justify-center text-tech-cyan">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-tech-cyan"></div>
+                <span className="ml-4 font-tech">Loading Ranch Data...</span>
+              </div>
+            );
+          }
+
+          // ... existing functions (getNextLevelExp, getCurrentLevelProgress, etc.) ...
+
+          return (
+            <div className="py-12 px-4">
+              <div className="container mx-auto">
+                {/* ... existing Header and Ranch Overview ... */}
+
+                {/* New: Collected Rewards Section */}
+                <div className="mt-12">
+                  <TechCard variant="purple" className="p-6">
+                    <CardHeader className="pb-4">
+                      <CardTitle className="font-tech text-tech-purple flex items-center space-x-2">
+                        <Sparkles className="w-6 h-6" />
+                        <span>Collected Rewards</span>
+                      </CardTitle>
+                      <CardDescription className="text-muted-foreground">
+                        Your hard-earned NFTs and badges from completed challenges.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      {rewardNfts.length === 0 ? (
+                        <div className="text-center text-muted-foreground font-tech py-8">
+                          No rewards collected yet. Complete lessons to earn them!
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                          {rewardNfts.map((reward) => (
+                            <div key={reward.id} className="tech-card p-3 text-center border border-tech-cyan/30">
+                              <img
+                                src={reward.nftImageUrl}
+                                alt={reward.rewardName}
+                                className="w-full h-auto rounded-md mb-2 object-contain"
+                                onError={(e) => { e.currentTarget.src = '[https://placehold.co/100x100/3a3340/99cccc?text=NFT](https://placehold.co/100x100/3a3340/99cccc?text=NFT)'; }} // Fallback
+                              />
+                              <p className="font-tech text-tech-cyan text-sm truncate">{reward.rewardName}</p>
+                              <Badge variant="secondary" className="mt-1 text-xs">
+                                Lesson {reward.lessonId}
+                              </Badge>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </CardContent>
+                  </TechCard>
+                </div>
+
+                {/* ... existing Management Tabs ... */}
+              </div>
+            </div>
+          );
+        }
+        ```
+
+**Phase 5: Save Reward NFT on Challenge Completion**
+
+* **Objective:** When a user successfully completes a challenge step and the `ChallengeReward` is triggered, save that reward to Firestore.
+
+1.  **Modify `client/src/pages/LessonDetailPage.tsx`:**
+    * **Action:** Call `addRewardNft` from `useGameStore` when a challenge is successfully completed.
+    * **Implementation:**
+        ```typescript
+        // client/src/pages/LessonDetailPage.tsx
+        // ... existing imports ...
+        import { useGameStore } from '@/hooks/use-game-store'; // Ensure useGameStore is imported
+
+        export function LessonDetailPage({ lessonId }: LessonDetailPageProps) {
+          // ... existing states ...
+          const { triggerChallengeReward, addRewardNft, isStoreReady: isGameStoreReady } = useGameStore(); // Destructure addRewardNft
+          const { isStoreReady: isLessonStoreReady } = useLessonStore(); // Destructure isStoreReady from lesson store
+
+          // ... existing useEffects ...
+
+          // Add a loading state if either store isn't ready
+          if (!lesson || !unlocked || !isLessonStoreReady || !isGameStoreReady) {
+            return (
+              <div className="min-h-screen flex items-center justify-center text-tech-cyan">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-tech-cyan"></div>
+                <span className="ml-4 font-tech">Loading Lesson...</span>
+              </div>
+            );
+          }
+
+          const handleValidate = async () => {
+            // ... existing validation logic ...
+
+            if (data.success && data.challenge_success) {
+              // ... existing visual triggers ...
+
+              // New: Save the reward NFT to Firestore
+              const rewardImageUrl = '/assets/images/brb-nft-ai-robot.png'; // Path to your reward image
+              const rewardName = `Lesson ${lesson.id} Completion Badge`; // Dynamic name
+              await addRewardNft({
+                lessonId: lesson.id,
+                nftImageUrl: rewardImageUrl,
+                rewardName: rewardName,
+                userId: userId, // Pass userId from useLessonStore or useGameStore
+              });
+
+              triggerChallengeReward(rewardImageUrl); // Trigger the visual reward animation
+              // ... existing toast ...
+              // ... existing step progression ...
+            }
+            // ... existing failure/error handling ...
+          };
+          // ... rest of LessonDetailPage ...
+        }
+        ```
+
+**Phase 6: Global Firebase Instance Access (Helper)**
+
+* **Objective:** Ensure `__app_id` and `__firebase_config` are accessible for Firebase initialization in `useLessonStore` and `useGameStore`.
+
+1.  **Modify `client/src/App.tsx` (or a new `client/src/firebase-init.ts`):**
+    * **Action:** Make the global variables available to other modules.
+    * **Implementation:**
+        ```typescript
+        // client/src/App.tsx
+        // Declare these globally if they are not already.
+        declare const __app_id: string;
+        declare const __firebase_config: string;
+
+        // ... rest of App.tsx ...
+        ```
+        *Alternatively, create `client/src/firebase-config.ts`:*
+        ```typescript
+        // client/src/firebase-config.ts
+        import { initializeApp } from 'firebase/app';
+        import { getAuth } from 'firebase/auth';
+        import { getFirestore } from 'firebase/firestore';
+
+        declare const __app_id: string;
+        declare const __firebase_config: string;
+        declare const __initial_auth_token: string;
+
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        export const app = initializeApp(firebaseConfig);
+        export const auth = getAuth(app);
+        export const db = getFirestore(app);
+        export const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        export const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : '';
+        ```
+        *Then, import these from `client/src/firebase-config.ts` in `MainLayout`, `useLessonStore`, `useGameStore`.*
+
+By implementing these changes, your application will gain robust data persistence, allowing users to save their progress and collected rewards. The "Shadow Ranch" page will transform into a dynamic showcase of their achievements, making the learning journey even more rewarding and visually engaging.
