@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { WesternCard, WesternCardContent, WesternCardHeader, WesternCardTitle } from "@/components/ui/WesternCard";
 import { WesternButton } from "@/components/ui/WesternButton";
-import { useGameStore } from "@/hooks/use-game-store";
+import { useGameStore } from "@/hooks/use-enhanced-game-store";
 import { useLessonStore } from "@/hooks/use-lesson-store";
 import { useToast } from "@/hooks/use-toast";
+import { RewardNftGallery } from "@/components/ranch/RewardNftGallery";
 import { formatRanchCoin, getRarityColor, getRarityBorder } from "@/lib/utils";
 
 interface ShopItem {
