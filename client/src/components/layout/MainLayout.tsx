@@ -86,7 +86,7 @@ export function MainLayout({ children }: MainLayoutProps) {
             <div className="flex items-center space-x-4">
               <span className="font-titulo text-sm text-tech-cyan-400">🏜️ BRB: A SOLANA ADVENTURE</span>
               <span className="text-gray-500 font-code text-xs">|</span>
-              <span className="text-gray-400 font-code text-xs">Blockchain Development Platform</span>
+              <span className="text-gray-400 font-code text-xs">Learn Solana Program Development</span>
             </div>
             <div className="flex items-center space-x-6">
               <a 
