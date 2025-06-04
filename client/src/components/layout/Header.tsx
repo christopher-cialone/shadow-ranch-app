@@ -23,7 +23,7 @@ export function Header({ onThemeToggle, currentTheme }: HeaderProps) {
           <div className="flex items-center space-x-4 cursor-pointer">
             <span className="text-tech-cyan-400 text-2xl animate-tech-pulse">🏜️</span>
             <h1 className="font-titulo text-2xl bg-gradient-to-r from-tech-cyan-400 to-tech-purple-400 bg-clip-text text-transparent">
-              BRB: A SOLANA ADVENTURE
+              BRB: SHADOW RANCH
             </h1>
           </div>
         </Link>

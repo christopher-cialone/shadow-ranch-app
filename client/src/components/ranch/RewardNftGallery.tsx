@@ -89,7 +89,9 @@ export function RewardNftGallery({ rewards }: RewardNftGalleryProps) {
                   Lesson {reward.lessonId}
                 </div>
                 <div className="text-xs font-code text-gray-600">
-                  {reward.awardedAt.toLocaleDateString()}
+                  {typeof reward.awardedAt === 'string' ? 
+                    new Date(reward.awardedAt).toLocaleDateString() : 
+                    reward.awardedAt.toLocaleDateString()}
                 </div>
               </div>
 
@@ -130,7 +132,7 @@ export function RewardNftGallery({ rewards }: RewardNftGalleryProps) {
         <div className="flex justify-between items-center text-sm mt-1">
           <span className="font-code text-gray-400">Latest Reward:</span>
           <span className="font-code text-gray-300">
-            {rewards.length > 0 ? rewards[0].awardedAt.toLocaleDateString() : 'None'}
+            {rewards.length > 0 ? new Date(rewards[0].awardedAt).toLocaleDateString() : 'None'}
           </span>
         </div>
       </div>
