@@ -110,6 +110,10 @@ export const useGameStore = create<GameStore>()(
       coinFallActive: false,
       lastStoredMessage: null,
       transactionActive: false,
+      
+      // Challenge reward states
+      showChallengeReward: false,
+      currentRewardNftUrl: null,
 
       addCharacter: (character) => {
         set((state) => ({
@@ -181,6 +185,15 @@ export const useGameStore = create<GameStore>()(
       triggerTransactionAnimation: () => {
         set({ transactionActive: true });
         setTimeout(() => set({ transactionActive: false }), 3000);
+      },
+
+      triggerChallengeReward: (nftUrl) => {
+        set({ 
+          currentRewardNftUrl: nftUrl,
+          showChallengeReward: true 
+        });
+        // The ChallengeReward component will handle its own timeout to hide
+        setTimeout(() => set({ showChallengeReward: false }), 4500);
       }
     }),
     {

@@ -7,6 +7,7 @@ import { NarrativeBox } from "@/components/lessons/NarrativeBox";
 import { LessonLayout } from "@/components/lessons/LessonLayout";
 import { MonacoEditor } from "@/components/editor/MonacoEditor";
 import { HintCharacter, type HintCharacterRef } from "@/components/lessons/HintCharacter";
+import { ChallengeReward } from "@/components/game/ChallengeReward";
 import { useLessonStore } from "@/hooks/use-lesson-store";
 import { useGameStore } from "@/hooks/use-game-store";
 import { useToast } from "@/hooks/use-toast";
@@ -31,7 +32,15 @@ export default function LessonDetail() {
   });
 
   const { getLessonProgress, updateLessonAttempt, completeLesson, setCurrentLesson } = useLessonStore();
-  const gameStore = useGameStore();
+  const { 
+    triggerSparkleAnimation, 
+    triggerCoinFall, 
+    triggerChallengeReward,
+    showChallengeReward,
+    currentRewardNftUrl,
+    earnRanchCoin,
+    addExperience
+  } = useGameStore();
   const { toast } = useToast();
 
   const progress = getLessonProgress(lessonId);
@@ -59,8 +68,8 @@ export default function LessonDetail() {
 
   const handleCodeRun = (data: any) => {
     if (data.success) {
-      gameStore.triggerSparkleAnimation();
-      gameStore.setLastStoredMessage("Code executed successfully!");
+      triggerSparkleAnimation();
+      triggerCoinFall();
     }
     setValidationResults(data);
   };
@@ -69,6 +78,14 @@ export default function LessonDetail() {
     setValidationResults(data);
     if (data.success) {
       updateLessonAttempt(lessonId, currentStep);
+      
+      // Trigger challenge reward animation for successful completion
+      triggerChallengeReward('/assets/images/brb-nft-ai-robot.png');
+      
+      toast({
+        title: "Challenge Completed!",
+        description: "Step validated successfully. NFT reward unlocked!",
+      });
     }
   };
 
@@ -106,9 +123,9 @@ export default function LessonDetail() {
 
   const handleComplete = () => {
     completeLesson(lessonId);
-    gameStore.earnRanchCoin(lesson?.reward || 100);
-    gameStore.addExperience(50);
-    gameStore.triggerCoinFall();
+    earnRanchCoin(lesson?.reward || 100);
+    addExperience(50);
+    triggerCoinFall();
     
     toast({
       title: "Lesson Completed!",
