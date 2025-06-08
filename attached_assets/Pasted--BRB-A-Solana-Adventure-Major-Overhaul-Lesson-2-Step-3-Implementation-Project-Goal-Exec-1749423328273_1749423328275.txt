@@ -1,0 +1,511 @@
+# BRB: A Solana Adventure - Major Overhaul & Lesson 2, Step 3 Implementation
+
+**Project Goal:** Execute a comprehensive overhaul to fix critical layout issues, integrate Firestore for robust data persistence, implement the Challenge Reward System, enhance the Hint System, begin PIXI.js visual improvements, and introduce Lesson 2, Step 3 (Program Entrypoint & Instruction Dispatch).
+
+**Overall Vision:** A visually stunning, seamless, and highly interactive educational game for Solana development with a cypher-punk Western theme.
+
+---
+
+**Instructions for Replit Agent (Comprehensive Overhaul):**
+
+**Phase 1: Critical Layout & Core UI Fixes**
+
+* **Objective:** Resolve all overlapping UI elements and ensure the page layout is stable, responsive, and aesthetically pleasing across different screen sizes.
+
+1.  **Fix `LessonLayout.tsx` Overlaps and Navigation Positioning:**
+    * **File:** `client/src/components/lessons/LessonLayout.tsx`
+    * **Action:**
+        * Change the outermost `div` (the one currently with `min-h-screen bg-gradient-to-br ...`) to include `flex flex-col`.
+        * The `div` containing the `Progress Header` (with `border-b border-border/20 ... sticky top-0 z-40`) should be changed from `sticky top-0 z-40` to `fixed top-0 left-0 right-0 z-40 w-full`. This will fix the overlap.
+        * To account for the fixed header's height, add `style={{ paddingTop: '120px', paddingBottom: '80px' }}` (adjust `120px` and `80px` based on actual header/footer heights after applying fixes, and `120px` is an estimate for the full LessonLayout header) to the `<main>` element within `LessonLayout`. Also add `flex-grow` to this `<main>` element.
+        * **Relocate Navigation Buttons:**
+            * Remove the "Previous" and "Next" buttons (and their containing `div`) from within the `Progress Header` section at the top.
+            * Create a **new `div`** at the very bottom of `LessonLayout.tsx` (before the closing `</LessonLayout>` tag). This `div` will house the navigation buttons.
+            * Give this new `div` the following classes:
+                ```html
+                <div className="fixed bottom-0 left-0 right-0 z-40 w-full
+                                flex items-center justify-between px-4 py-4
+                                bg-background/80 backdrop-blur-sm
+                                border-t border-border/20">
+                  {/* Previous Button */}
+                  <Button
+                    onClick={onPrevious}
+                    disabled={!hasPrevious}
+                    variant="outline"
+                    size="sm"
+                    className="text-xs"
+                  >
+                    <ChevronLeft className="w-4 h-4 mr-1" />
+                    Previous
+                  </Button>
+                  {/* Next Button */}
+                  <Button
+                    onClick={onNext}
+                    disabled={!hasNext}
+                    variant="default"
+                    size="sm"
+                    className="tech-button tech-button-primary text-xs"
+                  >
+                    Next
+                    <ChevronRight className="w-4 h-4 ml-1" />
+                  </Button>
+                </div>
+                ```
+            * Ensure `TechButton` (which will be defined later in Phase 2) is used for these buttons.
+
+2.  **Fix `MainLayout.tsx` Footer Positioning:**
+    * **File:** `client/src/components/layout/MainLayout.tsx`
+    * **Action:** Implement a proper "sticky footer" pattern.
+    * **Implementation:**
+        * On the outermost `div` (`min-h-screen bg-gradient-to-br ...`), add `flex flex-col`.
+        * On the `<main>` element (`relative z-10`), add `flex-grow`. This will make the main content expand to fill available space, pushing the footer to the very bottom.
+        * Adjust the `mt-20` on the `<footer>` element to a smaller value, e.g., `mt-10` or `mt-8`, as the `flex-grow` on main will handle pushing it down.
+
+3.  **Ensure Responsiveness Across All Pages:**
+    * **Files:** All page components (`HomePage.tsx`, `LessonsPage.tsx`, `RanchPage.tsx`, `PlaygroundPage.tsx`, `LessonDetailPage.tsx`).
+    * **Action:** Perform a quick review of the responsiveness for the adjusted layouts.
+    * **Implementation:** Confirm appropriate use of `sm:`, `md:`, `lg:`, `xl:` prefixes on grid columns, padding, and font sizes to ensure elements scale and wrap gracefully on different screen sizes.
+
+**Phase 2: Full Firestore Integration & Data Persistence**
+
+* **Objective:** Replace the in-memory `MemStorage` and `localStorage` with Google Firestore for all user, game, lesson progress, and reward data. This enables persistence across sessions and consistency across pages.
+
+1.  **Define Global Firebase Variables & Initialization:**
+    * **File:** `client/src/firebase-init.ts` (new file)
+    * **Action:** Create a centralized place to initialize Firebase and expose its instances.
+    * **Implementation:**
+        ```typescript
+        // client/src/firebase-init.ts
+        import { initializeApp } from 'firebase/app';
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from 'firebase/auth';
+        import { getFirestore } from 'firebase/firestore';
+
+        // These global variables are provided by the Replit environment
+        declare const __app_id: string;
+        declare const __firebase_config: string;
+        declare const __initial_auth_token: string;
+
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        export const app = initializeApp(firebaseConfig);
+        export const auth = getAuth(app);
+        export const db = getFirestore(app);
+        export const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id'; // Fallback for local dev
+        export const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : '';
+        ```
+
+2.  **Auth in `MainLayout.tsx`:**
+    * **File:** `client/src/components/layout/MainLayout.tsx`
+    * **Action:** Use the `firebase-init.ts` exports to handle authentication centrally.
+    * **Implementation:**
+        * Import `app`, `auth`, `db`, `appId`, `initialAuthToken` from `client/src/firebase-init.ts`.
+        * In `MainLayout`'s `useEffect`, perform the `onAuthStateChanged` and `signInWithCustomToken`/`signInAnonymously` logic using these imported `auth` and `db` instances.
+        * Set `isAuthReady` to `true` once authentication check is complete.
+        * Conditionally render `children` only when `isAuthReady` is `true`.
+
+3.  **Replace `server/storage.ts` with Firestore-based Implementation:**
+    * **File:** `server/storage.ts`
+    * **Action:** Completely replace the `MemStorage` class with `FirestoreStorage` to interact with Firestore.
+    * **Implementation:**
+        * **Remove the `MemStorage` class and its `constructor` entirely.**
+        * **Implement `FirestoreStorage`:**
+            ```typescript
+            // server/storage.ts
+            import {
+              // ... import all schema types from "@shared/schema" ...
+              users, ranches, lessons, userProgress, characters, buildings, rewardNfts,
+              type User, type InsertUser, type Ranch, type InsertRanch, type Lesson,
+              type UserProgress, type InsertUserProgress, type Character, type InsertCharacter,
+              type Building, type InsertBuilding, type RewardNft, type InsertRewardNft,
+            } from "@shared/schema";
+            import { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, collection, query, where, getDocs } from "firebase/firestore";
+            import { initializeApp } from "firebase/app"; // Import here for server-side init
+
+            // Global variables provided by Replit (they are injected into the environment)
+            declare const __app_id: string;
+            declare const __firebase_config: string;
+
+            // Initialize Firebase on the server-side
+            const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+            const firebaseApp = initializeApp(firebaseConfig); // Use a distinct name to avoid conflict
+            const firestoreDb = getFirestore(firebaseApp); // Use this instance for operations
+
+            // Define base paths for Firestore collections, using the Replit app ID for isolation
+            const ARTIFACTS_PATH = `artifacts/${typeof __app_id !== 'undefined' ? __app_id : 'default-app-id'}`;
+
+            // Define the IStorage interface (if it's not already in shared/schema.ts or a dedicated interface file)
+            export interface IStorage {
+                getUser(id: number): Promise<User | undefined>;
+                getUserByUsername(username: string): Promise<User | undefined>;
+                getUserByWalletAddress(walletAddress: string): Promise<User | undefined>;
+                createUser(user: InsertUser): Promise<User>;
+
+                getRanch(id: number): Promise<Ranch | undefined>;
+                getRanchByUserId(userId: number): Promise<Ranch | undefined>;
+                createRanch(ranch: InsertRanch): Promise<Ranch>;
+                updateRanch(id: number, updates: Partial<Omit<Ranch, 'id' | 'ownerId' | 'createdAt'>>): Promise<Ranch>;
+
+                getAllLessons(): Promise<Lesson[]>;
+                getLessonById(id: number): Promise<Lesson | undefined>;
+                createLesson(lesson: Omit<Lesson, 'id' | 'createdAt'>): Promise<Lesson>;
+
+                getLessonProgress(id: number): Promise<UserProgress | undefined>;
+                getLessonProgressByUserId(userId: number): Promise<UserProgress[]>;
+                getLessonProgressByUserAndLesson(userId: number, lessonId: number): Promise<UserProgress | undefined>;
+                createLessonProgress(progress: InsertUserProgress): Promise<UserProgress>;
+                updateLessonProgress(id: number, updates: Partial<Omit<UserProgress, 'id' | 'userId' | 'lessonId' | 'createdAt'>>): Promise<UserProgress>;
+
+                getCharacter(id: number): Promise<Character | undefined>;
+                getCharactersByUserId(userId: number): Promise<Character[]>;
+                createCharacter(character: InsertCharacter): Promise<Character>;
+                updateCharacter(id: number, updates: Partial<Omit<Character, 'id' | 'ownerId' | 'createdAt'>>): Promise<Character>;
+
+                getBuilding(id: number): Promise<Building | undefined>;
+                getBuildingsByRanchId(ranchId: number): Promise<Building[]>;
+                createBuilding(building: InsertBuilding): Promise<Building>;
+                updateBuilding(id: number, updates: Partial<Omit<Building, 'id' | 'ranchId' | 'createdAt'>>): Promise<Building>;
+
+                getRewardNftsByUserId(userId: string): Promise<RewardNft[]>; // Changed userId to string for Firestore
+                createRewardNft(insertReward: InsertRewardNft): Promise<RewardNft>;
+            }
+
+            export class FirestoreStorage implements IStorage {
+              private db: any;
+
+              constructor() {
+                this.db = firestoreDb;
+                this.initializeLessons(); // Ensure default lessons are in Firestore
+              }
+
+              private getUserCollectionRef(userId: string, collectionName: string) {
+                return collection(this.db, `${ARTIFACTS_PATH}/users/${userId}/${collectionName}`);
+              }
+
+              private getPublicCollectionRef(collectionName: string) {
+                return collection(this.db, `${ARTIFACTS_PATH}/public/data/${collectionName}`);
+              }
+
+              private async initializeLessons() {
+                const lessonsRef = this.getPublicCollectionRef('lessons');
+                const snapshot = await getDocs(lessonsRef);
+                if (snapshot.empty) {
+                  const defaultLessons: Omit<Lesson, 'id' | 'createdAt'>[] = [
+                    // Copy ONLY the content of `lessons` array from `client/src/data/lessons.ts` here.
+                    // This data needs to be hardcoded in the backend storage init for initial setup.
+                    // Make sure content.steps are correctly formatted as JSONB in schema.
+                    // ... (copy array content for lessons here, ensuring L1 and L2 steps are included) ...
+                    {
+                      id: 1, // Add mock ID for initial data, will be replaced by Firestore doc ID
+                      title: "Solana Basics & Wallet Setup",
+                      description: "Learn the fundamentals of Solana and set up your Web3 wallet",
+                      chapter: 1,
+                      difficulty: 'beginner',
+                      estimatedTime: 30,
+                      isPremium: false,
+                      content: {
+                        steps: [
+                          {
+                            id: 1,
+                            title: "Ping the Blockchain",
+                            challenge: "Write `get_network_status()` to check Devnet health.",
+                            expectedCodePattern: { rust: 'get_network_status\\(\\)', python: 'get_network_status\\(\\)' },
+                            successMessage: "Network Status: Connected! Ping: {ping}ms | Current Slot: {slot}",
+                            failureMessage: "Command not recognized. Ensure you typed `get_network_status()` exactly.",
+                            initialCodeTemplateKey: 'default',
+                            visualEffectTrigger: 'networkPing'
+                          },
+                        ]
+                      },
+                      codeTemplate: "" // Will be overridden by step templates
+                    },
+                    {
+                      id: 2, // Add mock ID for initial data
+                      title: "Creating Your Ranch Account",
+                      description: "Build your first Solana program to manage ranch data",
+                      chapter: 2,
+                      difficulty: 'beginner',
+                      estimatedTime: 45,
+                      isPremium: false,
+                      content: {
+                        steps: [
+                          {
+                            id: 1,
+                            title: "Define Ranch Owner Field",
+                            challenge: "In the `Ranch` struct (Rust) or `Ranch` class (Python), add a `pubkey` field named `owner`. This will identify who controls the ranch. Don't forget the comma for Rust!",
+                            expectedCodePattern: { rust: 'pub\\s+owner:\\s*Pubkey,', python: 'owner:\\s*Pubkey' },
+                            successMessage: "Excellent! The `owner` field has been added. Your ranch now knows who its rightful owner is!",
+                            failureMessage: "Not quite. Make sure you've added `pub owner: Pubkey,' (Rust) or 'owner: Pubkey' (Python) exactly inside the Ranch definition. Check for typos and correct capitalization!",
+                            initialCodeTemplateKey: 'ranch_management_initial',
+                            visualEffectTrigger: 'blueprint'
+                          },
+                          {
+                            id: 2,
+                            title: "Initialize Owner in `initialize_ranch`",
+                            challenge: "Now, inside the `initialize_ranch` function, assign the `owner` field of your `ranch` account to the `user.key()` (Rust) or `owner.key()` (Python). Remember `ranch.owner = ctx.accounts.user.key();` or `ranch.owner = owner.key()`.",
+                            expectedCodePattern: { rust: 'ranch\\.owner\\s*=\\s*ctx\\.accounts\\.user\\.key\\(\\);', python: 'ranch\\.owner\\s*=\\s*owner\\.key\\(\\)' },
+                            successMessage: "Owner successfully initialized! Your ranch deed is now registered to you!",
+                            failureMessage: "The owner assignment is incorrect. Double-check the syntax for assigning the owner's key to the ranch account.",
+                            initialCodeTemplateKey: 'ranch_management_step1_complete',
+                            visualEffectTrigger: 'sparkle'
+                          }
+                          // L2S3 will be added here in this prompt
+                        ]
+                      },
+                      codeTemplate: ""
+                    }
+                  ];
+                  for (const lessonData of defaultLessons) {
+                    // Firestore auto-generates IDs, use `setDoc` with a specific ID or `addDoc`
+                    await setDoc(doc(lessonsRef, lessonData.id.toString()), lessonData); // Use setDoc with string ID
+                  }
+                }
+              }
+
+              // --- Implement all IStorage methods for Firestore ---
+              // Each method will involve Firestore collection/doc references, `getDoc`, `setDoc`, `addDoc`, `updateDoc`, `deleteDoc`, `getDocs`, `query`, `where`.
+              // Remember Firestore uses string IDs for documents, so you'll need to adapt from numeric `id`s in the schema.
+              // For user-specific data, use `this.getUserCollectionRef(userId, 'collectionName')`.
+              // For public data (like lessons), use `this.getPublicCollectionRef('collectionName')`.
+
+              // Example for `getUserByWalletAddress`:
+              async getUserByWalletAddress(walletAddress: string): Promise<User | undefined> {
+                  const q = query(this.getPublicCollectionRef('users'), where('walletAddress', '==', walletAddress));
+                  const snapshot = await getDocs(q);
+                  if (snapshot.empty) return undefined;
+                  const docData = snapshot.docs[0].data();
+                  return { ...docData, id: parseInt(snapshot.docs[0].id) } as User;
+              }
+
+              // Example for `createUser`:
+              async createUser(insertUser: InsertUser): Promise<User> {
+                  const newUserRef = doc(this.getPublicCollectionRef('users'), insertUser.walletAddress); // Use walletAddress as doc ID
+                  await setDoc(newUserRef, { ...insertUser, createdAt: new Date() });
+                  const newUser = (await getDoc(newUserRef)).data() as User;
+                  return { ...newUser, id: parseInt(newUserRef.id) };
+              }
+
+              // Ranch operations:
+              async getRanchByUserId(userId: string): Promise<Ranch | undefined> { // userId is string from auth
+                const ranchDocRef = doc(this.getUserCollectionRef(userId, 'ranch'), 'data'); // Assume single ranch doc per user
+                const ranchSnap = await getDoc(ranchDocRef);
+                if (!ranchSnap.exists()) return undefined;
+                return { ...ranchSnap.data(), id: parseInt(ranchSnap.id) } as Ranch; // Mock numeric ID
+              }
+              async createRanch(insertRanch: InsertRanch): Promise<Ranch> {
+                const ranchDocRef = doc(this.getUserCollectionRef(insertRanch.ownerId.toString(), 'ranch'), 'data');
+                await setDoc(ranchDocRef, { ...insertRanch, level: 1, ranchCoinBalance: 500, buildingCount: 0, characterCount: 0, metadata: null, createdAt: new Date(), updatedAt: new Date() });
+                const newRanch = (await getDoc(ranchDocRef)).data() as Ranch;
+                return { ...newRanch, id: parseInt(ranchDocRef.id) };
+              }
+              async updateRanch(id: number, updates: Partial<Omit<Ranch, 'id' | 'ownerId' | 'createdAt'>>): Promise<Ranch> {
+                // This 'id' won't be direct Firestore doc ID, you'll need to find the user's ranch by userId
+                // For simplified update, assume the update is by userId if userId is passed implicitly/explicitly.
+                // For this prompt, assume this is called with a user's known Firestore UID
+                const userIdToUpdate = updates.ownerId?.toString() || (await getAuth().currentUser)?.uid; // Try to get user ID if not explicitly passed
+                if (!userIdToUpdate) throw new Error("User ID required to update ranch.");
+                const ranchDocRef = doc(this.getUserCollectionRef(userIdToUpdate, 'ranch'), 'data');
+                await updateDoc(ranchDocRef, { ...updates, updatedAt: new Date() });
+                const updatedRanch = (await getDoc(ranchDocRef)).data() as Ranch;
+                return { ...updatedRanch, id: parseInt(ranchDocRef.id) };
+              }
+
+              // Lesson Progress:
+              async getLessonProgressByUserId(userId: string): Promise<UserProgress[]> {
+                const q = query(this.getUserCollectionRef(userId, 'userProgress'));
+                const snapshot = await getDocs(q);
+                return snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id, completedAt: doc.data().completedAt?.toDate() })) as UserProgress[];
+              }
+              async createLessonProgress(insertProgress: InsertUserProgress): Promise<UserProgress> {
+                const progressRef = collection(this.getUserCollectionRef(insertProgress.userId.toString(), 'userProgress'));
+                const docRef = await addDoc(progressRef, { ...insertProgress, completedAt: insertProgress.completed ? new Date() : null, createdAt: new Date() });
+                const newProgress = (await getDoc(docRef)).data() as UserProgress;
+                return { ...newProgress, id: docRef.id };
+              }
+              async updateLessonProgress(id: string, updates: Partial<Omit<UserProgress, 'id' | 'userId' | 'lessonId' | 'createdAt'>>): Promise<UserProgress> { // ID is string
+                const progressRef = doc(this.getUserCollectionRef((await getAuth().currentUser)?.uid || '', 'userProgress'), id); // Need to derive user ID
+                await updateDoc(progressRef, { ...updates, completedAt: updates.completed ? new Date() : (await getDoc(progressRef)).data()?.completedAt });
+                const updatedProgress = (await getDoc(progressRef)).data() as UserProgress;
+                return { ...updatedProgress, id: progressRef.id };
+              }
+
+              // Character operations:
+              async getCharactersByUserId(userId: string): Promise<Character[]> {
+                const q = query(this.getUserCollectionRef(userId, 'characters'));
+                const snapshot = await getDocs(q);
+                return snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })) as Character[];
+              }
+              async createCharacter(insertCharacter: InsertCharacter): Promise<Character> {
+                const charRef = collection(this.getUserCollectionRef(insertCharacter.ownerId.toString(), 'characters'));
+                const docRef = await addDoc(charRef, { ...insertCharacter, level: 1, experience: 0, createdAt: new Date() });
+                const newChar = (await getDoc(docRef)).data() as Character;
+                return { ...newChar, id: docRef.id };
+              }
+              async updateCharacter(id: string, updates: Partial<Omit<Character, 'id' | 'ownerId' | 'createdAt'>>): Promise<Character> {
+                 const charRef = doc(this.getUserCollectionRef((await getAuth().currentUser)?.uid || '', 'characters'), id);
+                 await updateDoc(charRef, updates);
+                 const updatedChar = (await getDoc(charRef)).data() as Character;
+                 return { ...updatedChar, id: charRef.id };
+              }
+
+              // Building operations:
+              async getBuildingsByRanchId(ranchId: number): Promise<Building[]> {
+                  // This is tricky as buildings are under user's ranch
+                  // For simplicity, fetch all buildings for current user.
+                  const currentUserId = (await getAuth().currentUser)?.uid;
+                  if (!currentUserId) return [];
+                  const q = query(this.getUserCollectionRef(currentUserId, 'buildings'), where('ranchId', '==', ranchId)); // Assuming ranchId is still part of schema
+                  const snapshot = await getDocs(q);
+                  return snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })) as Building[];
+              }
+              async createBuilding(insertBuilding: InsertBuilding): Promise<Building> {
+                  const buildingRef = collection(this.getUserCollectionRef(insertBuilding.ranchId.toString(), 'buildings')); // Assuming ranchId is string
+                  const docRef = await addDoc(buildingRef, { ...insertBuilding, level: 1, metadata: insertBuilding.metadata || null, createdAt: new Date() });
+                  const newBuilding = (await getDoc(docRef)).data() as Building;
+                  return { ...newBuilding, id: docRef.id };
+              }
+              async updateBuilding(id: string, updates: Partial<Omit<Building, 'id' | 'ranchId' | 'createdAt'>>): Promise<Building> {
+                  // Need to know which user's building
+                  const currentUserId = (await getAuth().currentUser)?.uid;
+                  if (!currentUserId) throw new Error("User not authenticated.");
+                  const buildingRef = doc(this.getUserCollectionRef(currentUserId, 'buildings'), id);
+                  await updateDoc(buildingRef, updates);
+                  const updatedBuilding = (await getDoc(buildingRef)).data() as Building;
+                  return { ...updatedBuilding, id: buildingRef.id };
+              }
+
+              // Reward NFT operations:
+              async getRewardNftsByUserId(userId: string): Promise<RewardNft[]> {
+                  const q = query(this.getUserCollectionRef(userId, 'rewardNfts'));
+                  const snapshot = await getDocs(q);
+                  return snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id, awardedAt: doc.data().awardedAt?.toDate() })) as RewardNft[];
+              }
+
+              async createRewardNft(insertReward: InsertRewardNft): Promise<RewardNft> {
+                  const rewardRef = collection(this.getUserCollectionRef(insertReward.userId.toString(), 'rewardNfts'));
+                  const docRef = await addDoc(rewardRef, { ...insertReward, awardedAt: new Date() });
+                  const newReward = (await getDoc(docRef)).data() as RewardNft;
+                  return { ...newReward, id: docRef.id };
+              }
+
+              // Placeholder for methods not fully implemented in this prompt:
+              async getUser(id: number): Promise<User | undefined> { return undefined; }
+              async getUserByUsername(username: string): Promise<User | undefined> { return undefined; }
+              async getRanch(id: number): Promise<Ranch | undefined> { return undefined; }
+              async getLessonProgress(id: number): Promise<UserProgress | undefined> { return undefined; }
+              async getLessonProgressByUserAndLesson(userId: number, lessonId: number): Promise<UserProgress | undefined> { return undefined; }
+              async getCharacter(id: number): Promise<Character | undefined> { return undefined; }
+            }
+
+            export const storage = new FirestoreStorage();
+            ```
+
+4.  **Update Frontend Data Hooks to Use Firestore:**
+    * **File:** `client/src/hooks/use-lesson-store.ts`
+    * **Action:** Update to use `firebase-init.ts` and Firestore operations.
+    * **Implementation:**
+        * Import `db`, `auth`, `appId` from `client/src/firebase-init.ts`.
+        * Replace `localStorage` with `onSnapshot` listeners and `setDoc`/`addDoc` calls using `db` and `auth.currentUser.uid`.
+        * Modify `LessonProgress` interface to have `id?: string;`.
+        * Ensure `userId` is correctly retrieved from `auth.currentUser.uid` and passed to Firestore operations.
+        * The `useEffect` should initialize listeners only when `auth.currentUser` is available and `db` is ready.
+
+    * **File:** `client/src/hooks/use-game-store.ts`
+    * **Action:** Update to use `firebase-init.ts` and Firestore operations for all game data (`ranchData`, `characters`, `buildings`, `rewardNfts`).
+    * **Implementation:**
+        * Import `db`, `auth`, `appId` from `client/src/firebase-init.ts`.
+        * Replace `useState` initializations with `onSnapshot` listeners for respective Firestore collections.
+        * Update `addCharacter`, `addBuilding`, `spendRanchCoin`, `earnRanchCoin`, `addExperience` to interact with Firestore (`addDoc`, `updateDoc`).
+        * **Implement `addRewardNft`:** This function should use `addDoc` to the `rewardNfts` subcollection for the current user.
+        * Modify `Character`, `Building`, `RanchData`, `RewardNftData` interfaces to include `id?: string;`.
+
+**Phase 4: Implement Challenge Reward System & Ranch Page Display**
+
+* **Objective:** Display the congratulatory animation and the collected NFT reward on challenge success, and ensure these collected NFTs are persistent and visible on the "Shadow Ranch" page.
+
+1.  **Create `ChallengeReward.tsx` Component:**
+    * **File:** `client/src/components/game/ChallengeReward.tsx` (new file)
+    * **Action:** Build a full-screen overlay component for "CORRECT" text and animated NFT.
+    * **Implementation:**
+        * Import `motion` from `framer-motion`.
+        * Props: `isVisible: boolean`, `nftImageUrl: string`.
+        * Structure: `fixed inset-0 z-[100] flex items-center justify-center pointer-events-none bg-black/70 backdrop-blur-sm`.
+        * "CORRECT" text: `motion.h1` with `initial={{ opacity: 0, scale: 0.5 }}`, `animate={{ opacity: 1, scale: 1 }}`, `transition={{ duration: 0.5, ease: "easeOut" }}`. Use `font-titulo text-tech-cyan` and add a custom `text-shadow-matrix` class to `index.css`:
+            ```css
+            /* In client/src/index.css */
+            .text-shadow-matrix {
+              text-shadow: 0 0 5px hsl(var(--tech-cyan)), 0 0 10px hsl(var(--tech-purple));
+            }
+            ```
+        * NFT Image: `motion.img` with `src={nftImageUrl}`, `alt="Reward NFT"`, `className="w-64 h-64 object-contain rounded-lg glow-tech-cyan"`. Animate with `initial={{ opacity: 0, y: 50 }}`, `animate={{ opacity: 1, y: 0, transition: { delay: 0.3, duration: 0.5, ease: "easeOut" } }}`.
+        * Use `useEffect` to set `showReward` state internally when `isVisible` changes, and a `setTimeout` to hide the reward after ~3-4 seconds.
+
+2.  **Integrate `ChallengeReward.tsx` and Trigger from `LessonDetailPage.tsx`:**
+    * **File:** `client/src/pages/LessonDetailPage.tsx`
+    * **Action:** Display the reward component and trigger it on challenge success.
+    * **Implementation:**
+        * Import `ChallengeReward` and `useGameStore`.
+        * Destructure `showChallengeReward`, `currentRewardNftUrl`, `triggerChallengeReward`, and `addRewardNft` from `useGameStore()`.
+        * Render `<ChallengeReward isVisible={showChallengeReward} nftImageUrl={currentRewardNftUrl} />` (ensure this component is rendered at a high enough level, e.g., in `LessonDetailPage` or `MainLayout`).
+        * In `handleValidate`, inside `if (data.success && data.challenge_success)`:
+            * Define the reward image URL: `const rewardImageUrl = '/assets/images/brb-nft-ai-robot.png';` (ensure this file is in `client/public/assets/images/`).
+            * Define `rewardName` dynamically (e.g., `Lesson ${lesson.id} Step ${currentStepData.id} Badge`).
+            * Call `await addRewardNft({ userId: userIdFromGameStore, lessonId: lesson.id, nftImageUrl: rewardImageUrl, rewardName: rewardName });` (ensure `userId` is available from `useGameStore`).
+            * Call `triggerChallengeReward(rewardImageUrl);`.
+
+3.  **Display Collected Rewards on `RanchPage.tsx`:**
+    * **File:** `client/src/pages/RanchPage.tsx`
+    * **Action:** Fetch collected `rewardNfts` from `useGameStore` and display them in a new section.
+    * **Implementation:**
+        * Import `rewardNfts` from `useGameStore()`.
+        * Add a new section (e.g., a `TechCard` with title "Collected Rewards") on the `RanchPage`.
+        * Inside this section, map over `rewardNfts` to display each collected NFT using an `<img>` tag.
+        * Include fallback images for `onError` (e.g., `https://placehold.co/100x100/3a3340/99cccc?text=NFT`).
+
+**Phase 5: Implement `HintCharacter` & Refine Console/Error Messages**
+
+* **Objective:** Create the interactive character hint system and improve console feedback.
+
+1.  **Create `HintCharacter.tsx` Component:**
+    * **File:** `client/src/components/lessons/HintCharacter.tsx` (new file)
+    * **Action:** Build a reusable component for character-based pop-up hints.
+    * **Implementation:**
+        * Import `motion` from `framer-motion`.
+        * Props: `isVisible: boolean`, `message: string`, `characterImage: string`.
+        * Render `fixed bottom-4 left-4 z-[90]` (adjust positioning as desired).
+        * Use `motion.img` for the character, `motion.div` for the speech bubble.
+        * Character image: `src={characterImage}` (e.g., `/assets/images/scientist-character.png`), `className="w-24 h-24 object-contain"`.
+        * Speech bubble: Position `absolute` next to character, `bg-tech-cyan`, `rounded-xl p-3 text-background font-tech text-sm`. Add a CSS triangle with `before` pseudo-element for the speech bubble pointer.
+        * `framer-motion` for entrance/exit (e.g., `initial={{ opacity: 0, x: -50 }}` for character, `initial={{ opacity: 0, y: 20 }}` for bubble).
+        * Expose a `showHint(message: string)` function via `useImperativeHandle` for parent components to trigger.
+
+2.  **Integrate `HintCharacter.tsx` in `LessonDetailPage.tsx`:**
+    * **File:** `client/src/pages/LessonDetailPage.tsx`
+    * **Action:** Display the `HintCharacter` and trigger hints.
+    * **Implementation:**
+        * Import `HintCharacter` and `useRef`.
+        * Add ref: `const hintCharacterRef = useRef<any>(null);`
+        * Render `<HintCharacter ref={hintCharacterRef} characterImage="/assets/images/scientist-character.png" />` (ensure image is in `client/public/assets/images/`).
+        * Add a "Show Hint" `TechButton` (e.g., next to the editor or within the `NarrativeBox`).
+        * When clicked, call `hintCharacterRef.current?.showHint(currentStepData.hintMessage);`.
+        * Update `client/src/data/lessons.ts` to include `hintMessage: string` in each `LessonStep`.
+
+3.  **Refine Console Output & Error Messages (Final Touches):**
+    * **Files:** `client/src/pages/PlaygroundPage.tsx`, `client/src/pages/LessonDetailPage.tsx`, `server/routes.ts`
+    * **Action:** Ensure clarity and visual distinction.
+    * **Implementation:**
+        * Confirm `whitespace-pre-wrap` is applied to console output divs.
+        * Confirm `consoleOutputColor` state is correctly set and applied (e.g., `text-green-400`, `text-red-400`, `text-yellow-400`).
+        * In `server/routes.ts`, ensure `feedbackMessage` for `challenge_success: false` is as specific as possible, giving actionable advice.
+        * For generic `success: false` from the backend, if `apiResponse.result.errors` is an array of strings, iterate through and display each one on a new line in the frontend console.
+
+**Phase 6: IDE Size Adjustment (Final Refinement)**
+
+* **Objective:** Optimize the IDE's visual prominence without breaking layout.
+
+1.  **Review IDE Sizing:**
+    * **File:** `client/src/pages/LessonDetailPage.tsx`, `client/src/pages/PlaygroundPage.tsx`
+    * **Action:** After all layout fixes, re-evaluate the `height` prop of the `MonacoEditor` and its parent container's width/column span.
+    * **Implementation:** If the IDE still feels small, incrementally increase the `height` prop (e.g., from `600` to `700` or `750`) and ensure the parent grid layout (`xl:col-span-3` etc.) provides adequate horizontal space. The fixed header/footer should now allow more vertical content.
+
+---
+
+By completing these comprehensive steps, your "BRB: A Solana Adventure" application will not only boast robust data persistence but also offer a highly polished, visually engaging, and effective learning experience, truly living up to the vision of a CryptoZombies-style game for Solana.

@@ -65,7 +65,7 @@ export class MemStorage implements IStorage {
   }
 
   private initializeDefaultData() {
-    // Create default lessons
+    // Create default lessons with Lesson 2, Step 3 (Program Entrypoint & Instruction Dispatch)
     const defaultLessons: InsertLesson[] = [
       {
         title: "Introduction to Rust",
