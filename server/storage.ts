@@ -73,7 +73,7 @@ export class MemStorage implements IStorage {
         difficulty: "Beginner",
         duration: "30 min",
         reward: 100,
-        requiredLessons: [],
+        requiredLessons: null,
         category: "rust",
         order: 1,
         isActive: true,
@@ -115,7 +115,7 @@ export class MemStorage implements IStorage {
         difficulty: "Beginner", 
         duration: "45 min",
         reward: 150,
-        requiredLessons: [1],
+        requiredLessons: [1] as number[],
         category: "solana",
         order: 2,
         isActive: true,
@@ -245,7 +245,10 @@ export class MemStorage implements IStorage {
     const id = this.currentId++;
     const lesson: Lesson = { 
       ...insertLesson, 
-      id 
+      id,
+      isActive: insertLesson.isActive ?? true,
+      reward: insertLesson.reward ?? 100,
+      requiredLessons: insertLesson.requiredLessons || null
     };
     this.lessons.set(id, lesson);
     return lesson;
@@ -265,7 +268,9 @@ export class MemStorage implements IStorage {
     const user: User = { 
       ...insertUser, 
       id, 
-      createdAt: new Date() 
+      createdAt: new Date(),
+      walletAddress: insertUser.walletAddress ?? null,
+      pfpUrl: insertUser.pfpUrl ?? null
     };
     this.users.set(id, user);
     
@@ -304,7 +309,10 @@ export class MemStorage implements IStorage {
     const ranch: Ranch = { 
       ...insertRanch, 
       id, 
-      createdAt: new Date() 
+      createdAt: new Date(),
+      level: insertRanch.level ?? 1,
+      experience: insertRanch.experience ?? 0,
+      coins: insertRanch.coins ?? 100
     };
     this.ranches.set(id, ranch);
     return ranch;
@@ -355,6 +363,9 @@ export class MemStorage implements IStorage {
     const progress: UserProgress = { 
       ...insertProgress, 
       id, 
+      isCompleted: insertProgress.isCompleted ?? false,
+      currentStep: insertProgress.currentStep ?? 1,
+      attempts: insertProgress.attempts ?? 0,
       completedAt: insertProgress.isCompleted ? new Date() : null,
       lastAttemptAt: new Date() 
     };

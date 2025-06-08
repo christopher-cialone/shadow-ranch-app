@@ -103,7 +103,7 @@ const HintCharacter = forwardRef<HintCharacterRef, HintCharacterProps>((props, r
               transition={{ duration: 0.2, delay: 0.1 }}
               className="absolute bottom-20 right-0 mb-2 mr-4 max-w-sm"
             >
-              <div className={`relative ${getBubbleColor().split(' ')[0]} border-2 border-tech-cyan-600/50 shadow-2xl rounded-lg`}>
+              <TechCard variant="cyan" className={`${getBubbleColor().split(' ')[0]} border-2 border-tech-cyan-600/50 shadow-2xl`}>
                 <div className="p-4">
                   <div className="flex items-start space-x-2">
                     <span className="text-lg flex-shrink-0 mt-0.5">{getCharacterEmoji()}</span>
@@ -120,7 +120,7 @@ const HintCharacter = forwardRef<HintCharacterRef, HintCharacterProps>((props, r
                 <div className="absolute bottom-0 right-8 transform translate-y-full">
                   <div className={`w-0 h-0 border-x-8 border-t-8 border-solid border-transparent ${getBubbleColor().split(' ')[1]}`}></div>
                 </div>
-              </div>
+              </TechCard>
             </motion.div>
 
             {/* Character Image/Avatar */}
