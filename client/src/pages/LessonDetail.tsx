@@ -96,10 +96,21 @@ export default function LessonDetail() {
         `${lesson?.title} - Step ${currentStep} Completion Badge`
       );
       
+      // Enhanced success feedback with hint character
+      hintCharacterRef.current?.showHint(
+        `Excellent work! You've completed ${lesson?.title} - Step ${currentStep}. Moving to the next challenge!`
+      );
+      
       toast({
         title: "Challenge Completed!",
         description: "Step validated successfully. NFT reward unlocked!",
       });
+    } else {
+      // Progressive hint system for failed attempts
+      const attemptCount = (progress?.attempts || 0) + 1;
+      if (attemptCount >= 2) {
+        hintCharacterRef.current?.showProgressiveHint(attemptCount);
+      }
     }
   };
 
@@ -256,8 +267,7 @@ export default function LessonDetail() {
                         variant="accent"
                         className="w-full"
                         onClick={() => {
-                          const hintMessage = currentStepData.hints.join(" ");
-                          hintCharacterRef.current?.showHint(hintMessage);
+                          hintCharacterRef.current?.showContextualHint(currentStep);
                         }}
                       >
                         <span className="mr-2">🤖</span>
@@ -327,7 +337,11 @@ export default function LessonDetail() {
       </div>
 
       {/* Hint Character */}
-      <HintCharacter ref={hintCharacterRef} />
+      <HintCharacter 
+        ref={hintCharacterRef} 
+        stepHints={currentStepData?.hints || []}
+        currentStep={currentStep}
+      />
       
       {/* Challenge Reward Overlay */}
       <ChallengeReward
