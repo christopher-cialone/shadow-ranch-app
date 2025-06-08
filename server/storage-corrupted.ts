@@ -1,8 +1,8 @@
-import {
-  users, ranches, lessons, userProgress, characters, buildings, rewardNfts,
-  type User, type InsertUser, type Ranch, type InsertRanch, type Lesson, type InsertLesson,
-  type UserProgress, type InsertUserProgress, type Character, type InsertCharacter,
-  type Building, type InsertBuilding, type RewardNft, type InsertRewardNft, type LessonStep
+import { 
+  users, ranches, lessons, userProgress, characters, buildings,
+  type User, type Ranch, type Lesson, type UserProgress, type Character, type Building,
+  type InsertUser, type InsertRanch, type InsertLesson, type InsertUserProgress, 
+  type InsertCharacter, type InsertBuilding, type LessonStep
 } from "@shared/schema";
 
 export interface IStorage {
@@ -65,7 +65,7 @@ export class MemStorage implements IStorage {
   }
 
   private initializeDefaultData() {
-    // Create default lessons including Lesson 2, Step 3 (Program Entrypoint & Instruction Dispatch)
+    // Create default lessons with Lesson 2, Step 3 (Program Entrypoint & Instruction Dispatch)
     const defaultLessons: InsertLesson[] = [
       {
         title: "Introduction to Rust",
@@ -76,7 +76,6 @@ export class MemStorage implements IStorage {
         requiredLessons: [],
         category: "rust",
         order: 1,
-        isActive: true,
         steps: [
           {
             id: 1,
@@ -84,171 +83,162 @@ export class MemStorage implements IStorage {
             narrative: "Welcome to Shadow Ranch, partner! Time to learn the basics of Rust. Let's start by declaring a simple variable.",
             instructions: [
               "Declare a variable named `greeting`",
-              "Assign the string \"Hello, Solana!\""
+              "Assign the string \"Hello, Solana!\"",
+              "Print the variable using println! macro"
             ],
             hints: [
-              "Use 'let' keyword to declare variables in Rust",
-              "String literals are enclosed in double quotes"
+              "In Rust, strings are created with double quotes",
+              "The syntax is: `let variable_name = \"string value\";`",
+              "Use `println!(\"{}\", variable_name);` to print"
             ],
             validationRules: [
               {
                 type: "contains",
                 pattern: "let greeting",
-                message: "Declare a variable named 'greeting'",
+                message: "Create a variable named 'greeting'",
                 required: true
               },
               {
-                type: "contains", 
+                type: "contains",
                 pattern: "Hello, Solana!",
-                message: "Assign the string \"Hello, Solana!\"",
+                message: "Assign the correct string value",
+                required: true
+              },
+              {
+                type: "contains",
+                pattern: "println!",
+                message: "Use println! macro to display the output",
                 required: true
               }
             ],
-            starterCode: "// Declare your greeting variable here\n",
-            expectedOutput: "Variable declared successfully"
+            starterCode: "fn main() {\n    // Write your code here\n    \n}",
+            expectedOutput: "Hello, Solana!"
+          },
+          {
+            id: 2,
+            title: "Working with Numbers",
+            narrative: "Good work! Now let's explore Rust's number types. In the frontier, counting your coins is essential!",
+            instructions: [
+              "Create a variable `coins` with value 150",
+              "Create a variable `gems` with value 25",
+              "Calculate and print their sum"
+            ],
+            hints: [
+              "Rust has integer types like i32, u32, etc.",
+              "You can use + to add numbers",
+              "Variables are immutable by default in Rust"
+            ],
+            validationRules: [
+              {
+                type: "contains",
+                pattern: "let coins",
+                message: "Create a 'coins' variable",
+                required: true
+              },
+              {
+                type: "contains",
+                pattern: "let gems",
+                message: "Create a 'gems' variable",
+                required: true
+              },
+              {
+                type: "contains",
+                pattern: "coins + gems",
+                message: "Calculate the sum of coins and gems",
+                required: true
+              }
+            ],
+            starterCode: "fn main() {\n    // Declare your variables here\n    \n}",
+            expectedOutput: "175"
           }
         ]
       },
       {
-        title: "Creating Your Ranch Account",
-        description: "Build your first Solana program to manage ranch data",
-        difficulty: "Beginner", 
+        title: "Anchor Framework Basics",
+        description: "Dive into Anchor framework and build your first Solana program with automatic IDL generation.",
+        difficulty: "Intermediate",
         duration: "45 min",
-        reward: 150,
+        reward: 200,
         requiredLessons: [1],
-        category: "solana",
+        category: "anchor",
         order: 2,
-        isActive: true,
         steps: [
           {
             id: 1,
-            title: "Define Ranch Owner Field",
-            narrative: "Every ranch needs an owner. In the `Ranch` struct, add a `pubkey` field named `owner`. This will identify who controls the ranch.",
+            title: "Setting up Anchor",
+            narrative: "Time to saddle up with Anchor! This framework makes Solana development as smooth as a well-oiled saddle.",
             instructions: [
-              "In the Ranch struct, add a pubkey field named 'owner'",
-              "Use proper Rust syntax with pub visibility",
-              "Don't forget the comma for Rust!"
+              "Import the anchor_lang prelude",
+              "Define a basic program structure",
+              "Create an Initialize instruction"
             ],
             hints: [
-              "Rust syntax: pub owner: Pubkey,",
-              "Make sure you've added it inside the Ranch definition",
-              "Check for typos and correct capitalization!"
+              "Use `use anchor_lang::prelude::*;`",
+              "Programs are defined with `#[program]`",
+              "Instructions are functions in the program module"
             ],
             validationRules: [
               {
-                type: "regex",
-                pattern: "pub\\s+owner:\\s*Pubkey,",
-                message: "Add 'pub owner: Pubkey,' to the Ranch struct",
+                type: "contains",
+                pattern: "use anchor_lang::prelude::*",
+                message: "Import anchor_lang prelude",
                 required: true
-              }
-            ],
-            starterCode: "use anchor_lang::prelude::*;\n\n#[account]\npub struct Ranch {\n    // TODO: Add owner field\n}\n",
-            expectedOutput: "Excellent! The `owner` field has been added. Your ranch now knows who its rightful owner is!"
-          },
-          {
-            id: 2,
-            title: "Initialize Owner in `initialize_ranch`",
-            narrative: "Now, inside the `initialize_ranch` function, assign the `owner` field of your `ranch` account to the `user.key()`.",
-            instructions: [
-              "Inside the initialize_ranch function, set ranch.owner",
-              "Assign it to ctx.accounts.user.key()",
-              "Remember the syntax: ranch.owner = ctx.accounts.user.key();"
-            ],
-            hints: [
-              "Syntax: ranch.owner = ctx.accounts.user.key();",
-              "Don't forget the semicolon",
-              "Double-check the syntax for assigning the owner's key to the ranch account"
-            ],
-            validationRules: [
-              {
-                type: "regex",
-                pattern: "ranch\\.owner\\s*=\\s*ctx\\.accounts\\.user\\.key\\(\\);",
-                message: "Set ranch.owner = ctx.accounts.user.key();",
-                required: true
-              }
-            ],
-            starterCode: "pub fn initialize_ranch(ctx: Context<InitializeRanch>) -> Result<()> {\n    let ranch = &mut ctx.accounts.ranch;\n    // TODO: Set the owner\n    Ok(())\n}\n",
-            expectedOutput: "Owner successfully initialized! Your ranch deed is now registered to you!"
-          },
-          {
-            id: 3,
-            title: "Program Entrypoint & Instruction Dispatch",
-            narrative: "Time to create the main program entry point that handles different instructions. This is the heart of your Solana program!",
-            instructions: [
-              "Define the program entrypoint using #[program]",
-              "Add instruction dispatch for initialize_ranch",
-              "Include proper error handling with Result<()>"
-            ],
-            hints: [
-              "Use #[program] attribute before the mod declaration",
-              "Each instruction should be a public function",
-              "Return Result<()> for proper error handling",
-              "The program module should be public: pub mod"
-            ],
-            validationRules: [
+              },
               {
                 type: "contains",
                 pattern: "#[program]",
-                message: "Add #[program] attribute",
-                required: true
-              },
-              {
-                type: "contains",
-                pattern: "pub mod",
-                message: "Define a public module",
-                required: true
-              },
-              {
-                type: "contains",
-                pattern: "initialize_ranch",
-                message: "Include initialize_ranch instruction",
+                message: "Define a program with #[program] attribute",
                 required: true
               }
             ],
-            starterCode: "use anchor_lang::prelude::*;\n\ndeclare_id!(\"YourProgramIDHere\");\n\n// TODO: Add #[program] attribute and define the program module\n",
-            expectedOutput: "Program entrypoint created with instruction dispatch! Your Solana program is ready to handle instructions!"
+            starterCode: "// Import Anchor prelude\n\n// Define your program here\n",
+            expectedOutput: "Program compiled successfully"
+          }
+        ]
+      },
+      {
+        title: "Advanced Solana Programs",
+        description: "Build complex DeFi protocols and NFT marketplaces using advanced Solana programming patterns.",
+        difficulty: "Advanced",
+        duration: "60 min",
+        reward: 500,
+        requiredLessons: [1, 2],
+        category: "anchor",
+        order: 3,
+        steps: [
+          {
+            id: 1,
+            title: "Complex State Management",
+            narrative: "You've reached the advanced frontier! Time to handle complex state like a true blockchain sheriff.",
+            instructions: [
+              "Define a complex account structure",
+              "Implement state transitions",
+              "Handle error cases"
+            ],
+            hints: [
+              "Use Account<'info, T> for account deserialization",
+              "Define custom error types",
+              "Use constraint validations"
+            ],
+            validationRules: [
+              {
+                type: "contains",
+                pattern: "#[account]",
+                message: "Define an account structure",
+                required: true
+              }
+            ],
+            starterCode: "// Advanced Solana program structure\n",
+            expectedOutput: "Advanced program deployed"
           }
         ]
       }
     ];
 
     // Initialize lessons
-    for (const lessonData of defaultLessons) {
-      const lesson = this.createLessonSync(lessonData);
-    }
-
-    // Create sample user
-    const sampleUser: User = {
-      id: 1,
-      username: "cowboy",
-      password: "password123",
-      walletAddress: "11111111111111111111111111111112",
-      pfpUrl: null,
-      createdAt: new Date()
-    };
-    this.users.set(1, sampleUser);
-
-    // Create sample ranch
-    const sampleRanch: Ranch = {
-      id: 1,
-      name: "Shadow Ranch",
-      userId: 1,
-      level: 1,
-      experience: 0,
-      coins: 500,
-      createdAt: new Date()
-    };
-    this.ranches.set(1, sampleRanch);
-  }
-
-  private createLessonSync(insertLesson: InsertLesson): Lesson {
-    const id = this.currentId++;
-    const lesson: Lesson = { 
-      ...insertLesson, 
-      id 
-    };
-    this.lessons.set(id, lesson);
-    return lesson;
+    defaultLessons.forEach(lesson => {
+      this.createLesson(lesson);
+    });
   }
 
   // User operations
@@ -355,7 +345,6 @@ export class MemStorage implements IStorage {
     const progress: UserProgress = { 
       ...insertProgress, 
       id, 
-      completedAt: insertProgress.isCompleted ? new Date() : null,
       lastAttemptAt: new Date() 
     };
     this.userProgress.set(`${insertProgress.userId}-${insertProgress.lessonId}`, progress);
@@ -369,9 +358,9 @@ export class MemStorage implements IStorage {
     
     const updatedProgress = { 
       ...progress, 
-      ...updates,
-      completedAt: updates.isCompleted ? new Date() : progress.completedAt,
-      lastAttemptAt: new Date()
+      ...updates, 
+      lastAttemptAt: new Date(),
+      completedAt: updates.isCompleted ? new Date() : progress.completedAt
     };
     this.userProgress.set(key, updatedProgress);
     return updatedProgress;
@@ -391,9 +380,6 @@ export class MemStorage implements IStorage {
     const character: Character = { 
       ...insertCharacter, 
       id, 
-      experience: insertCharacter.experience || 0,
-      level: insertCharacter.level || 1,
-      isActive: insertCharacter.isActive !== undefined ? insertCharacter.isActive : true,
       acquiredAt: new Date() 
     };
     this.characters.set(id, character);
@@ -423,8 +409,6 @@ export class MemStorage implements IStorage {
     const building: Building = { 
       ...insertBuilding, 
       id, 
-      level: insertBuilding.level || 1,
-      isActive: insertBuilding.isActive !== undefined ? insertBuilding.isActive : true,
       builtAt: new Date() 
     };
     this.buildings.set(id, building);
