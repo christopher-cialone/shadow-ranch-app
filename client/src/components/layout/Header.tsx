@@ -31,14 +31,14 @@ export function Header({ onThemeToggle, currentTheme }: HeaderProps) {
         <nav className="hidden md:flex items-center space-x-6">
           {navItems.map((item) => (
             <Link key={item.href} href={item.href}>
-              <a
+              <span
                 className={cn(
-                  "font-tech text-gray-300 hover:text-tech-cyan-400 transition-colors uppercase tracking-wider",
+                  "font-tech text-gray-300 hover:text-tech-cyan-400 transition-colors uppercase tracking-wider cursor-pointer",
                   location === item.href && "text-tech-cyan-400"
                 )}
               >
                 {item.label}
-              </a>
+              </span>
             </Link>
           ))}
         </nav>

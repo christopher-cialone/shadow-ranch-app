@@ -356,10 +356,6 @@ def initialize_ranch(
 `
 };
 
-export const codeTemplates = {
-  default: rustTemplates.default,
-  ranch_management_initial: rustTemplates.ranch_management_initial,
-  ranch_management_step1_complete: rustTemplates.ranch_management_step1_complete,
-  ranch_management_step2_complete: rustTemplates.ranch_management_step2_complete,
+export const codeTemplates: { [key: string]: string } = {
   ...rustTemplates
 };

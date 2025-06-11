@@ -1,4 +1,4 @@
-// client/src/data/lessons.ts - Definitive Content
+// client/src/data/lessons.ts - Definitive Content (COPY AND PASTE THIS ENTIRE BLOCK)
 export interface LessonData {
     id: number;
     title: string;
@@ -7,13 +7,13 @@ export interface LessonData {
     difficulty: 'beginner' | 'intermediate' | 'advanced';
     estimatedTime: number; // in minutes
     isPremium: boolean;
-    duration: string; // formatted duration string
-    reward: number; // reward amount
-    requiredLessons: number[] | null; // prerequisite lessons
     content: {
         steps: LessonStep[];
     };
     codeTemplate?: string; // Optional: for general lesson, specific templates in steps
+    duration: string;
+    reward: number;
+    requiredLessons: number[] | null;
 }
 
 export interface LessonStep {
@@ -65,7 +65,7 @@ export const lessons: LessonData[] = [
         estimatedTime: 45,
         isPremium: false,
         duration: "45 min",
-        reward: 150,
+        reward: 250,
         requiredLessons: [1],
         content: {
             steps: [
@@ -126,7 +126,7 @@ export const lessons: LessonData[] = [
         estimatedTime: 60,
         isPremium: false,
         duration: "60 min",
-        reward: 200,
+        reward: 400,
         requiredLessons: [2],
         content: {
             steps: [
@@ -152,7 +152,7 @@ export const lessons: LessonData[] = [
         estimatedTime: 50,
         isPremium: true,
         duration: "50 min",
-        reward: 250,
+        reward: 500,
         requiredLessons: [3],
         content: {
             steps: [
@@ -169,7 +169,7 @@ export const lessons: LessonData[] = [
         estimatedTime: 75,
         isPremium: true,
         duration: "75 min",
-        reward: 300,
+        reward: 750,
         requiredLessons: [4],
         content: {
             steps: [
@@ -186,7 +186,7 @@ export const lessons: LessonData[] = [
         estimatedTime: 90,
         isPremium: true,
         duration: "90 min",
-        reward: 350,
+        reward: 900,
         requiredLessons: [5],
         content: {
             steps: [
@@ -203,7 +203,7 @@ export const lessons: LessonData[] = [
         estimatedTime: 120,
         isPremium: true,
         duration: "120 min",
-        reward: 400,
+        reward: 1200,
         requiredLessons: [6],
         content: {
             steps: [

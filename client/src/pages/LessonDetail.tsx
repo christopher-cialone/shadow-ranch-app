@@ -64,7 +64,7 @@ export default function LessonDetail() {
       if (step?.initialCodeTemplateKey) {
         const template = codeTemplates[step.initialCodeTemplateKey];
         if (template) {
-          setCode(template[language as keyof typeof template] || template.rust);
+          setCode(template);
         }
       }
     }
