@@ -77,8 +77,18 @@ export default function LessonDetail() {
 
   const progressPercentage = lesson ? (currentStep / lesson.steps.length) * 100 : 0;
   const currentStepCompleted = isStepCompleted(lessonId, currentStep);
+  
+  // Calculate navigation logic
+  const totalStepsInCurrentLesson = lesson?.steps.length || 0;
+  const isLastStepOfCurrentLesson = currentStep === totalStepsInCurrentLesson;
+  const canGoToNextStep = currentStep < totalStepsInCurrentLesson && currentStepCompleted;
+  const canGoToNextLesson = isLastStepOfCurrentLesson && currentStepCompleted;
+  
+  const hasPrevious = currentStep > 1;
+  const hasNext = canGoToNextStep || canGoToNextLesson;
+  const nextButtonText = canGoToNextStep ? "Next Step" : (canGoToNextLesson ? "Next Lesson" : "Next");
   const canGoNext = currentStepCompleted || validationResults?.success || false;
-  const isCompleted = currentStep >= (lesson?.steps.length || 0) && currentStepCompleted;
+  const isCompleted = isLastStepOfCurrentLesson && currentStepCompleted;
 
   const handleCodeRun = (data: any) => {
     if (data.success) {
@@ -129,19 +139,23 @@ export default function LessonDetail() {
   };
 
   const handleNext = () => {
-    if (lesson && currentStep < lesson.steps.length) {
+    if (canGoToNextStep) {
+      // Move to next step within current lesson
       const nextStep = currentStep + 1;
       setCurrentStep(nextStep);
       setValidationResults(null);
       setHintVisible(false);
       
       // Load starter code for next step
-      const stepData = lesson.steps.find(s => s.id === nextStep);
+      const stepData = lesson?.steps.find(s => s.id === nextStep);
       if (stepData?.starterCode) {
         setCode(stepData.starterCode);
       } else {
         setCode("");
       }
+    } else if (canGoToNextLesson) {
+      // Navigate to next lesson
+      window.location.href = `/lessons/${lessonId + 1}`;
     }
   };
 
@@ -205,6 +219,9 @@ export default function LessonDetail() {
       onNext={handleNext}
       onComplete={handleComplete}
       canGoNext={canGoNext}
+      hasPrevious={hasPrevious}
+      hasNext={hasNext}
+      nextButtonText={nextButtonText}
       isCompleted={isCompleted}
     >
       <div className="grid grid-cols-1 xl:grid-cols-5 gap-8 h-[calc(100vh-300px)]">

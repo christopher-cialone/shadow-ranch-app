@@ -15,6 +15,9 @@ interface LessonLayoutProps {
   onNext?: () => void;
   onComplete?: () => void;
   canGoNext?: boolean;
+  hasPrevious?: boolean;
+  hasNext?: boolean;
+  nextButtonText?: string;
   isCompleted?: boolean;
   children: ReactNode;
 }
@@ -28,6 +31,9 @@ export function LessonLayout({
   onNext,
   onComplete,
   canGoNext = false,
+  hasPrevious = false,
+  hasNext = false,
+  nextButtonText = "Next",
   isCompleted = false,
   children
 }: LessonLayoutProps) {
@@ -49,7 +55,7 @@ export function LessonLayout({
                   {title}
                 </h1>
                 <TechButton
-                  variant="ghost"
+                  variant="secondary"
                   size="sm"
                   onClick={handleExit}
                   className="text-gray-400 hover:text-white"
@@ -84,7 +90,7 @@ export function LessonLayout({
                 <TechButton
                   variant="secondary"
                   onClick={onPrevious}
-                  disabled={currentStep <= 1}
+                  disabled={!hasPrevious}
                   size="sm"
                 >
                   <span className="mr-2">←</span>
@@ -110,10 +116,10 @@ export function LessonLayout({
                     <TechButton
                       variant="primary"
                       onClick={onNext}
-                      disabled={!canGoNext || currentStep >= totalSteps}
+                      disabled={!hasNext}
                       size="sm"
                     >
-                      NEXT STEP
+                      {nextButtonText.toUpperCase()}
                       <span className="ml-2">→</span>
                     </TechButton>
                   )}
