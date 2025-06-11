@@ -171,9 +171,12 @@ export default function LessonDetail() {
       setHintVisible(false);
       
       // Load starter code for previous step
-      const stepData = lesson?.steps.find(s => s.id === prevStep);
-      if (stepData?.starterCode) {
-        setCode(stepData.starterCode);
+      const stepData = lesson?.steps.find((s: any) => s.id === prevStep);
+      if (stepData?.initialCodeTemplateKey) {
+        const template = codeTemplates[stepData.initialCodeTemplateKey];
+        if (template) {
+          setCode(template[language as keyof typeof template] || template.rust);
+        }
       }
     }
   };
@@ -190,16 +193,7 @@ export default function LessonDetail() {
     });
   };
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <i className="fas fa-spinner fa-spin text-4xl text-desert-400 mb-4" />
-          <p className="font-deputy text-xl text-gray-300">Loading lesson...</p>
-        </div>
-      </div>
-    );
-  }
+
 
   if (!lesson) {
     return (
