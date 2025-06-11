@@ -5,6 +5,7 @@ interface GameCanvasProps {
   networkPingActive?: boolean;
   sparkleActive?: boolean;
   coinFallActive?: boolean;
+  dataStreamActive?: boolean;
   transactionActive?: boolean;
   lastStoredMessage?: string | null;
 }
@@ -13,6 +14,7 @@ export function GameCanvas({
   networkPingActive,
   sparkleActive,
   coinFallActive,
+  dataStreamActive,
   transactionActive,
   lastStoredMessage
 }: GameCanvasProps) {
@@ -39,12 +41,41 @@ export function GameCanvas({
     }
   }, [sparkleActive]);
 
+  useEffect(() => {
+    if (dataStreamActive && canvasRef.current) {
+      // Create data stream effects for PDA success
+      for (let i = 0; i < 20; i++) {
+        const dataParticle = document.createElement('div');
+        dataParticle.className = 'data-stream-particle';
+        dataParticle.style.cssText = `
+          position: absolute;
+          width: 4px;
+          height: 4px;
+          background: #08ddb8;
+          border-radius: 50%;
+          left: ${40 + Math.sin(i * 0.3) * 20}%;
+          top: ${i * 4}%;
+          animation: dataStreamFlow 3.5s ease-out forwards;
+          animation-delay: ${i * 100}ms;
+          box-shadow: 0 0 8px #08ddb8;
+        `;
+        canvasRef.current.appendChild(dataParticle);
+        
+        setTimeout(() => {
+          if (dataParticle.parentNode) {
+            dataParticle.parentNode.removeChild(dataParticle);
+          }
+        }, 3500);
+      }
+    }
+  }, [dataStreamActive]);
+
   return (
     <div 
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none z-40"
       style={{ 
-        display: networkPingActive || sparkleActive || coinFallActive || transactionActive || lastStoredMessage ? 'block' : 'none' 
+        display: networkPingActive || sparkleActive || coinFallActive || dataStreamActive || transactionActive || lastStoredMessage ? 'block' : 'none' 
       }}
     >
       {/* Network ping effect */}

@@ -95,6 +95,11 @@ export default function LessonDetail() {
         ? "@assets/box-brb_1749632577631.png" 
         : nftRobotUrl;
       
+      // Trigger special data stream animation for PDA lesson
+      if (lessonId === 2 && currentStep === 3) {
+        triggerDataStreamAnimation();
+      }
+      
       triggerChallengeReward(
         rewardNftUrl,
         lessonId,
