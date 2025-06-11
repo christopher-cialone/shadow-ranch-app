@@ -8,6 +8,7 @@ import { LessonLayout } from "@/components/lessons/LessonLayout";
 import { MonacoEditor } from "@/components/editor/MonacoEditor";
 import { HintCharacter, type HintCharacterRef } from "@/components/lessons/HintCharacter";
 import { ChallengeReward } from "@/components/game/ChallengeReward";
+import { GameCanvas } from "@/components/game/GameCanvas";
 import { useLessonStore } from "@/hooks/use-lesson-store";
 import { useGameStore } from "@/hooks/use-enhanced-game-store";
 import { useToast } from "@/hooks/use-toast";
@@ -40,6 +41,7 @@ export default function LessonDetail() {
     triggerChallengeReward,
     showChallengeReward,
     currentRewardNftUrl,
+    dataStreamActive,
     earnRanchCoin,
     addExperience,
     ranchData,
@@ -90,6 +92,7 @@ export default function LessonDetail() {
     setValidationResults(data);
     if (data.success) {
       updateLessonAttempt(lessonId, currentStep);
+      completeStep(lessonId, currentStep); // Mark this step as completed
       
       // Trigger challenge reward animation for successful completion
       const rewardNftUrl = lessonId === 2 && currentStep === 3 
@@ -358,6 +361,11 @@ export default function LessonDetail() {
       <ChallengeReward
         isVisible={showChallengeReward}
         nftImageUrl={currentRewardNftUrl}
+      />
+
+      {/* Game Canvas for Visual Effects */}
+      <GameCanvas
+        dataStreamActive={dataStreamActive}
       />
     </LessonLayout>
   );
