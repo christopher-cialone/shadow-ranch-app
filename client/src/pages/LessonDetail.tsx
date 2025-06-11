@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import { useRoute } from "wouter";
-import { useQuery } from "@tanstack/react-query";
 import { TechCard } from "@/components/ui/TechCard";
 import { TechButton } from "@/components/ui/TechButton";
 import { NarrativeBox } from "@/components/lessons/NarrativeBox";
@@ -13,8 +12,9 @@ import { useLessonStore } from "@/hooks/use-lesson-store";
 import { useGameStore } from "@/hooks/use-enhanced-game-store";
 import { useToast } from "@/hooks/use-toast";
 import { formatRanchCoin } from "@/lib/utils";
+import { lessons, type LessonData } from "@/data/lessons";
+import { codeTemplates } from "@/data/code-templates";
 import nftRobotUrl from "@assets/brb-nft-ai-robot.png";
-import type { Lesson } from "@shared/schema";
 
 export default function LessonDetail() {
   const [, params] = useRoute("/lessons/:id");
@@ -28,10 +28,8 @@ export default function LessonDetail() {
   
   const hintCharacterRef = useRef<HintCharacterRef>(null);
 
-  const { data: lesson, isLoading } = useQuery<Lesson>({
-    queryKey: [`/api/lessons/${lessonId}`],
-    enabled: !!lessonId,
-  });
+  // Get lesson from client-side data
+  const lesson = lessons.find(l => l.id === lessonId);
 
   const { getLessonProgress, updateLessonAttempt, completeLesson, completeStep, isStepCompleted, setCurrentLesson } = useLessonStore();
   const { 
@@ -51,7 +49,7 @@ export default function LessonDetail() {
   const { toast } = useToast();
 
   const progress = getLessonProgress(lessonId);
-  const currentStepData = lesson?.steps.find(step => step.id === currentStep);
+  const currentStepData = lesson?.steps.find((step: any) => step.id === currentStep);
 
   useEffect(() => {
     if (lesson) {
@@ -61,13 +59,16 @@ export default function LessonDetail() {
         setCurrentStep(savedProgress.currentStep);
       }
       
-      // Set starter code if available
-      const step = lesson.steps.find(s => s.id === currentStep);
-      if (step?.starterCode) {
-        setCode(step.starterCode);
+      // Set starter code from templates if available
+      const step = lesson.steps.find((s: any) => s.id === currentStep);
+      if (step?.initialCodeTemplateKey) {
+        const template = codeTemplates[step.initialCodeTemplateKey];
+        if (template) {
+          setCode(template[language as keyof typeof template] || template.rust);
+        }
       }
     }
-  }, [lesson, lessonId, currentStep]);
+  }, [lesson, lessonId, currentStep, language]);
 
   // Preload the NFT reward image for instant display
   useEffect(() => {
@@ -147,9 +148,12 @@ export default function LessonDetail() {
       setHintVisible(false);
       
       // Load starter code for next step
-      const stepData = lesson?.steps.find(s => s.id === nextStep);
-      if (stepData?.starterCode) {
-        setCode(stepData.starterCode);
+      const stepData = lesson?.steps.find((s: any) => s.id === nextStep);
+      if (stepData?.initialCodeTemplateKey) {
+        const template = codeTemplates[stepData.initialCodeTemplateKey];
+        if (template) {
+          setCode(template[language as keyof typeof template] || template.rust);
+        }
       } else {
         setCode("");
       }
