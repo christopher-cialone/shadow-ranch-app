@@ -49,7 +49,7 @@ export default function LessonDetail() {
   const { toast } = useToast();
 
   const progress = getLessonProgress(lessonId);
-  const currentStepData = lesson?.steps.find((step: any) => step.id === currentStep);
+  const currentStepData = lesson?.content.steps.find((step: any) => step.id === currentStep);
 
   useEffect(() => {
     if (lesson) {
@@ -60,7 +60,7 @@ export default function LessonDetail() {
       }
       
       // Set starter code from templates if available
-      const step = lesson.steps.find((s: any) => s.id === currentStep);
+      const step = lesson.content.steps.find((s: any) => s.id === currentStep);
       if (step?.initialCodeTemplateKey) {
         const template = codeTemplates[step.initialCodeTemplateKey];
         if (template) {
@@ -76,11 +76,11 @@ export default function LessonDetail() {
     img.src = '/assets/images/brb-nft-ai-robot.png';
   }, []);
 
-  const progressPercentage = lesson ? (currentStep / lesson.steps.length) * 100 : 0;
+  const progressPercentage = lesson ? (currentStep / lesson.content.steps.length) * 100 : 0;
   const currentStepCompleted = isStepCompleted(lessonId, currentStep);
   
   // Calculate navigation logic
-  const totalStepsInCurrentLesson = lesson?.steps.length || 0;
+  const totalStepsInCurrentLesson = lesson?.content.steps.length || 0;
   const isLastStepOfCurrentLesson = currentStep === totalStepsInCurrentLesson;
   const canGoToNextStep = currentStep < totalStepsInCurrentLesson && currentStepCompleted;
   const canGoToNextLesson = isLastStepOfCurrentLesson && currentStepCompleted;
@@ -148,7 +148,7 @@ export default function LessonDetail() {
       setHintVisible(false);
       
       // Load starter code for next step
-      const stepData = lesson?.steps.find((s: any) => s.id === nextStep);
+      const stepData = lesson?.content.steps.find((s: any) => s.id === nextStep);
       if (stepData?.initialCodeTemplateKey) {
         const template = codeTemplates[stepData.initialCodeTemplateKey];
         if (template) {
@@ -171,7 +171,7 @@ export default function LessonDetail() {
       setHintVisible(false);
       
       // Load starter code for previous step
-      const stepData = lesson?.steps.find((s: any) => s.id === prevStep);
+      const stepData = lesson?.content.steps.find((s: any) => s.id === prevStep);
       if (stepData?.initialCodeTemplateKey) {
         const template = codeTemplates[stepData.initialCodeTemplateKey];
         if (template) {
