@@ -1,28 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { WesternButton } from "@/components/ui/WesternButton";
 import { WesternCard, WesternCardContent, WesternCardHeader, WesternCardTitle } from "@/components/ui/WesternCard";
 import { useLessonStore } from "@/hooks/use-lesson-store";
 import { formatRanchCoin, getRarityColor } from "@/lib/utils";
-import type { Lesson } from "@shared/schema";
+import { lessons, type LessonData } from "@/data/lessons";
 
 export default function Lessons() {
-  const { data: lessons, isLoading } = useQuery<Lesson[]>({
-    queryKey: ["/api/lessons"],
-  });
-
   const { getLessonProgress, isLessonUnlocked } = useLessonStore();
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <i className="fas fa-spinner fa-spin text-4xl text-desert-400 mb-4" />
-          <p className="font-deputy text-xl text-gray-300">Loading lessons...</p>
-        </div>
-      </div>
-    );
-  }
+
 
   return (
     <div className="py-20 bg-gradient-to-b from-gray-900 to-gray-800">
