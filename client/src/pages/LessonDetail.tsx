@@ -152,7 +152,7 @@ export default function LessonDetail() {
       if (stepData?.initialCodeTemplateKey) {
         const template = codeTemplates[stepData.initialCodeTemplateKey];
         if (template) {
-          setCode(template[language as keyof typeof template] || template.rust);
+          setCode(template);
         }
       } else {
         setCode("");
@@ -175,7 +175,7 @@ export default function LessonDetail() {
       if (stepData?.initialCodeTemplateKey) {
         const template = codeTemplates[stepData.initialCodeTemplateKey];
         if (template) {
-          setCode(template[language as keyof typeof template] || template.rust);
+          setCode(template);
         }
       }
     }
