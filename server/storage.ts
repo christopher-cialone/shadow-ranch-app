@@ -264,7 +264,7 @@ export class MemStorage implements IStorage {
       id,
       isActive: insertLesson.isActive ?? true,
       reward: insertLesson.reward ?? 100,
-      requiredLessons: insertLesson.requiredLessons || null
+      requiredLessons: insertLesson.requiredLessons ? [...insertLesson.requiredLessons] : null
     };
     this.lessons.set(id, lesson);
     return lesson;
@@ -365,7 +365,7 @@ export class MemStorage implements IStorage {
       id,
       isActive: insertLesson.isActive ?? true,
       reward: insertLesson.reward ?? 100,
-      requiredLessons: insertLesson.requiredLessons || null
+      requiredLessons: insertLesson.requiredLessons ? [...insertLesson.requiredLessons] : null
     };
     this.lessons.set(id, lesson);
     return lesson;
