@@ -211,7 +211,7 @@ export default function LessonDetail() {
     <LessonLayout
       title={lesson.title}
       currentStep={currentStep}
-      totalSteps={lesson.steps.length}
+      totalSteps={lesson.content.steps.length}
       progress={progressPercentage}
       onPrevious={handlePrevious}
       onNext={handleNext}

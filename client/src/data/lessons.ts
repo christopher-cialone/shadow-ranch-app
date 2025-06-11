@@ -7,6 +7,9 @@ export interface LessonData {
     difficulty: 'beginner' | 'intermediate' | 'advanced';
     estimatedTime: number; // in minutes
     isPremium: boolean;
+    duration: string; // formatted duration string
+    reward: number; // reward amount
+    requiredLessons: number[] | null; // prerequisite lessons
     content: {
         steps: LessonStep[];
     };
@@ -34,6 +37,9 @@ export const lessons: LessonData[] = [
         difficulty: 'beginner',
         estimatedTime: 30,
         isPremium: false,
+        duration: "30 min",
+        reward: 100,
+        requiredLessons: null,
         content: {
             steps: [
                 {
@@ -58,6 +64,9 @@ export const lessons: LessonData[] = [
         difficulty: 'beginner',
         estimatedTime: 45,
         isPremium: false,
+        duration: "45 min",
+        reward: 150,
+        requiredLessons: [1],
         content: {
             steps: [
                 {
@@ -116,6 +125,9 @@ export const lessons: LessonData[] = [
         difficulty: 'intermediate',
         estimatedTime: 60,
         isPremium: false,
+        duration: "60 min",
+        reward: 200,
+        requiredLessons: [2],
         content: {
             steps: [
                 {
@@ -139,6 +151,9 @@ export const lessons: LessonData[] = [
         difficulty: 'intermediate',
         estimatedTime: 50,
         isPremium: true,
+        duration: "50 min",
+        reward: 250,
+        requiredLessons: [3],
         content: {
             steps: [
                 { id: 1, title: "Coming Soon...", challenge: "This lesson is under development.", expectedCodePattern: {}, successMessage: "", failureMessage: "", initialCodeTemplateKey: 'default' }
@@ -153,6 +168,9 @@ export const lessons: LessonData[] = [
         difficulty: 'advanced',
         estimatedTime: 75,
         isPremium: true,
+        duration: "75 min",
+        reward: 300,
+        requiredLessons: [4],
         content: {
             steps: [
                 { id: 1, title: "Coming Soon...", challenge: "This lesson is under development.", expectedCodePattern: {}, successMessage: "", failureMessage: "", initialCodeTemplateKey: 'default' }
@@ -167,6 +185,9 @@ export const lessons: LessonData[] = [
         difficulty: 'advanced',
         estimatedTime: 90,
         isPremium: true,
+        duration: "90 min",
+        reward: 350,
+        requiredLessons: [5],
         content: {
             steps: [
                 { id: 1, title: "Coming Soon...", challenge: "This lesson is under development.", expectedCodePattern: {}, successMessage: "", failureMessage: "", initialCodeTemplateKey: 'default' }
@@ -181,6 +202,9 @@ export const lessons: LessonData[] = [
         difficulty: 'advanced',
         estimatedTime: 120,
         isPremium: true,
+        duration: "120 min",
+        reward: 400,
+        requiredLessons: [6],
         content: {
             steps: [
                 { id: 1, title: "Coming Soon...", challenge: "This lesson is under development.", expectedCodePattern: {}, successMessage: "", failureMessage: "", initialCodeTemplateKey: 'default' }

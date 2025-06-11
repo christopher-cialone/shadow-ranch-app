@@ -23,9 +23,9 @@ export default function Lessons() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {lessons?.map((lesson) => {
             const progress = getLessonProgress(lesson.id);
-            const isUnlocked = isLessonUnlocked(lesson.id, lesson.requiredLessons);
+            const isUnlocked = isLessonUnlocked(lesson.id, lesson.requiredLessons || []);
             const progressPercentage = progress?.isCompleted ? 100 : 
-              progress?.currentStep ? (progress.currentStep / lesson.steps.length) * 100 : 0;
+              progress?.currentStep ? (progress.currentStep / lesson.content.steps.length) * 100 : 0;
 
             return (
               <WesternCard 
