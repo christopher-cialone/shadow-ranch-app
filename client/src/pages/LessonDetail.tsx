@@ -32,7 +32,7 @@ export default function LessonDetail() {
     enabled: !!lessonId,
   });
 
-  const { getLessonProgress, updateLessonAttempt, completeLesson, setCurrentLesson } = useLessonStore();
+  const { getLessonProgress, updateLessonAttempt, completeLesson, completeStep, isStepCompleted, setCurrentLesson } = useLessonStore();
   const { 
     triggerSparkleAnimation, 
     triggerCoinFall, 
@@ -74,8 +74,9 @@ export default function LessonDetail() {
   }, []);
 
   const progressPercentage = lesson ? (currentStep / lesson.steps.length) * 100 : 0;
-  const canGoNext = validationResults?.success || false;
-  const isCompleted = currentStep >= (lesson?.steps.length || 0) && canGoNext;
+  const currentStepCompleted = isStepCompleted(lessonId, currentStep);
+  const canGoNext = currentStepCompleted || validationResults?.success || false;
+  const isCompleted = currentStep >= (lesson?.steps.length || 0) && currentStepCompleted;
 
   const handleCodeRun = (data: any) => {
     if (data.success) {

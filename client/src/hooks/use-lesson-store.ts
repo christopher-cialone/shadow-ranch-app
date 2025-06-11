@@ -4,6 +4,7 @@ import { persist } from 'zustand/middleware';
 interface LessonProgress {
   lessonId: number;
   currentStep: number;
+  completedSteps: number[];
   isCompleted: boolean;
   attempts: number;
   lastAttemptAt: Date;
@@ -18,6 +19,8 @@ interface LessonStore {
   getLessonProgress: (lessonId: number) => LessonProgress | undefined;
   completeLesson: (lessonId: number) => void;
   updateLessonAttempt: (lessonId: number, step: number) => void;
+  completeStep: (lessonId: number, step: number) => void;
+  isStepCompleted: (lessonId: number, step: number) => boolean;
   getOverallProgress: () => number;
   isLessonUnlocked: (lessonId: number, requiredLessons: number[]) => boolean;
   getCompletedLessonsCount: () => number;
@@ -46,6 +49,7 @@ export const useLessonStore = create<LessonStore>()(
                 ...existing,
                 lessonId,
                 currentStep: existing?.currentStep || 1,
+                completedSteps: existing?.completedSteps || [],
                 isCompleted: true,
                 attempts: existing?.attempts || 1,
                 lastAttemptAt: new Date(),
@@ -67,6 +71,7 @@ export const useLessonStore = create<LessonStore>()(
                 ...existing,
                 lessonId,
                 currentStep: step,
+                completedSteps: existing?.completedSteps || [],
                 isCompleted: existing?.isCompleted || false,
                 attempts: (existing?.attempts || 0) + 1,
                 lastAttemptAt: new Date(),
@@ -75,6 +80,37 @@ export const useLessonStore = create<LessonStore>()(
             }
           };
         });
+      },
+
+      completeStep: (lessonId: number, step: number) => {
+        set((state) => {
+          const existing = state.progress[lessonId];
+          const completedSteps = existing?.completedSteps || [];
+          
+          if (!completedSteps.includes(step)) {
+            return {
+              progress: {
+                ...state.progress,
+                [lessonId]: {
+                  ...existing,
+                  lessonId,
+                  currentStep: step,
+                  completedSteps: [...completedSteps, step],
+                  isCompleted: existing?.isCompleted || false,
+                  attempts: existing?.attempts || 1,
+                  lastAttemptAt: new Date(),
+                  completedAt: existing?.completedAt
+                }
+              }
+            };
+          }
+          return state;
+        });
+      },
+
+      isStepCompleted: (lessonId: number, step: number) => {
+        const progress = get().progress[lessonId];
+        return progress?.completedSteps?.includes(step) || false;
       },
 
       getOverallProgress: () => {
