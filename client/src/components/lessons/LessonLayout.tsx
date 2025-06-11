@@ -74,12 +74,12 @@ export function LessonLayout({
         </div>
       </div>
 
-      {/* Main Content - Scrollable */}
-      <div className="flex-grow overflow-y-auto">
+      {/* Main Content - Scrollable with proper padding */}
+      <main className="flex-grow overflow-y-auto pt-[120px] pb-[80px]">
         <div className="container mx-auto px-4 py-6">
           {children}
         </div>
-      </div>
+      </main>
 
       {/* Bottom Navigation - Sticky at bottom */}
       <div className="sticky bottom-0 z-30 bg-tech-purple-900/80 backdrop-blur-sm border-t border-tech-cyan-600/20">
