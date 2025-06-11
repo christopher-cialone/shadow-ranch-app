@@ -106,7 +106,7 @@ export default function LessonDetail() {
       
       // Trigger challenge reward animation for successful completion
       const rewardNftUrl = lessonId === 2 && currentStep === 3 
-        ? "@assets/box-brb_1749632577631.png" 
+        ? "/assets/images/purple-box-nft.png" 
         : nftRobotUrl;
       
       // Trigger special data stream animation for PDA lesson

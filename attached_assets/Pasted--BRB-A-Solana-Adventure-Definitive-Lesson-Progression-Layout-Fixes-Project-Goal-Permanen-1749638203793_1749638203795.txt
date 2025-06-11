@@ -1,0 +1,600 @@
+# BRB: A Solana Adventure - Definitive Lesson Progression & Layout Fixes
+
+**Project Goal:** Permanently resolve the lesson progression loop and layout overlaps. This involves correctly defining all steps for Lesson 2, adding a placeholder for Lesson 3, ensuring precise frontend-backend synchronization for step progression, and finalizing all UI layout and console display enhancements.
+
+**Current Critical Issue:** Users are stuck after completing Lesson 2, Step 1, because `client/src/data/lessons.ts` currently defines Lesson 2 as having only one step. This leads to premature lesson completion and navigation back to the lesson list.
+
+---
+
+**Instructions for Replit Agent (Comprehensive Fixes):**
+
+**Phase 1: Fully Define Lesson 2 Steps & Ensure Progression Data Correctness**
+
+* **Objective:** Ensure Lesson 2 has all its intended steps defined, allowing `LessonDetailPage` to correctly track `totalStepsInCurrentLesson` and advance users step-by-step.
+
+1.  **Complete Lesson 2 Steps in `client/src/data/lessons.ts`:**
+    * **File:** `client/src/data/lessons.ts`
+    * **Action:** Add the detailed `LessonStep` objects for Lesson 2, Step 2, and Lesson 2, Step 3, ensuring their `id`, `title`, `challenge`, `expectedCodePattern`, `successMessage`, `failureMessage`, `initialCodeTemplateKey`, `visualEffectTrigger`, and `hintMessage` are correct.
+    * **Implementation:**
+        ```typescript
+        // client/src/data/lessons.ts
+        export interface LessonStep {
+            id: number;
+            title: string;
+            challenge: string;
+            expectedCodePattern: { rust?: string; python?: string; }; // Regex string
+            successMessage: string;
+            failureMessage: string;
+            initialCodeTemplateKey: string; // Key from code-templates.ts
+            visualEffectTrigger?: 'blueprint' | 'sparkle' | 'coinFall' | 'messageBoard' | 'transaction' | 'dataStream'; // New prop for visual feedback
+            hintMessage?: string; // New hint message
+        }
+
+        export const lessons: LessonData[] = [
+            {
+                id: 1, // Lesson 1: Solana Basics & Wallet Setup
+                title: "Solana Basics & Wallet Setup",
+                description: "Learn the fundamentals of Solana and set up your Web3 wallet",
+                chapter: 1,
+                difficulty: 'beginner',
+                estimatedTime: 30,
+                isPremium: false,
+                content: {
+                    steps: [
+                        {
+                            id: 1,
+                            title: "Ping the Blockchain",
+                            challenge: "Write `get_network_status()` to check Devnet health.",
+                            expectedCodePattern: { rust: 'get_network_status\\(\\)', python: 'get_network_status\\(\\)' },
+                            successMessage: "Network Status: Connected! Ping: {ping}ms | Current Slot: {slot}",
+                            failureMessage: "Command not recognized. Ensure you typed `get_network_status()` exactly.",
+                            initialCodeTemplateKey: 'default',
+                            visualEffectTrigger: 'networkPing',
+                            hintMessage: "Remember, the network status command is a simple function call. Look for a function that doesn't require any arguments!"
+                        },
+                    ]
+                },
+            },
+            {
+                id: 2, // Lesson 2: Creating Your Ranch Account
+                title: "Creating Your Ranch Account",
+                description: "Build your first Solana program to manage ranch data",
+                chapter: 2,
+                difficulty: 'beginner',
+                estimatedTime: 45,
+                isPremium: false,
+                content: {
+                    steps: [
+                        {
+                            id: 1,
+                            title: "Define Ranch Owner Field",
+                            challenge: "Your ranch needs an owner! In the `Ranch` struct (Rust) or `Ranch` class (Python), add a `pubkey` field named `owner`. This will identify who controls the ranch. Don't forget the comma for Rust!",
+                            expectedCodePattern: { rust: 'pub\\s+owner:\\s*Pubkey,', python: 'owner:\\s*Pubkey' },
+                            successMessage: "Excellent! The `owner` field has been added. Your ranch now knows who its rightful owner is!",
+                            failureMessage: "Not quite. Make sure you've added 'pub owner: Pubkey,' (Rust) or 'owner: Pubkey' (Python) exactly inside the Ranch definition. Check for typos and correct capitalization!",
+                            initialCodeTemplateKey: 'ranch_management_initial',
+                            visualEffectTrigger: 'blueprint',
+                            hintMessage: "Think about Rust structs or Python classes. You need to add a line that declares a public key variable named 'owner' within your 'Ranch' data structure."
+                        },
+                        {
+                            id: 2,
+                            title: "Initialize Owner in `initialize_ranch`",
+                            challenge: "Now, inside the `initialize_ranch` function, assign the `owner` field of your `ranch` account to the `ctx.accounts.owner.key()` (Rust) or `owner.key()` (Python). Remember `ranch.owner = ctx.accounts.owner.key();` or `ranch.owner = owner.key()`.",
+                            expectedCodePattern: { rust: 'ranch\\.owner\\s*=\\s*ctx\\.accounts\\.owner\\.key\\(\\);', python: 'ranch\\.owner\\s*=\\s*owner\\.key\\(\\)' },
+                            successMessage: "Owner successfully initialized! Your ranch deed is now registered to you!",
+                            failureMessage: "The owner assignment is incorrect. Double-check the syntax for assigning the owner's key to the ranch account. Hint: Look at the `ctx.accounts.owner` context in Rust or `owner` parameter in Python.",
+                            initialCodeTemplateKey: 'ranch_management_step1_complete',
+                            visualEffectTrigger: 'sparkle',
+                            hintMessage: "You need to set the 'owner' field of your 'ranch' variable to the public key of the user who's calling this program. In Rust, you'll use `ctx.accounts.owner.key()`; in Python, `owner.key()`."
+                        },
+                        {
+                            id: 3,
+                            title: "Programmatic Ownership: Securing Your Ranch with a Program Derived Address (PDA)",
+                            challenge: `Welcome, digital homesteader! In this decentralized frontier, we value true ownership and privacy. Unlike the old world where deeds were on paper in a dusty office, here, your ranch deed can be controlled by pure code! This is the essence of **cypher-punk** – using cryptography and decentralized tech to protect privacy and freedom.
+                            Today, we're diving into **Program Derived Addresses (PDAs)**. Imagine your ranch deed isn't owned by a specific wallet with a private key, but by a special, unhackable 'strongbox' that *only your ranch program can open*. This strongbox address is *derived* from your program's ID and some unique 'seeds' (like a secret password) and a 'bump' (a special number to make sure it's valid). This makes your ranch truly **decentralized** and secure, giving control to the smart contract itself, not a person's key.
+
+                            **Your Task:**
+                            1.  In the \`InitializeRanch\` struct (Rust) or function definition (Python), locate the \`#[account(...)]\` attribute for your \`ranch\` account.
+                            2.  **Add a \`seeds\` argument** to this attribute. For the ranch, the seeds will be the byte literal \`b"ranch"\` and the owner's public key (\`owner.key().as_ref()\` in Rust, \`owner\` in Python).
+                            3.  **Add a \`bump\` argument** to this attribute. This is a special nonce that ensures the PDA is valid.`,
+                            expectedCodePattern: {
+                                rust: 'seeds\\s*=\\s*\\[b"ranch",\\s*owner\\.key\\(\\)\\.as_ref\\(\\)\\]\\s*,\\s*bump',
+                                python: 'seeds=\\[\'ranch\',\\s*owner\\]\\s*,\\s*bump'
+                            },
+                            successMessage: "Fantastic! Your ranch account is now a true Program Derived Address (PDA)! Its deed is safely locked away, controlled by your program, not a private key. You've embraced programmatic ownership!",
+                            failureMessage: "Not quite. Double-check your PDA syntax. Did you add `seeds` and `bump` correctly within the `#[account(...)]` attribute (Rust) or `init` arguments (Python)? Remember the exact values for the seeds (`b\"ranch\"` and the owner's key) and that `bump` is also required!",
+                            initialCodeTemplateKey: 'ranch_management_step2_complete', // This template should be the code *after* L2S2 is done
+                            visualEffectTrigger: 'dataStream', // New visual effect for PDA success
+                            hintMessage: `Okay, digital prospector! Think of PDAs like a magic lockbox only your program can open. You need to tell Solana:
+                            1.  What 'words' (seeds) make this lockbox unique (e.g., the word "ranch" and the owner's special key).
+                            2.  A special number (the 'bump') that makes sure the lockbox address is perfect and unhackable.
+                            Look at the \`#[account(...)]\` line for the \`ranch\` in Rust, or the \`.init()\` call in Python, and add the \`seeds\` and \`bump\` keywords!`
+                        },
+                    ]
+                },
+            },
+            {
+                id: 3, // Placeholder for Lesson 3
+                title: "Introduction to NFTs: Minting Your First Digital Asset",
+                description: "Learn how to create and mint Non-Fungible Tokens (NFTs) on Solana.",
+                chapter: 3,
+                difficulty: 'intermediate',
+                estimatedTime: 60,
+                isPremium: false,
+                content: {
+                    steps: [
+                        {
+                            id: 1,
+                            title: "Coming Soon...",
+                            challenge: "This lesson is under development. Check back soon for exciting challenges!",
+                            expectedCodePattern: {},
+                            successMessage: "",
+                            failureMessage: "",
+                            initialCodeTemplateKey: 'default',
+                            hintMessage: "More challenges are on the way!"
+                        }
+                    ]
+                }
+            },
+            {
+                id: 4,
+                title: "RanchCoin Token Creation",
+                description: "Deploy your own SPL token for in-game economy",
+                chapter: 4,
+                difficulty: 'intermediate',
+                estimatedTime: 50,
+                isPremium: true,
+                content: {
+                    steps: [
+                        { id: 1, title: "Coming Soon...", challenge: "This lesson is under development.", expectedCodePattern: {}, successMessage: "", failureMessage: "", initialCodeTemplateKey: 'default' }
+                    ]
+                }
+            },
+            {
+                id: 5,
+                title: "Saloon Dueling System",
+                description: "Program interactive duels and betting mechanics",
+                chapter: 5,
+                difficulty: 'advanced',
+                estimatedTime: 75,
+                isPremium: true,
+                content: {
+                    steps: [
+                        { id: 1, title: "Coming Soon...", challenge: "This lesson is under development.", expectedCodePattern: {}, successMessage: "", failureMessage: "", initialCodeTemplateKey: 'default' }
+                    ]
+                }
+            },
+            {
+                id: 6,
+                title: "Security & Ranch Defense",
+                description: "Implement security measures against shadow beasts",
+                chapter: 6,
+                difficulty: 'advanced',
+                estimatedTime: 90,
+                isPremium: true,
+                content: {
+                    steps: [
+                        { id: 1, title: "Coming Soon...", challenge: "This lesson is under development.", expectedCodePattern: {}, successMessage: "", failureMessage: "", initialCodeTemplateKey: 'default' }
+                    ]
+                }
+            },
+            {
+                id: 7,
+                title: "Ether Range Expeditions",
+                description: "Master cross-program invocations and external integrations",
+                chapter: 7,
+                difficulty: 'advanced',
+                estimatedTime: 120,
+                isPremium: true,
+                content: {
+                    steps: [
+                        { id: 1, title: "Coming Soon...", challenge: "This lesson is under development.", expectedCodePattern: {}, successMessage: "", failureMessage: "", initialCodeTemplateKey: 'default' }
+                    ]
+                }
+            }
+        ];
+        ```
+
+2.  **Update Code Templates in `client/src/data/code-templates.ts`:**
+    * **File:** `client/src/data/code-templates.ts`
+    * **Action:** Ensure the `ranch_management_step2_complete` template accurately reflects the code *after* Lesson 2, Step 2 is completed, which will serve as the *starting point* for Lesson 2, Step 3.
+    * **Implementation:**
+        ```typescript
+        // In client/src/data/code-templates.ts
+        export const rustTemplates = {
+          default: `use anchor_lang::prelude::*;
+
+declare_id!("YourProgramID");
+
+#[program]
+pub mod my_program {
+    use super::*;
+
+    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
+        msg!("Program initialized!");
+        Ok(())
+    }
+}
+
+#[derive(Accounts)]
+pub struct Initialize<'info> {
+    #[account(mut)]
+    pub payer: Signer<'info>,
+    pub system_program: Program<'info, System>,
+}
+`, // Ensure this is the actual default
+          ranch_management_initial: `use anchor_lang::prelude::*;
+
+declare_id!("RanchManager111111111111111111111111111111");
+
+#[program]
+pub mod ranch_manager {
+    use super::*;
+
+    pub fn initialize_ranch(
+        ctx: Context<InitializeRanch>,
+        ranch_name: String,
+    ) -> Result<()> {
+        let ranch = &mut ctx.accounts.ranch;
+        // TODO: Assign owner field here in a later step
+        ranch.name = ranch_name;
+        ranch.level = 1;
+        ranch.experience = 0;
+        ranch.ranch_coin_balance = 500;
+        ranch.building_count = 0;
+        ranch.character_count = 0;
+        ranch.created_at = Clock::get()?.unix_timestamp;
+
+        msg!("Ranch '{}' initialized for owner {}", ranch.name, ranch.owner);
+        Ok(())
+    }
+}
+
+#[derive(Accounts)]
+#[instruction(ranch_name: String)]
+pub struct InitializeRanch<'info> {
+    #[account(
+        init,
+        payer = owner,
+        space = 8 + Ranch::INIT_SPACE,
+        // USER ADDS SEEDS AND BUMP HERE IN L2S3
+        // seeds = [b"ranch", owner.key().as_ref()],
+        // bump
+    )]
+    pub ranch: Account<'info, Ranch>,
+
+    #[account(mut)]
+    pub owner: Signer<'info>,
+    pub system_program: Program<'info, System>,
+}
+
+#[account]
+pub struct Ranch {
+    // USER ADDS PUB OWNER: PUBKEY, HERE IN L2S1
+    pub ranch_coin_balance: u64, // 8
+    pub building_count: u8,     // 1
+    pub character_count: u8,    // 1
+    pub created_at: i64,        // 8
+    pub name: String,           // 4 + 32
+    pub level: u8,              // 1
+    pub experience: u64,        // 8
+}
+
+impl Ranch {
+    const INIT_SPACE: usize = 8 + 1 + 1 + 8 + 4 + 32 + 1 + 8; // Adjust space as fields are added
+}
+
+#[error_code]
+pub enum ErrorCode {
+    #[msg("Unauthorized access to ranch")]
+    UnauthorizedAccess,
+}
+`,
+          ranch_management_step1_complete: `use anchor_lang::prelude::*;
+
+declare_id!("RanchManager111111111111111111111111111111");
+
+#[program]
+pub mod ranch_manager {
+    use super::*;
+
+    pub fn initialize_ranch(
+        ctx: Context<InitializeRanch>,
+        ranch_name: String,
+    ) -> Result<()> {
+        let ranch = &mut ctx.accounts.ranch;
+        ranch.owner = ctx.accounts.owner.key(); // This line is added in L2S2
+        ranch.name = ranch_name;
+        ranch.level = 1;
+        ranch.experience = 0;
+        ranch.ranch_coin_balance = 500;
+        ranch.building_count = 0;
+        ranch.character_count = 0;
+        ranch.created_at = Clock::get()?.unix_timestamp;
+
+        msg!("Ranch '{}' initialized for owner {}", ranch.name, ranch.owner);
+        Ok(())
+    }
+}
+
+#[derive(Accounts)]
+#[instruction(ranch_name: String)]
+pub struct InitializeRanch<'info> {
+    #[account(
+        init,
+        payer = owner,
+        space = 8 + 32 + 4 + 32 + 1 + 8 + 8 + 1 + 1 + 8, // Adjusted space for 'owner: Pubkey'
+        // USER ADDS SEEDS AND BUMP HERE IN L2S3
+        // seeds = [b"ranch", owner.key().as_ref()],
+        // bump
+    )]
+    pub ranch: Account<'info, Ranch>,
+
+    #[account(mut)]
+    pub owner: Signer<'info>,
+    pub system_program: Program<'info, System>,
+}
+
+#[account]
+pub struct Ranch {
+    pub owner: Pubkey, // This line is added in L2S1
+    pub ranch_coin_balance: u64,
+    pub building_count: u8,
+    pub character_count: u8,
+    pub created_at: i64,
+    pub name: String,
+    pub level: u8,
+    pub experience: u64,
+}
+
+impl Ranch {
+    const INIT_SPACE: usize = 32 + 4 + 32 + 1 + 8 + 8 + 1 + 1 + 8; // Updated for Pubkey (32 bytes)
+}
+
+#[error_code]
+pub enum ErrorCode {
+    #[msg("Unauthorized access to ranch")]
+    UnauthorizedAccess,
+}
+`,
+          // ... other rustTemplates ...
+        };
+
+        export const pythonTemplates = {
+          default: `import seahorse.prelude.*
+
+declare_id('YourProgramID')
+
+@instruction
+def initialize(payer: Signer):
+    """Initialize a new program"""
+    print(f"Program initialized by {payer.key()}")
+`, // Ensure this is the actual default
+          ranch_management_initial: `import seahorse.prelude.*
+
+declare_id('RanchManager111111111111111111111111111111')
+
+class Ranch(Account):
+    # USER ADDS OWNER: PUBKEY HERE IN L2S1
+    ranch_coin_balance: u64
+    building_count: u8
+    character_count: u8
+    created_at: i64
+    name: str
+    level: u8
+    experience: u64
+
+@instruction
+def initialize_ranch(
+    ranch: Empty[Ranch],
+    owner: Signer,
+    ranch_name: str
+):
+    """Initialize a new ranch"""
+    ranch = ranch.init(
+        payer=owner,
+        space=8 + 32 + 32 + 1 + 8 + 8 + 1 + 1 + 8, # Adjust space
+        # USER ADDS SEEDS AND BUMP HERE IN L2S3
+        # seeds=['ranch', owner],
+        # bump
+    )
+
+    # TODO: Assign owner field here in a later step
+    ranch.name = ranch_name
+    ranch.level = 1
+    ranch.experience = 0
+    ranch.ranch_coin_balance = 500
+    ranch.building_count = 0
+    ranch.character_count = 0
+    ranch.created_at = Clock.unix_timestamp()
+
+    print(f"Ranch '{ranch_name}' initialized for owner {owner.key()}")
+`,
+          ranch_management_step1_complete: `import seahorse.prelude.*
+
+declare_id('RanchManager111111111111111111111111111111')
+
+class Ranch(Account):
+    owner: Pubkey # This line is added in L2S1
+    ranch_coin_balance: u64
+    building_count: u8
+    character_count: u8
+    created_at: i64
+    name: str
+    level: u8
+    experience: u64
+
+@instruction
+def initialize_ranch(
+    ranch: Empty[Ranch],
+    owner: Signer,
+    ranch_name: str
+):
+    """Initialize a new ranch"""
+    ranch = ranch.init(
+        payer=owner,
+        space=8 + 32 + 32 + 1 + 8 + 8 + 1 + 1 + 8, # Adjusted space
+        # USER ADDS SEEDS AND BUMP HERE IN L2S3
+        # seeds=['ranch', owner],
+        # bump
+    )
+
+    ranch.owner = owner.key() # This line is added in L2S2
+    ranch.name = ranch_name
+    ranch.level = 1
+    ranch.experience = 0
+    ranch.ranch_coin_balance = 500
+    ranch.building_count = 0
+    ranch.character_count = 0
+    ranch.created_at = Clock.unix_timestamp()
+
+    print(f"Ranch '{ranch_name}' initialized for owner {owner.key()}")
+`,
+          // ... other pythonTemplates ...
+        };
+        ```
+
+3.  **Update `server/routes.ts` for Lesson 2, Step 3 Verification:**
+    * **File:** `server/routes.ts`
+    * **Action:** Ensure the verification logic for Lesson 2, Step 3 is correctly in place and matches the expected patterns.
+    * **Implementation:** (This code block was already provided in `brb_lesson_progression_final_fix` and should be ensured to be present in `server/routes.ts`).
+
+**Phase 2: Finalize Layout Overlap & Positioning Fixes**
+
+* **Objective:** Ensure all UI elements are correctly spaced and positioned, preventing overlaps.
+
+1.  **Refine `LessonLayout.tsx` Header & Main Content Flow (CRITICAL FIX):**
+    * **File:** `client/src/components/lessons/LessonLayout.tsx`
+    * **Action:** Ensure the fixed header pushes content down correctly and the layout is a proper flex column.
+    * **Implementation:**
+        * On the outermost `div` of `LessonLayout` (which currently has `min-h-screen bg-gradient-to-br ...`), **ensure** it has the Tailwind classes `flex flex-col`.
+        * The `div` containing the `Progress Header` (`border-b border-border/20 ... sticky top-0 z-40`) **must** be changed from `sticky top-0 z-40` to `fixed top-0 left-0 right-0 z-40 w-full`. This will make it consistently fixed at the top and prevent content from scrolling under it.
+        * Determine the actual height of this fixed header. Inspect the element in the browser's developer tools. Let's assume its height is `120px` (including padding/margins).
+        * Apply `padding-top` to the `<main>` element to push its content below the fixed header:
+            ```html
+            <main className="flex-grow pt-[120px] pb-[80px]"> {/* Add padding-bottom for fixed bottom nav */}
+              {children}
+            </main>
+            ```
+            * *Note:* The `pb-[80px]` is for the fixed bottom navigation bar we're about to add.
+
+2.  **Relocate Navigation Buttons to Bottom in `LessonLayout.tsx` (CRITICAL FIX):**
+    * **File:** `client/src/components/lessons/LessonLayout.tsx`
+    * **Action:** Move the "Previous" and "Next" buttons from the top header to a new fixed navigation bar at the bottom of the lesson content.
+    * **Implementation:**
+        * **Remove** the `div` containing the "Previous" and "Next" buttons from the `Progress Header` section at the top.
+        * Create a **new `div`** at the very bottom of the `LessonLayout.tsx` component, just before its closing `</div>` tag. This `div` will serve as the bottom navigation bar.
+        * Give this new `div` the following classes:
+            ```html
+            {/* NEW: Fixed Bottom Navigation Bar */}
+            <div className="fixed bottom-0 left-0 right-0 z-40 w-full
+                            flex items-center justify-between px-4 py-4
+                            bg-background/80 backdrop-blur-sm
+                            border-t border-border/20">
+              {/* Previous Button */}
+              <Button
+                onClick={onPrevious}
+                disabled={!hasPrevious}
+                variant="outline"
+                size="sm"
+                className="text-xs"
+              >
+                <ChevronLeft className="w-4 h-4 mr-1" />
+                Previous
+              </Button>
+              {/* Next Button */}
+              <Button
+                onClick={onNext}
+                disabled={nextButtonDisabled} {/* Use the disabled state calculated in LDP */}
+                variant="default"
+                size="sm"
+                className="tech-button tech-button-primary text-xs"
+              >
+                {nextButtonText || 'Next'} {/* Use the new prop */}
+                <ChevronRight className="w-4 h-4 ml-1" />
+              </Button>
+            </div>
+            ```
+        * Ensure `TechButton` and `Button` imports are correct.
+
+3.  **Verify `MainLayout.tsx` Footer Positioning (CRITICAL FIX):**
+    * **File:** `client/src/components/layout/MainLayout.tsx`
+    * **Action:** Confirm the "sticky footer" pattern is correctly implemented.
+    * **Implementation:**
+        * Ensure the outermost `div` (`min-h-screen bg-gradient-to-br ...`) **definitively** has the Tailwind classes `flex flex-col`.
+        * Ensure the `<main>` element (`relative z-10`) **definitively** has `flex-grow`.
+        * The footer should now automatically be pushed to the bottom. Review the `mt-` (margin-top) class on the `<footer>` element. If it's `mt-20`, try reducing it to `mt-10` or `mt-8` for a more compact appearance.
+
+**Phase 3: Console Output & Error Message Refinements (Final Polish)**
+
+* **Objective:** Make console output clearer and more distinct for different message types.
+
+1.  **Dynamic Text Coloring for Console Output:**
+    * **Files:** `client/src/pages/PlaygroundPage.tsx`, `client/src/pages/LessonDetailPage.tsx`
+    * **Action:** Ensure `consoleOutputColor` state is correctly set and applied to the console output div.
+    * **Implementation:**
+        * In both files, define `const [consoleOutputColor, setConsoleOutputColor] = useState('text-gray-500');`
+        * In `handleRun` (Playground) and `handleValidate` (Lesson Detail), when `setConsoleOutput` is called, simultaneously call `setConsoleOutputColor` with the appropriate Tailwind class:
+            * `setConsoleOutputColor('text-green-400')` for `challenge_success: true`.
+            * `setConsoleOutputColor('text-yellow-400')` for warnings (if `CodeValidator` returns warnings but no errors).
+            * `setConsoleOutputColor('text-red-400')` for `challenge_success: false` or backend `success: false` (errors).
+        * Apply this `consoleOutputColor` class to the actual console `div` (e.g., `<div className={cn("bg-black/50 rounded-lg p-4 font-mono text-sm min-h-32", consoleOutputColor)}>`).
+
+2.  **Enhanced Backend Error Message Handling:**
+    * **File:** `server/routes.ts`
+    * **Action:** For general compilation failures, ensure `result.errors` is a structured array that the frontend can parse.
+    * **Implementation:**
+        * In the final `else` block (the generic compilation failure using `Math.random()`), ensure the `result` structure includes an `errors` array, and make the error messages more specific.
+            ```typescript
+            // In server/routes.ts, the final generic `else` block for compilation failure:
+            else { // This is the fallback if no challenge matched
+              // Simulate compilation process with random success/failure
+              await new Promise(resolve => setTimeout(resolve, 1500)); // Adjusted simulation time
+
+              const success = Math.random() > 0.1; // 90% success rate
+
+              if (success) {
+                res.json({
+                  success: true,
+                  challenge_id: "generic_compile_success",
+                  challenge_success: true,
+                  result: {
+                    compiled: true,
+                    programId: `Program${Date.now()}`,
+                    deploymentAddress: `Deploy${Date.now()}`,
+                    logs: [
+                      "✅ Code compiled successfully.",
+                      "🚀 Program deployed to devnet (simulated).",
+                      "💰 Transaction confirmed (simulated).",
+                      "🎉 Program executed with no errors!"
+                    ],
+                    console_output: "Compilation & Deployment Successful! Check logs for details."
+                  }
+                });
+              } else {
+                res.json({
+                  success: false,
+                  challenge_id: "generic_compile_failure",
+                  challenge_success: false,
+                  error: "Compilation failed: Review your code for syntax and logic errors.",
+                  result: {
+                    compiled: false,
+                    errors: [ // Provide more detailed mock errors
+                      "Line 15: Syntax Error: Missing semicolon after statement.",
+                      "Line 23: Semantic Error: Variable 'ranch_account' is undefined in this scope.",
+                      "Line 30: Anchor Constraint Error: Invalid account constraint or missing signer for 'owner' account.",
+                      "Ensure your program ID is correctly declared."
+                    ]
+                  }
+                });
+              }
+            }
+            ```
+        * **Frontend Display of Structured Errors:**
+            * **Files:** `client/src/pages/PlaygroundPage.tsx`, `client/src/pages/LessonDetailPage.tsx`
+            * **Action:** Update the rendering of the console output to properly display `result.errors` if they exist.
+            * **Implementation:**
+                * Inside `handleRun`/`handleValidate`, when `data.success === false && data.result.errors`, modify `setConsoleOutput`.
+                * Instead of just `data.error`, render `data.error + '\n' + (data.result.errors || []).join('\n')`. This relies on `whitespace-pre-wrap` for rendering.
+
+By executing these critical fixes, the application's user flow will be smooth and intuitive, the layout will be stable, and all feedback messages will be clear and helpful for the user's learning journey.
