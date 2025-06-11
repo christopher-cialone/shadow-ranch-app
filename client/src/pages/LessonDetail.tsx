@@ -36,6 +36,7 @@ export default function LessonDetail() {
   const { 
     triggerSparkleAnimation, 
     triggerCoinFall, 
+    triggerDataStreamAnimation,
     triggerChallengeReward,
     showChallengeReward,
     currentRewardNftUrl,
@@ -90,8 +91,12 @@ export default function LessonDetail() {
       updateLessonAttempt(lessonId, currentStep);
       
       // Trigger challenge reward animation for successful completion
+      const rewardNftUrl = lessonId === 2 && currentStep === 3 
+        ? "@assets/box-brb_1749632577631.png" 
+        : nftRobotUrl;
+      
       triggerChallengeReward(
-        nftRobotUrl,
+        rewardNftUrl,
         lessonId,
         `${lesson?.title} - Step ${currentStep} Completion Badge`
       );

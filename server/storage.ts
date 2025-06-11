@@ -172,41 +172,29 @@ export class MemStorage implements IStorage {
           },
           {
             id: 3,
-            title: "Program Entrypoint & Instruction Dispatch",
-            narrative: "Time to create the main program entry point that handles different instructions. This is the heart of your Solana program!",
+            title: "Programmatic Ownership: Securing Your Ranch with a Program Derived Address (PDA)",
+            narrative: "Welcome, digital homesteader! In this decentralized frontier, we value true ownership and privacy. Unlike the old world where deeds were on paper in a dusty office, here, your ranch deed can be controlled by pure code! This is the essence of cypher-punk – using cryptography and decentralized tech to protect privacy and freedom. Today, we're diving into Program Derived Addresses (PDAs). Imagine your ranch deed isn't owned by a specific wallet with a private key, but by a special, unhackable 'strongbox' that only your ranch program can open. This strongbox address is derived from your program's ID and some unique 'seeds' (like a secret password) and a 'bump' (a special number to make sure it's valid). This makes your ranch truly decentralized and secure, giving control to the smart contract code itself.",
             instructions: [
-              "Define the program entrypoint using #[program]",
-              "Add instruction dispatch for initialize_ranch",
-              "Include proper error handling with Result<()>"
+              "In the InitializeRanch struct, locate the #[account(...)] attribute for your ranch account",
+              "Add a seeds argument to this attribute with b\"ranch\" and owner.key().as_ref()",
+              "Add a bump argument to this attribute for PDA validation"
             ],
             hints: [
-              "Use #[program] attribute before the mod declaration",
-              "Each instruction should be a public function",
-              "Return Result<()> for proper error handling",
-              "The program module should be public: pub mod"
+              "Think of PDAs like a magic lockbox only your program can open",
+              "You need to tell Solana what 'words' (seeds) make this lockbox unique",
+              "The bump is a special number that makes sure the lockbox address is perfect and unhackable",
+              "Look at the #[account(...)] line for the ranch and add the seeds and bump keywords"
             ],
             validationRules: [
               {
-                type: "contains",
-                pattern: "#[program]",
-                message: "Add #[program] attribute",
-                required: true
-              },
-              {
-                type: "contains",
-                pattern: "pub mod",
-                message: "Define a public module",
-                required: true
-              },
-              {
-                type: "contains",
-                pattern: "initialize_ranch",
-                message: "Include initialize_ranch instruction",
+                type: "regex",
+                pattern: "seeds\\s*=\\s*\\[b\"ranch\",\\s*owner\\.key\\(\\)\\.as_ref\\(\\)\\]\\s*,\\s*bump",
+                message: "Add 'seeds = [b\"ranch\", owner.key().as_ref()], bump' to the ranch account attribute",
                 required: true
               }
             ],
-            starterCode: "use anchor_lang::prelude::*;\n\ndeclare_id!(\"YourProgramIDHere\");\n\n// TODO: Add #[program] attribute and define the program module\n",
-            expectedOutput: "Program entrypoint created with instruction dispatch! Your Solana program is ready to handle instructions!"
+            starterCode: "use anchor_lang::prelude::*;\n\ndeclare_id!(\"RanchManager111111111111111111111111111111\");\n\n#[program]\npub mod ranch_manager {\n    use super::*;\n\n    pub fn initialize_ranch(\n        ctx: Context<InitializeRanch>,\n        ranch_name: String,\n    ) -> Result<()> {\n        let ranch = &mut ctx.accounts.ranch;\n        ranch.owner = ctx.accounts.owner.key();\n        ranch.name = ranch_name;\n        ranch.level = 1;\n        ranch.experience = 0;\n        ranch.ranch_coin_balance = 500;\n        ranch.building_count = 0;\n        ranch.character_count = 0;\n        ranch.created_at = Clock::get()?.unix_timestamp;\n\n        msg!(\"Ranch '{}' initialized for owner {}\", ranch.name, ranch.owner);\n        Ok(())\n    }\n}\n\n#[derive(Accounts)]\n#[instruction(ranch_name: String)]\npub struct InitializeRanch<'info> {\n    #[account(\n        init,\n        payer = owner,\n        space = 8 + Ranch::INIT_SPACE,\n        // TODO: Add seeds and bump here\n        // seeds = [b\"ranch\", owner.key().as_ref()],\n        // bump\n    )]\n    pub ranch: Account<'info, Ranch>,\n\n    #[account(mut)]\n    pub owner: Signer<'info>,\n    pub system_program: Program<'info, System>,\n}\n\n#[account]\npub struct Ranch {\n    pub owner: Pubkey,\n    pub name: String,\n    pub level: u8,\n    pub experience: u64,\n    pub ranch_coin_balance: u64,\n    pub building_count: u8,\n    pub character_count: u8,\n    pub created_at: i64,\n}\n\nimpl Ranch {\n    const INIT_SPACE: usize = 32 + 4 + 32 + 1 + 8 + 8 + 1 + 1 + 8;\n}\n\n#[error_code]\npub enum ErrorCode {\n    #[msg(\"Unauthorized access to ranch\")]\n    UnauthorizedAccess,\n}",
+            expectedOutput: "Fantastic! Your ranch account is now a true Program Derived Address (PDA)! Its deed is safely locked away, controlled by your program, not a private key. You've embraced programmatic ownership!"
           }
         ]
       }

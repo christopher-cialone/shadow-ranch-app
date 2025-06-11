@@ -47,6 +47,7 @@ interface GameStore {
   networkPingActive: boolean;
   sparkleActive: boolean;
   coinFallActive: boolean;
+  dataStreamActive: boolean;
   lastStoredMessage: string | null;
   transactionActive: boolean;
   
@@ -65,6 +66,7 @@ interface GameStore {
   triggerNetworkPing: () => void;
   triggerSparkleAnimation: () => void;
   triggerCoinFall: () => void;
+  triggerDataStreamAnimation: () => void;
   setLastStoredMessage: (message: string) => void;
   triggerTransactionAnimation: () => void;
   
@@ -117,6 +119,7 @@ export const useGameStore = create<GameStore>()(
       // Visual effects
       networkPingActive: false,
       sparkleActive: false,
+      dataStreamActive: false,
       coinFallActive: false,
       lastStoredMessage: null,
       transactionActive: false,
@@ -186,6 +189,11 @@ export const useGameStore = create<GameStore>()(
       triggerCoinFall: () => {
         set({ coinFallActive: true });
         setTimeout(() => set({ coinFallActive: false }), 2000);
+      },
+
+      triggerDataStreamAnimation: () => {
+        set({ dataStreamActive: true });
+        setTimeout(() => set({ dataStreamActive: false }), 3500);
       },
 
       setLastStoredMessage: (message) => {
