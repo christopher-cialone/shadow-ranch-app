@@ -46,7 +46,7 @@ export function LessonLayout({
   return (
     <div className="min-h-screen flex flex-col">
       {/* Fixed Header */}
-      <div className="sticky top-0 z-40 bg-tech-purple-900/80 backdrop-blur-sm border-b border-tech-cyan-600/20">
+      <div className="fixed top-0 left-0 right-0 z-40 w-full bg-tech-purple-900/80 backdrop-blur-sm border-b border-tech-cyan-600/20">
         <div className="container mx-auto px-4 py-4">
           <TechCard variant="purple" className="bg-tech-purple-900/60 border-tech-purple-600">
             <div className="p-4">
@@ -81,8 +81,8 @@ export function LessonLayout({
         </div>
       </main>
 
-      {/* Bottom Navigation - Sticky at bottom */}
-      <div className="sticky bottom-0 z-30 bg-tech-purple-900/80 backdrop-blur-sm border-t border-tech-cyan-600/20">
+      {/* Bottom Navigation - Fixed at bottom */}
+      <div className="fixed bottom-0 left-0 right-0 z-30 w-full bg-tech-purple-900/80 backdrop-blur-sm border-t border-tech-cyan-600/20">
         <div className="container mx-auto px-4 py-4">
           <TechCard variant="purple" className="bg-tech-purple-900/60 border-tech-purple-600">
             <div className="p-3">

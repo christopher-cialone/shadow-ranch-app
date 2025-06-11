@@ -197,6 +197,34 @@ export class MemStorage implements IStorage {
             expectedOutput: "Fantastic! Your ranch account is now a true Program Derived Address (PDA)! Its deed is safely locked away, controlled by your program, not a private key. You've embraced programmatic ownership!"
           }
         ]
+      },
+      {
+        title: "Introduction to NFTs: Minting Your First Digital Asset",
+        description: "Learn how to create and mint Non-Fungible Tokens (NFTs) on Solana.",
+        difficulty: "Intermediate",
+        duration: "60 min",
+        reward: 200,
+        requiredLessons: [2] as number[],
+        category: "nft",
+        order: 3,
+        isActive: true,
+        steps: [
+          {
+            id: 1,
+            title: "Coming Soon...",
+            narrative: "This lesson is under development. Check back soon for exciting NFT challenges!",
+            instructions: [
+              "This lesson is currently being developed",
+              "More NFT challenges coming soon"
+            ],
+            hints: [
+              "Stay tuned for more advanced Solana development lessons"
+            ],
+            validationRules: [],
+            starterCode: "// Coming soon - NFT minting challenges!",
+            expectedOutput: "More challenges are on the way!"
+          }
+        ]
       }
     ];
 
