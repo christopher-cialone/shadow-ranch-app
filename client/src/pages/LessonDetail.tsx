@@ -272,31 +272,31 @@ export default function LessonDetail() {
               {currentStepData && (
                 <>
                   <NarrativeBox variant="story" icon="📋" title="Mission Brief">
-                    {currentStepData.narrative}
+                    {currentStepData.challenge}
                   </NarrativeBox>
 
                   <NarrativeBox variant="challenge" icon="🎯" title="System Requirements">
-                    <ul className="space-y-2">
-                      {currentStepData.instructions.map((instruction, index) => (
-                        <li key={index} className="flex items-start">
-                          <span className={`mr-2 mt-1 ${
-                            validationResults?.results?.[index]?.passed ? 'text-tech-cyan-400' : 'text-gray-500'
-                          }`}>
-                            {validationResults?.results?.[index]?.passed ? '✓' : '○'}
-                          </span>
-                          <span>{instruction}</span>
-                        </li>
-                      ))}
-                    </ul>
+                    <div className="space-y-3">
+                      <div className="flex items-start">
+                        <span className={`mr-2 mt-1 ${
+                          validationResults?.passed ? 'text-tech-cyan-400' : 'text-gray-500'
+                        }`}>
+                          {validationResults?.passed ? '✓' : '○'}
+                        </span>
+                        <span className="text-gray-300">Complete the coding challenge above</span>
+                      </div>
+                    </div>
                   </NarrativeBox>
 
-                  {currentStepData.hints.length > 0 && (
+                  {currentStepData.hintMessage && (
                     <div className="bg-gradient-to-r from-tech-pink-800/30 to-tech-pink-700/30 border border-tech-pink-600 p-4 rounded-lg">
                       <TechButton 
                         variant="accent"
                         className="w-full"
                         onClick={() => {
-                          hintCharacterRef.current?.showContextualHint(currentStep);
+                          if (currentStepData.hintMessage) {
+                            hintCharacterRef.current?.showHint(currentStepData.hintMessage);
+                          }
                         }}
                       >
                         <span className="mr-2">🤖</span>
@@ -368,7 +368,7 @@ export default function LessonDetail() {
       {/* Hint Character */}
       <HintCharacter 
         ref={hintCharacterRef} 
-        stepHints={currentStepData?.hints || []}
+        stepHints={currentStepData?.hintMessage ? [currentStepData.hintMessage] : []}
         currentStep={currentStep}
       />
       
