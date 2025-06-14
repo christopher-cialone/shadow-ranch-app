@@ -1,4 +1,4 @@
-// client/src/data/code-templates.ts - Definitive Content
+// client/src/data/code-templates.ts - DEFINITIVE CONTENT (COPY THIS ENTIRE BLOCK)
 export const rustTemplates = {
   default: `use anchor_lang::prelude::*;
 
@@ -34,7 +34,7 @@ pub mod ranch_manager {
         ranch_name: String,
     ) -> Result<()> {
         let ranch = &mut ctx.accounts.ranch;
-        // TODO: Assign owner field here in a later step
+        // TODO: Assign owner field here in a later step (L2S2)
         ranch.name = ranch_name;
         ranch.level = 1;
         ranch.experience = 0;
@@ -189,7 +189,6 @@ pub struct InitializeRanch<'info> {
         init,
         payer = owner,
         space = 8 + 32 + 4 + 32 + 1 + 8 + 8 + 1 + 1 + 8,
-        // USER ADDS SEEDS AND BUMP HERE IN L2S3
         seeds = [b"ranch", owner.key().as_ref()],
         bump
     )]
@@ -263,7 +262,7 @@ def initialize_ranch(
         # bump
     )
 
-    # TODO: Assign owner field here in a later step
+    # TODO: Assign owner field here in a later step (L2S2)
     ranch.name = ranch_name
     ranch.level = 1
     ranch.experience = 0
@@ -338,7 +337,6 @@ def initialize_ranch(
     ranch = ranch.init(
         payer=owner,
         space=8 + 32 + 32 + 1 + 8 + 8 + 1 + 1 + 8,
-        # USER ADDS SEEDS AND BUMP HERE IN L2S3
         seeds=['ranch', owner],
         bump
     )
