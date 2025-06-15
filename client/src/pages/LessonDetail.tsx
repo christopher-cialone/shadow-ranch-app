@@ -67,6 +67,14 @@ export default function LessonDetail() {
           setCode(template);
         }
       }
+
+      // Proactive Hint for Lesson 1, Step 1 (onboarding assistance)
+      if (lesson.id === 1 && currentStep === 1) {
+        const initialHint = lesson.content.steps[0].hintMessage || "Welcome! Let's get started on your Solana Adventure!";
+        setTimeout(() => {
+          hintCharacterRef.current?.showHint(initialHint);
+        }, 1000); // Show hint after 1 second delay for better UX
+      }
     }
   }, [lesson, lessonId, currentStep, language]);
 

@@ -9,7 +9,10 @@ pub mod my_program {
     use super::*;
 
     pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        msg!("Program initialized!");
+        // --- Your code for Challenge 1 goes here! ---
+        // Type: get_network_status()
+        // Example: msg!("Hello World!");
+        // ---------------------------------------------
         Ok(())
     }
 }
@@ -231,7 +234,11 @@ declare_id('YourProgramID')
 @instruction
 def initialize(payer: Signer):
     """Initialize a new program"""
-    print(f"Program initialized by {payer.key()}")
+    # --- Your code for Challenge 1 goes here! ---
+    # Type: get_network_status()
+    # Example: print("Hello World!")
+    # ---------------------------------------------
+    pass # Keep this line unless you replace it with actual code
 `,
   ranch_management_initial: `import seahorse.prelude.*
 

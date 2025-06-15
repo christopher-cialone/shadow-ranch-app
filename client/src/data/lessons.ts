@@ -38,14 +38,23 @@ export const lessons: LessonData[] = [
             steps: [
                 {
                     id: 1,
-                    title: "Ping the Blockchain",
-                    challenge: "Write `get_network_status()` to check Devnet health.",
+                    title: "Ping the Blockchain: Your First Transmission",
+                    challenge: `Welcome, new recruit! Your mission begins now. This isn't just a game; it's a training simulation in the digital frontier. Your first task is to establish a connection with the Solana Devnet – think of it as sending a tiny digital "ping" to see if the network is alive and responding.
+
+            Below, you'll see your **Code Terminal**, a powerful tool for writing Solana programs. It starts with some basic program structure. Don't worry about understanding all of it yet! We'll guide you.
+
+            **Your Task:**
+            1.  Find the special area in your **Code Terminal** marked with comments like \`// Your code goes here\` or \`# Your code goes here\`.
+            2.  Type the following command into that area: \`get_network_status()\`
+            3.  Click the **"Deploy"** button to send your command.
+
+            Watch the "Console Output" below your code for a response! This is how your program communicates with the Solana network.`,
                     expectedCodePattern: { rust: 'get_network_status\\(\\)', python: 'get_network_status\\(\\)' },
-                    successMessage: "Network Status: Connected! Ping: {ping}ms | Current Slot: {slot}",
-                    failureMessage: "Command not recognized. Ensure you typed `get_network_status()` exactly.",
+                    successMessage: "Transmission received! Network Status: Connected! Ping: {ping}ms | Current Slot: {slot}. You've made your first connection!",
+                    failureMessage: "Transmission failed. The `get_network_status()` command was not found or is misspelled. Please ensure you typed it exactly as shown in the designated area. Double-check for typos!",
                     initialCodeTemplateKey: 'default',
                     visualEffectTrigger: 'networkPing',
-                    hintMessage: "Remember, the network status command is a simple function call. Look for a function that doesn't require any arguments!"
+                    hintMessage: `Hey there! To complete this first step, type \`get_network_status()\` exactly as you see it into the designated section of your Code Terminal. Then, click the "Deploy" button. This function call is like pressing a big red button to check the network!`
                 },
             ]
         },
