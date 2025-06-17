@@ -47,63 +47,53 @@ We are going to write it.
 /*
 Privacy is necessary for an open society in the electronic age.
 ... We cannot expect governments, corporations, or any other large, faceless organizations to grant us privacy.
-*/
-`,
+*/`,
   ethos_lesson1_2: `// The Crypto Anarchist Manifesto
 // by Timothy C. May
 
 /*
-Fully anonymous, untraceable transactions.
-Strong cryptography will forever alter the nature of governments.
-*/
-`,
-  ethos_lesson2_1: `// The Fiat Chains
-// 2008: A crisis of centralization.
+A specter is haunting the modern world, the specter of crypto anarchy.
+Computer technology is on the verge of providing the ability for individuals and groups to communicate and interact with each other in a totally anonymous manner.
+*/`,
+  ethos_lesson2_1: `// The Genesis of Digital Freedom
+// Breaking the Fiat Chains
 
 /*
-Money supply controlled by a few.
-Censorship, inflation, and lack of true ownership.
-*/
-`,
-  ethos_lesson2_2: `// Bitcoin Whitepaper (Excerpt)
-// A Peer-to-Peer Electronic Cash System
+"The Times 03/Jan/2009 Chancellor on brink of second bailout for banks"
+- Message embedded in Bitcoin's Genesis Block
+*/`,
+  ethos_lesson2_2: `// Bitcoin: A Peer-to-Peer Electronic Cash System
+// by Satoshi Nakamoto
 
 /*
-"A purely peer-to-peer version of electronic cash would allow online payments
-to be sent directly from one party to another without going through a financial institution."
-*/
-`,
-  ethos_lesson2_3: `// The Blockchain
-// Immutability and Transparency.
+A purely peer-to-peer version of electronic cash would allow online payments to be sent directly from one party to another without going through a financial institution.
+*/`,
+  ethos_lesson2_3: `// The Blockchain Revolution
+// Public, Immutable, Decentralized
 
 /*
-"The network timestamps transactions by hashing them into an ongoing chain of hash-based
-proof-of-work, forming a record that cannot be changed without redoing the proof-of-work."
-*/
-`,
+The blockchain is a distributed ledger that maintains a continuously growing list of records, called blocks, which are linked and secured using cryptography.
+*/`,
   ethos_lesson3_1: `// Ethereum & Smart Contracts
-// Code is law, self-enforcing.
+// Code is Law
 
 /*
-"A smart contract is a computer protocol intended to digitally facilitate, verify,
-or enforce the negotiation or performance of a contract."
-*/
-`,
-  ethos_lesson3_2: `// DeFi & NFTs: Promises and Perils
-// Innovation vs. Centralization's creeping threat.
+Smart contracts are self-executing contracts with the terms of the agreement directly written into code.
+*/`,
+  ethos_lesson3_2: `// DeFi & NFTs: The Double-Edged Sword
+// Innovation vs. Centralization
 
 /*
-Decentralized Finance aims to recreate traditional financial systems without intermediaries.
-NFTs provide unique digital ownership.
-*/
-`,
+With great power comes the great responsibility to remain decentralized.
+*/`,
   ethos_lesson3_3: `// The Path Forward
-// Realigning with the Ethos.
+// Building a Better Digital World
 
 /*
-Question centralization.
-Champion privacy.
-Build for liberty.
+"We are what we repeatedly do. Excellence, then, is not an act, but a habit."
+- Aristotle
+
+Your code will shape the future.
 */
 `,
   ranch_management_initial: `use anchor_lang::prelude::*;
