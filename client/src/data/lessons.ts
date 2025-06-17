@@ -7,6 +7,7 @@ export interface LessonData {
     difficulty: 'beginner' | 'intermediate' | 'advanced';
     estimatedTime: number; // in minutes
     isPremium: boolean;
+    reward?: number; // Optional: Ranch Coins earned for completion
     content: {
         steps: LessonStep[];
     };
@@ -333,58 +334,58 @@ export const lessons: LessonData[] = [
         }
     },
     {
-        id: 4,
+        id: 7, // Original Lesson 3 (adjusted ID)
         title: "RanchCoin Token Creation",
         description: "Deploy your own SPL token for in-game economy",
-        chapter: 4,
+        chapter: 6, // Chapter adjusted
         difficulty: 'intermediate',
         estimatedTime: 50,
         isPremium: true,
         content: {
             steps: [
-                { id: 1, title: "Coming Soon...", challenge: "This lesson is under development.", expectedCodePattern: {}, successMessage: "", failureMessage: "", initialCodeTemplateKey: 'default' }
+                { id: 1, title: "Coming Soon...", challenge: "This lesson is under development.", successMessage: "", failureMessage: "", initialCodeTemplateKey: 'default', isCodingChallenge: true }
             ]
         }
     },
     {
-        id: 5,
+        id: 8, // Original Lesson 4 (adjusted ID)
         title: "Saloon Dueling System",
         description: "Program interactive duels and betting mechanics",
-        chapter: 5,
+        chapter: 7, // Chapter adjusted
         difficulty: 'advanced',
         estimatedTime: 75,
         isPremium: true,
         content: {
             steps: [
-                { id: 1, title: "Coming Soon...", challenge: "This lesson is under development.", expectedCodePattern: {}, successMessage: "", failureMessage: "", initialCodeTemplateKey: 'default' }
+                { id: 1, title: "Coming Soon...", challenge: "This lesson is under development.", successMessage: "", failureMessage: "", initialCodeTemplateKey: 'default', isCodingChallenge: true }
             ]
         }
     },
     {
-        id: 6,
+        id: 9, // Original Lesson 5 (adjusted ID)
         title: "Security & Ranch Defense",
         description: "Implement security measures against shadow beasts",
-        chapter: 6,
+        chapter: 8, // Chapter adjusted
         difficulty: 'advanced',
         estimatedTime: 90,
         isPremium: true,
         content: {
             steps: [
-                { id: 1, title: "Coming Soon...", challenge: "This lesson is under development.", expectedCodePattern: {}, successMessage: "", failureMessage: "", initialCodeTemplateKey: 'default' }
+                { id: 1, title: "Coming Soon...", challenge: "This lesson is under development.", successMessage: "", failureMessage: "", initialCodeTemplateKey: 'default', isCodingChallenge: true }
             ]
         }
     },
     {
-        id: 7,
+        id: 10, // Original Lesson 6 (adjusted ID)
         title: "Ether Range Expeditions",
         description: "Master cross-program invocations and external integrations",
-        chapter: 7,
+        chapter: 9, // Chapter adjusted
         difficulty: 'advanced',
         estimatedTime: 120,
         isPremium: true,
         content: {
             steps: [
-                { id: 1, title: "Coming Soon...", challenge: "This lesson is under development.", expectedCodePattern: {}, successMessage: "", failureMessage: "", initialCodeTemplateKey: 'default' }
+                { id: 1, title: "Coming Soon...", challenge: "This lesson is under development.", successMessage: "", failureMessage: "", initialCodeTemplateKey: 'default', isCodingChallenge: true }
             ]
         }
     }
