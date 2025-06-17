@@ -24,6 +24,88 @@ pub struct Initialize<'info> {
     pub system_program: Program<'info, System>,
 }
 `,
+  // Ethos Lesson Templates (Non-coding)
+  ethos_lesson0_1: `// Code for freedom, not control.
+// Welcome to the digital frontier.
+
+/*
+History shows that control leads to oppression.
+Our fight is for a decentralized future.
+*/
+`,
+  ethos_lesson0_2: `// Privacy is power.
+// Cryptography is the shield.
+
+/*
+Cypherpunks write code.
+We are going to write it.
+*/
+`,
+  ethos_lesson1_1: `// A Cypherpunk's Manifesto
+// by Eric Hughes
+
+/*
+Privacy is necessary for an open society in the electronic age.
+... We cannot expect governments, corporations, or any other large, faceless organizations to grant us privacy.
+*/
+`,
+  ethos_lesson1_2: `// The Crypto Anarchist Manifesto
+// by Timothy C. May
+
+/*
+Fully anonymous, untraceable transactions.
+Strong cryptography will forever alter the nature of governments.
+*/
+`,
+  ethos_lesson2_1: `// The Fiat Chains
+// 2008: A crisis of centralization.
+
+/*
+Money supply controlled by a few.
+Censorship, inflation, and lack of true ownership.
+*/
+`,
+  ethos_lesson2_2: `// Bitcoin Whitepaper (Excerpt)
+// A Peer-to-Peer Electronic Cash System
+
+/*
+"A purely peer-to-peer version of electronic cash would allow online payments
+to be sent directly from one party to another without going through a financial institution."
+*/
+`,
+  ethos_lesson2_3: `// The Blockchain
+// Immutability and Transparency.
+
+/*
+"The network timestamps transactions by hashing them into an ongoing chain of hash-based
+proof-of-work, forming a record that cannot be changed without redoing the proof-of-work."
+*/
+`,
+  ethos_lesson3_1: `// Ethereum & Smart Contracts
+// Code is law, self-enforcing.
+
+/*
+"A smart contract is a computer protocol intended to digitally facilitate, verify,
+or enforce the negotiation or performance of a contract."
+*/
+`,
+  ethos_lesson3_2: `// DeFi & NFTs: Promises and Perils
+// Innovation vs. Centralization's creeping threat.
+
+/*
+Decentralized Finance aims to recreate traditional financial systems without intermediaries.
+NFTs provide unique digital ownership.
+*/
+`,
+  ethos_lesson3_3: `// The Path Forward
+// Realigning with the Ethos.
+
+/*
+Question centralization.
+Champion privacy.
+Build for liberty.
+*/
+`,
   ranch_management_initial: `use anchor_lang::prelude::*;
 
 declare_id!("RanchManager111111111111111111111111111111");
@@ -239,6 +321,68 @@ def initialize(payer: Signer):
     # Example: print("Hello World!")
     # ---------------------------------------------
     pass # Keep this line unless you replace it with actual code
+`,
+  // Ethos Lesson Templates (Non-coding)
+  ethos_lesson0_1: `# Code for freedom, not control.
+# Welcome to the digital frontier.
+
+# History shows that control leads to oppression.
+# Our fight is for a decentralized future.
+`,
+  ethos_lesson0_2: `# Privacy is power.
+# Cryptography is the shield.
+
+# Cypherpunks write code.
+# We are going to write it.
+`,
+  ethos_lesson1_1: `# A Cypherpunk's Manifesto
+# by Eric Hughes
+
+# Privacy is necessary for an open society in the electronic age.
+# We cannot expect governments, corporations... to grant us privacy.
+`,
+  ethos_lesson1_2: `# The Crypto Anarchist Manifesto
+# by Timothy C. May
+
+# Fully anonymous, untraceable transactions.
+# Strong cryptography will forever alter the nature of governments.
+`,
+  ethos_lesson2_1: `# The Fiat Chains
+# 2008: A crisis of centralization.
+
+# Money supply controlled by a few.
+# Censorship, inflation, and lack of true ownership.
+`,
+  ethos_lesson2_2: `# Bitcoin Whitepaper (Excerpt)
+# A Peer-to-Peer Electronic Cash System
+
+# "A purely peer-to-peer version of electronic cash would allow online payments
+# to be sent directly from one party to another without going through a financial institution."
+`,
+  ethos_lesson2_3: `# The Blockchain
+# Immutability and Transparency.
+
+# "The network timestamps transactions by hashing them into an ongoing chain of hash-based
+# proof-of-work, forming a record that cannot be changed without redoing the proof-of-work."
+`,
+  ethos_lesson3_1: `# Ethereum & Smart Contracts
+# Code is law, self-enforcing.
+
+# "A smart contract is a computer protocol intended to digitally facilitate, verify,
+# or enforce the negotiation or performance of a contract."
+`,
+  ethos_lesson3_2: `# DeFi & NFTs: Promises and Perils
+# Innovation vs. Centralization's creeping threat.
+
+# Decentralized Finance aims to recreate traditional financial systems without intermediaries.
+# NFTs provide unique digital ownership.
+`,
+  ethos_lesson3_3: `# The Path Forward
+# Realigning with the Ethos.
+
+# Question centralization.
+# Champion privacy.
+# Build for liberty.
 `,
   ranch_management_initial: `import seahorse.prelude.*
 

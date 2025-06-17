@@ -112,6 +112,12 @@ The application implements a flexible storage interface pattern:
 
 ```
 Changelog:
+- June 17, 2025: Implemented comprehensive cypherpunk ethos and history curriculum
+  - Added foundational lessons (Modules 0-3) covering digital freedom philosophy
+  - Created narrative-based learning system with non-coding steps
+  - Enhanced lesson interface to support both coding and philosophical content
+  - Added new visual effects and code templates for ethos lessons
+  - Restructured lesson progression: ethos foundations → technical implementation
 - June 15, 2025. Initial setup
 ```
 

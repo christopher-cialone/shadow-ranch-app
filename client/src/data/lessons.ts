@@ -323,11 +323,11 @@ export const lessons: LessonData[] = [
                     id: 1,
                     title: "Coming Soon...",
                     challenge: "This lesson is under development. Check back soon for exciting challenges!",
-                    expectedCodePattern: {},
                     successMessage: "",
                     failureMessage: "",
                     initialCodeTemplateKey: 'default',
-                    hintMessage: "More challenges are on the way!"
+                    hintMessage: "More challenges are on the way!",
+                    isCodingChallenge: true,
                 }
             ]
         }

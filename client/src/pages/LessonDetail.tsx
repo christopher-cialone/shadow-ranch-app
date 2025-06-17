@@ -231,43 +231,78 @@ export default function LessonDetail() {
       isCompleted={isCompleted}
     >
       <div className="grid grid-cols-1 xl:grid-cols-5 gap-8 h-[calc(100vh-300px)]">
-        {/* Primary Content: Code Editor */}
+        {/* Primary Content: Code Editor or Narrative Display */}
         <div className="xl:col-span-3 space-y-8">
-          <TechCard variant="cyan" className="h-full">
-            <div className="p-6 h-full">
-              <MonacoEditor
-                value={code}
-                onChange={setCode}
-                language={language}
-                onLanguageChange={setLanguage}
-                height="700px"
-                onRun={handleCodeRun}
-                onValidate={handleCodeValidate}
-                lessonId={lessonId}
-                currentStep={currentStep}
-              />
-            </div>
-          </TechCard>
-
-          {/* Validation Results */}
-          {validationResults && (
-            <TechCard variant={validationResults.success ? "neutral" : "pink"} className="p-4">
-              <div className={`text-sm font-code ${
-                validationResults.success 
-                  ? 'text-green-300'
-                  : 'text-red-300'
-              }`}>
-                <div className="flex items-center mb-2">
-                  <span className="mr-2">{validationResults.success ? '✅' : '❌'}</span>
-                  {validationResults.message}
+          {currentStepData?.isCodingChallenge ? (
+            <>
+              <TechCard variant="cyan" className="h-full">
+                <div className="p-6 h-full">
+                  <MonacoEditor
+                    value={code}
+                    onChange={setCode}
+                    language={language}
+                    onLanguageChange={setLanguage}
+                    height="700px"
+                    onRun={handleCodeRun}
+                    onValidate={handleCodeValidate}
+                    lessonId={lessonId}
+                    currentStep={currentStep}
+                  />
                 </div>
-                {validationResults.errors && validationResults.errors.length > 0 && (
-                  <ul className="text-xs space-y-1 ml-6">
-                    {validationResults.errors.map((error: string, index: number) => (
-                      <li key={index}>• {error}</li>
-                    ))}
-                  </ul>
-                )}
+              </TechCard>
+
+              {/* Validation Results */}
+              {validationResults && (
+                <TechCard variant={validationResults.success ? "neutral" : "pink"} className="p-4">
+                  <div className={`text-sm font-code ${
+                    validationResults.success 
+                      ? 'text-green-300'
+                      : 'text-red-300'
+                  }`}>
+                    <div className="flex items-center mb-2">
+                      <span className="mr-2">{validationResults.success ? '✅' : '❌'}</span>
+                      {validationResults.message}
+                    </div>
+                    {validationResults.errors && validationResults.errors.length > 0 && (
+                      <ul className="text-xs space-y-1 ml-6">
+                        {validationResults.errors.map((error: string, index: number) => (
+                          <li key={index}>• {error}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </TechCard>
+              )}
+            </>
+          ) : (
+            /* Narrative Content Display for Ethos Lessons */
+            <TechCard variant="cyan" className="h-full">
+              <div className="p-8 h-full overflow-y-auto">
+                <div className="prose prose-invert prose-cyan max-w-none">
+                  <div className="text-sm font-code text-cyan-300 mb-4">
+                    {code}
+                  </div>
+                  <div className="mt-8 p-6 bg-gradient-to-r from-purple-900/30 to-cyan-900/30 rounded-lg border border-cyan-500/30">
+                    <h3 className="text-lg font-bold text-cyan-300 mb-4">Ready to Continue?</h3>
+                    <p className="text-gray-300 mb-4">
+                      Reflect on the concepts above, then click the "Deploy" button to confirm your understanding and move forward.
+                    </p>
+                    <TechButton
+                      onClick={() => {
+                        setValidationResults({
+                          success: true,
+                          message: currentStepData?.successMessage || "Understanding confirmed!",
+                          errors: []
+                        });
+                        completeStep(lessonId, currentStep);
+                      }}
+                      variant="primary"
+                      className="w-full"
+                    >
+                      Deploy Understanding
+                    </TechButton>
+                  </div>
+                </div>
               </div>
             </TechCard>
           )}
