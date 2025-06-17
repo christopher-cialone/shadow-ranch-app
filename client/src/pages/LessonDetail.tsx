@@ -25,6 +25,8 @@ export default function LessonDetail() {
   const [code, setCode] = useState("");
   const [hintVisible, setHintVisible] = useState(false);
   const [validationResults, setValidationResults] = useState<any>(null);
+  const [quizAnswer, setQuizAnswer] = useState("");
+  const [selectedOption, setSelectedOption] = useState("");
   
   const hintCharacterRef = useRef<HintCharacterRef>(null);
 
@@ -105,6 +107,67 @@ export default function LessonDetail() {
       triggerCoinFall();
     }
     setValidationResults(data);
+  };
+
+  const validateQuiz = (stepData: any) => {
+    if (!stepData.quiz) return false;
+    
+    const { type, correctAnswer } = stepData.quiz;
+    
+    switch (type) {
+      case 'text-input':
+        return quizAnswer.toLowerCase().trim() === String(correctAnswer).toLowerCase().trim();
+      case 'multiple-choice':
+        return selectedOption === correctAnswer;
+      case 'true-false':
+        return selectedOption === String(correctAnswer);
+      default:
+        return false;
+    }
+  };
+
+  const handleQuizValidate = () => {
+    if (!currentStepData) return;
+    
+    const isCorrect = validateQuiz(currentStepData);
+    
+    if (isCorrect) {
+      updateLessonAttempt(lessonId, currentStep);
+      completeStep(lessonId, currentStep);
+      
+      // Trigger visual effects based on the step's configuration
+      if (currentStepData.visualEffectTrigger) {
+        triggerSparkleAnimation();
+      }
+      
+      const rewardNftUrl = nftRobotUrl;
+      triggerChallengeReward(
+        rewardNftUrl,
+        lessonId,
+        `${lesson?.title} - Step ${currentStep} Completion Badge`
+      );
+      
+      setValidationResults({
+        success: true,
+        message: currentStepData.successMessage
+      });
+      
+      toast({
+        title: "Reflection Complete!",
+        description: "Moving to the next step in your journey.",
+      });
+    } else {
+      setValidationResults({
+        success: false,
+        message: currentStepData.failureMessage
+      });
+      
+      toast({
+        title: "Try Again",
+        description: "Take another moment to reflect on the question.",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleCodeValidate = (data: any) => {
@@ -282,26 +345,130 @@ export default function LessonDetail() {
                   <div className="text-sm font-code text-cyan-300 mb-4">
                     {code}
                   </div>
-                  <div className="mt-8 p-6 bg-gradient-to-r from-purple-900/30 to-cyan-900/30 rounded-lg border border-cyan-500/30">
-                    <h3 className="text-lg font-bold text-cyan-300 mb-4">Ready to Continue?</h3>
-                    <p className="text-gray-300 mb-4">
-                      Reflect on the concepts above, then click the "Deploy" button to confirm your understanding and move forward.
-                    </p>
-                    <TechButton
-                      onClick={() => {
-                        setValidationResults({
-                          success: true,
-                          message: currentStepData?.successMessage || "Understanding confirmed!",
-                          errors: []
-                        });
-                        completeStep(lessonId, currentStep);
-                      }}
-                      variant="primary"
-                      className="w-full"
-                    >
-                      Deploy Understanding
-                    </TechButton>
-                  </div>
+                  
+                  {/* Quiz Section for Narrative Lessons */}
+                  {currentStepData?.quiz && (
+                    <div className="mt-8 p-6 bg-gradient-to-r from-purple-900/30 to-cyan-900/30 rounded-lg border border-cyan-500/30">
+                      <h3 className="text-lg font-bold text-cyan-300 mb-4">{currentStepData.quiz.question}</h3>
+                      
+                      {currentStepData.quiz.type === 'text-input' && (
+                        <div className="space-y-4">
+                          <input
+                            type="text"
+                            value={quizAnswer}
+                            onChange={(e) => setQuizAnswer(e.target.value)}
+                            className="w-full p-3 bg-black/50 border border-cyan-500/30 rounded-lg text-cyan-300 placeholder-gray-500 focus:border-cyan-500 focus:outline-none"
+                            placeholder="Type your answer here..."
+                          />
+                          <TechButton 
+                            onClick={handleQuizValidate}
+                            className="w-full"
+                          >
+                            Submit Answer
+                          </TechButton>
+                        </div>
+                      )}
+                      
+                      {currentStepData.quiz.type === 'multiple-choice' && (
+                        <div className="space-y-4">
+                          {currentStepData.quiz.options?.map((option, index) => (
+                            <button
+                              key={index}
+                              onClick={() => setSelectedOption(option)}
+                              className={`w-full p-3 text-left rounded-lg border transition-all ${
+                                selectedOption === option
+                                  ? 'bg-cyan-900/50 border-cyan-400 text-cyan-300'
+                                  : 'bg-black/30 border-gray-600 text-gray-300 hover:border-cyan-500/50'
+                              }`}
+                            >
+                              {option}
+                            </button>
+                          ))}
+                          <TechButton 
+                            onClick={handleQuizValidate}
+                            disabled={!selectedOption}
+                            className="w-full"
+                          >
+                            Submit Answer
+                          </TechButton>
+                        </div>
+                      )}
+                      
+                      {currentStepData.quiz.type === 'true-false' && (
+                        <div className="space-y-4">
+                          <div className="flex space-x-4">
+                            <button
+                              onClick={() => setSelectedOption("true")}
+                              className={`flex-1 p-3 rounded-lg border transition-all ${
+                                selectedOption === "true"
+                                  ? 'bg-green-900/50 border-green-400 text-green-300'
+                                  : 'bg-black/30 border-gray-600 text-gray-300 hover:border-green-500/50'
+                              }`}
+                            >
+                              True
+                            </button>
+                            <button
+                              onClick={() => setSelectedOption("false")}
+                              className={`flex-1 p-3 rounded-lg border transition-all ${
+                                selectedOption === "false"
+                                  ? 'bg-red-900/50 border-red-400 text-red-300'
+                                  : 'bg-black/30 border-gray-600 text-gray-300 hover:border-red-500/50'
+                              }`}
+                            >
+                              False
+                            </button>
+                          </div>
+                          <TechButton 
+                            onClick={handleQuizValidate}
+                            disabled={!selectedOption}
+                            className="w-full"
+                          >
+                            Submit Answer
+                          </TechButton>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Deploy Button for Non-Quiz Narrative Steps */}
+                  {!currentStepData?.quiz && (
+                    <div className="mt-8 p-6 bg-gradient-to-r from-purple-900/30 to-cyan-900/30 rounded-lg border border-cyan-500/30">
+                      <h3 className="text-lg font-bold text-cyan-300 mb-4">Ready to Continue?</h3>
+                      <p className="text-gray-300 mb-4">
+                        Reflect on the concepts above, then click the "Deploy" button to confirm your understanding and move forward.
+                      </p>
+                      <TechButton
+                        onClick={() => {
+                          setValidationResults({
+                            success: true,
+                            message: currentStepData?.successMessage || "Understanding confirmed!",
+                            errors: []
+                          });
+                          completeStep(lessonId, currentStep);
+                        }}
+                        variant="primary"
+                        className="w-full"
+                      >
+                        Deploy Understanding
+                      </TechButton>
+                    </div>
+                  )}
+
+                  {/* Validation Results for Narrative Lessons */}
+                  {validationResults && !currentStepData?.isCodingChallenge && (
+                    <div className="mt-4 p-4 bg-gradient-to-r from-purple-900/30 to-cyan-900/30 rounded-lg border border-cyan-500/30">
+                      <div className={`text-sm font-code ${
+                        validationResults.success 
+                          ? 'text-green-300'
+                          : 'text-red-300'
+                      }`}>
+                        <div className="flex items-center mb-2">
+                          <span className="mr-2">{validationResults.success ? '✅' : '❌'}</span>
+                          {validationResults.message}
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </TechCard>
