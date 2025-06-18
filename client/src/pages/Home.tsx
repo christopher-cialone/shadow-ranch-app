@@ -27,7 +27,7 @@ export default function Home() {
             </h1>
             <p className="font-deputy md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto text-[22px] font-medium">
               <TypewriterText 
-                text="Cypherpunks write code. We know that someone has to write software to defend privacy and since we can't get privacy unless we all do, we're going to write it. Discover the history of the Cypherpunk! Learn to write Solana Programs through gamified challenges. We are all Cypherpunks"
+                text="Cypherpunks write code. We know that someone has to write software to defend privacy. We are builders. Discover the history of the Cypherpunk! Learn to write Solana Programs through gamified challenges. We are all Cypherpunks"
                 speed={60}
                 delay={1000}
               />
