@@ -27,6 +27,7 @@ export default function LessonDetail() {
   const [validationResults, setValidationResults] = useState<any>(null);
   const [quizAnswer, setQuizAnswer] = useState("");
   const [selectedOption, setSelectedOption] = useState("");
+  const [quizSubmitted, setQuizSubmitted] = useState(false);
   
   const hintCharacterRef = useRef<HintCharacterRef>(null);
 
@@ -66,7 +67,7 @@ export default function LessonDetail() {
       if (step?.initialCodeTemplateKey) {
         const template = codeTemplates[step.initialCodeTemplateKey];
         if (template) {
-          setCode(template);
+          setCode(template[language as keyof typeof template] || '');
         }
       }
 
