@@ -152,10 +152,11 @@ export default function LessonDetail() {
         success: true,
         message: currentStepData.successMessage
       });
+      setQuizSubmitted(true);
       
       toast({
-        title: "Reflection Complete!",
-        description: "Moving to the next step in your journey.",
+        title: "Knowledge Check Complete!",
+        description: "Your understanding of cypherpunk principles is growing stronger.",
       });
     } else {
       setValidationResults({
@@ -164,8 +165,8 @@ export default function LessonDetail() {
       });
       
       toast({
-        title: "Try Again",
-        description: "Take another moment to reflect on the question.",
+        title: "Not Quite Right",
+        description: "Take another moment to consider the cypherpunk perspective.",
         variant: "destructive"
       });
     }
