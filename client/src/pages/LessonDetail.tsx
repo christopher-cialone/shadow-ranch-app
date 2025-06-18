@@ -224,7 +224,7 @@ export default function LessonDetail() {
       if (stepData?.initialCodeTemplateKey) {
         const template = codeTemplates[stepData.initialCodeTemplateKey];
         if (template) {
-          setCode(template);
+          setCode(template[language as keyof typeof template] || '');
         }
       } else {
         setCode("");
@@ -247,7 +247,7 @@ export default function LessonDetail() {
       if (stepData?.initialCodeTemplateKey) {
         const template = codeTemplates[stepData.initialCodeTemplateKey];
         if (template) {
-          setCode(template);
+          setCode(template[language as keyof typeof template] || '');
         }
       }
     }
@@ -255,13 +255,13 @@ export default function LessonDetail() {
 
   const handleComplete = () => {
     completeLesson(lessonId);
-    earnRanchCoin(lesson?.reward || 100);
+    earnRanchCoin(100);
     addExperience(50);
     triggerCoinFall();
     
     toast({
       title: "Lesson Completed!",
-      description: `You earned ${formatRanchCoin(lesson?.reward || 100)} Ranch Coins and 50 XP!`,
+      description: `You earned ${formatRanchCoin(100)} Ranch Coins and 50 XP!`,
     });
   };
 
