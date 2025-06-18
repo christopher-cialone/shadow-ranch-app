@@ -77,9 +77,7 @@ export default function Home() {
               <div className="text-center">
                 <i className="fas fa-graduation-cap text-4xl text-sunset-400 mb-4" />
                 <h3 className="font-deputy text-xl text-sunset-400 mb-3">Expert Curriculum</h3>
-                <p className="text-gray-300 font-mono text-sm">
-                  Learn from industry experts with carefully crafted lessons and challenges.
-                </p>
+                <p className="text-gray-300 font-mono text-sm">Learn the principles crypto was built on through carefully crafted lessons and challenges.</p>
               </div>
             </WesternCard>
           </div>
