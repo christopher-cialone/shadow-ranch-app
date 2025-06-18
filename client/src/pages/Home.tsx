@@ -24,9 +24,7 @@ export default function Home() {
             <h1 className="font-western text-6xl md:text-8xl text-desert-400 mb-6 animate-glow-pulse">
               Welcome to Shadow Ranch
             </h1>
-            <p className="font-deputy text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
-              Saddle up for the ultimate coding adventure! Learn Solana development through immersive challenges in our cypher-punk Western world.
-            </p>
+            <p className="font-deputy md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto font-semibold text-[22px]">Cypherpunks write code. We know that someone has to write software to defend privacy & since we can't get privacy unless we all do, we're going to write it. Study the ways & history of the Cypherpunk: learn to create Solana Programs through gamified challenges!</p>
             <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
               <Link href="/lessons">
                 <WesternButton variant="primary" className="text-lg">
@@ -44,7 +42,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
       {/* Features Section */}
       <section className="py-20 bg-gradient-to-b from-gray-900 to-gray-800">
         <div className="container mx-auto px-4">
@@ -88,7 +85,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
       {/* Stats Section */}
       <section className="py-20 bg-gradient-to-b from-gray-800 to-gray-900">
         <div className="container mx-auto px-4">
