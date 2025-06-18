@@ -101,7 +101,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                 </svg>
               </a>
               <a 
-                href="https://t.me/cialone_codes" 
+                href="https://t.me/+Cb2SmUQ-53QwZGM5" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-tech-cyan-400 transition-colors flex items-center space-x-1"
