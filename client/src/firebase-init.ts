@@ -1,37 +1,39 @@
-// client/src/firebase-init.ts - DEFINITIVE CONTENT V7 REBUILD
-import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+// client/src/firebase-init.ts
+import { initializeApp } from 'firebase/app';
+import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
-// Firebase config from environment variables
+// Firebase configuration using environment secrets
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || process.env.FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || process.env.FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || process.env.FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || process.env.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || process.env.FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || process.env.FIREBASE_APP_ID
 };
 
-// Initialize Firebase only if it hasn't been initialized already
-let app;
-if (getApps().length === 0) {
-  app = initializeApp(firebaseConfig);
-} else {
-  app = getApp();
-}
-
-// Initialize Firebase Auth and Firestore
+export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
-export const firestoreDbInstance = db;
+export const appId = firebaseConfig.appId || 'shadow-ranch-default';
 
-// Export the app instance
-export { app };
+// Auth state management
+export let currentUser: any = null;
 
-// Add logging for debugging
-console.log('Firebase initialized:', {
-  projectId: firebaseConfig.projectId,
-  authDomain: firebaseConfig.authDomain,
-  hasApiKey: !!firebaseConfig.apiKey
+onAuthStateChanged(auth, (user) => {
+  currentUser = user;
 });
+
+// Initialize anonymous authentication
+export const initializeAuth = async () => {
+  try {
+    if (!auth.currentUser) {
+      await signInAnonymously(auth);
+    }
+    return auth.currentUser;
+  } catch (error) {
+    console.warn('Firebase auth failed, using local storage fallback:', error);
+    return null;
+  }
+};
