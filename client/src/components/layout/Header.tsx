@@ -19,26 +19,26 @@ export function Header({ onThemeToggle, currentTheme }: HeaderProps) {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-tech-purple-900/95 backdrop-blur-sm border-b border-tech-cyan-600/30">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        <Link href="/">
-          <div className="flex items-center space-x-4 cursor-pointer">
+        <div className="flex items-center space-x-4">
+          <Link href="/" className="flex items-center space-x-4 cursor-pointer">
             <span className="text-tech-cyan-400 text-2xl animate-tech-pulse">🏜️</span>
             <h1 className="font-titulo text-2xl bg-gradient-to-r from-tech-cyan-400 to-tech-purple-400 bg-clip-text text-transparent">
               BRB: SHADOW RANCH
             </h1>
-          </div>
-        </Link>
+          </Link>
+        </div>
         
         <nav className="hidden md:flex items-center space-x-6">
           {navItems.map((item) => (
             <Link key={item.href} href={item.href}>
-              <span
+              <div
                 className={cn(
                   "font-tech text-gray-300 hover:text-tech-cyan-400 transition-colors uppercase tracking-wider cursor-pointer",
                   location === item.href && "text-tech-cyan-400"
                 )}
               >
                 {item.label}
-              </span>
+              </div>
             </Link>
           ))}
         </nav>

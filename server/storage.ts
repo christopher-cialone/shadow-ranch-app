@@ -474,4 +474,21 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Dynamic storage selection
+let storageInstance: IStorage;
+
+if (USE_FIRESTORE) {
+  try {
+    const { FirestoreStorage } = require('./firestore-complete');
+    storageInstance = new FirestoreStorage();
+    console.log('✓ Using Firestore storage backend');
+  } catch (error) {
+    console.warn('⚠ Firestore unavailable, falling back to memory storage:', error);
+    storageInstance = new MemStorage();
+  }
+} else {
+  storageInstance = new MemStorage();
+  console.log('✓ Using in-memory storage backend');
+}
+
+export const storage = storageInstance;
