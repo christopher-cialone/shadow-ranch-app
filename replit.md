@@ -133,7 +133,7 @@ Changelog:
 
 ```
 Preferred communication style: Simple, everyday language.
-Animation preferences: DecryptedText animation for home page paragraph text with sequential reveal (1.75 seconds duration).
-Text content: Updated to "We are those builders" and "We are the builders" messaging emphasizing builder identity.
-Performance: Faster decryption animation with 12ms speed and 8 iterations.
+Animation preferences: DecryptedText animation for home page paragraph text with sequential reveal (original speed).
+Text content: Final version emphasizing learning Solana programming and cypherpunk history foundation.
+Performance: Original decryption animation with 50ms speed and 10 iterations.
 ```

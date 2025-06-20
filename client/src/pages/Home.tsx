@@ -27,9 +27,9 @@ export default function Home() {
             </h1>
             <p className="font-deputy md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto text-[22px] font-medium">
               <DecryptedText 
-                text="We know that someone has to write software to defend privacy. We are those builders. Discovery the history of the cypherpunks and learn to write Solana programs through gamified challenges. We are the builders"
-                speed={12}
-                maxIterations={8}
+                text="Learn to write Solana programs through gamified challenges and discover the history of the cypherpunk movement that laid the foundation for our industry. We are the builders"
+                speed={50}
+                maxIterations={10}
                 sequential={true}
                 revealDirection="start"
                 animateOn="view"
