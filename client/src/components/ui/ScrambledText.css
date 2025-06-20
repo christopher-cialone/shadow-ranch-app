@@ -1,0 +1,14 @@
+.text-block {
+  margin: 0;
+  max-width: 800px;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  display: inline;
+}
+
+.char {
+  will-change: transform;
+  display: inline-block;
+  transition: all 0.1s ease;
+}

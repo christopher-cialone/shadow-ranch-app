@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { WesternButton } from "@/components/ui/WesternButton";
 import { WesternCard } from "@/components/ui/WesternCard";
-import DecryptedText from "@/components/ui/DecryptedText";
+import ScrambledText from "@/components/ui/ScrambledText";
 import { useGameStore } from "@/hooks/use-game-store";
 import { formatRanchCoin } from "@/lib/utils";
 
@@ -26,17 +26,15 @@ export default function Home() {
               Welcome to Shadow Ranch
             </h1>
             <p className="font-deputy md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto text-[22px] font-medium">
-              <DecryptedText 
-                text="Learn to write Solana programs through gamified challenges and discover the history of the cypherpunk movement that laid the foundation for our industry. We are the builders"
-                speed={50}
-                maxIterations={10}
-                sequential={true}
-                revealDirection="start"
-                animateOn="view"
-                className="text-gray-300"
-                encryptedClassName="text-cyan-400"
-                characters="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+"
-              />
+              <ScrambledText
+                className="scrambled-text-demo"
+                radius={100}
+                duration={1.2}
+                speed={0.5}
+                scrambleChars=".:"
+              >
+                Learn to write Solana programs through gamified challenges and discover the history of the cypherpunk movement that laid the foundation for our industry. We are the builders
+              </ScrambledText>
             </p>
             <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
               <Link href="/lessons">
