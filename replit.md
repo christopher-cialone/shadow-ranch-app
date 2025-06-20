@@ -112,6 +112,13 @@ The application implements a flexible storage interface pattern:
 
 ```
 Changelog:
+- June 20, 2025: DecryptedText Animation Implementation
+  - Installed framer-motion package for advanced animations
+  - Created DecryptedText component with cypherpunk-style character scrambling
+  - Replaced TypewriterText with DecryptedText on home page
+  - Separated hero text into four distinct sentences with individual animations
+  - Configured 1.75-second decrypt timing with center-outward reveal
+  - Applied purple/cyan color scheme for encrypted/decrypted states
 - June 18, 2025: Enhanced V6 Interactive Ethos Implementation Complete
   - Rebuilt comprehensive cypherpunk ethos curriculum (Modules 0-3)
   - Added interactive quiz system with multiple question types (text-input, multiple-choice, true-false)

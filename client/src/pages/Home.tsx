@@ -30,8 +30,8 @@ export default function Home() {
                 <DecryptedText
                   text="We know that someone has to write software to defend privacy."
                   animateOn="view"
-                  speed={100}
-                  maxIterations={25}
+                  speed={75}
+                  maxIterations={23}
                   revealDirection="center"
                   className="text-[#98e59e]"
                   encryptedClassName="text-purple-400"
@@ -41,8 +41,8 @@ export default function Home() {
                 <DecryptedText
                   text="Discover the history of the Cypherpunks"
                   animateOn="view"
-                  speed={100}
-                  maxIterations={25}
+                  speed={75}
+                  maxIterations={23}
                   revealDirection="center"
                   className="text-[#98e59e]"
                   encryptedClassName="text-purple-400"
@@ -52,8 +52,8 @@ export default function Home() {
                 <DecryptedText
                   text="Learn to write Solana Programs through gamified challenges."
                   animateOn="view"
-                  speed={100}
-                  maxIterations={25}
+                  speed={75}
+                  maxIterations={23}
                   revealDirection="center"
                   className="text-[#98e59e]"
                   encryptedClassName="text-purple-400"
@@ -63,8 +63,8 @@ export default function Home() {
                 <DecryptedText
                   text="We are the builders"
                   animateOn="view"
-                  speed={100}
-                  maxIterations={25}
+                  speed={75}
+                  maxIterations={23}
                   revealDirection="center"
                   className="text-[#98e59e]"
                   encryptedClassName="text-purple-400"
