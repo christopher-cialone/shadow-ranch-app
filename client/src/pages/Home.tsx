@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { WesternButton } from "@/components/ui/WesternButton";
 import { WesternCard } from "@/components/ui/WesternCard";
-import { TypewriterText } from "@/components/ui/TypewriterText";
+import DecryptedText from "@/components/ui/DecryptedText";
 import { useGameStore } from "@/hooks/use-game-store";
 import { formatRanchCoin } from "@/lib/utils";
 
@@ -25,13 +25,52 @@ export default function Home() {
             <h1 className="font-western text-6xl md:text-8xl text-desert-400 mb-6 animate-glow-pulse">
               Welcome to Shadow Ranch
             </h1>
-            <p className="font-deputy md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto text-[22px] font-medium">
-              <TypewriterText 
-                text="Cypherpunks write code. We know that someone has to write software to defend privacy. We are builders. Discover the history of the Cypherpunk! Learn to write Solana Programs through gamified challenges. We are all Cypherpunks"
-                speed={60}
-                delay={1000}
-              />
-            </p>
+            <div className="font-deputy md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto text-[22px] font-medium space-y-4">
+              <div className="text-[#98e59e]">
+                <DecryptedText
+                  text="We know that someone has to write software to defend privacy."
+                  animateOn="view"
+                  speed={50}
+                  maxIterations={15}
+                  revealDirection="center"
+                  className="text-[#98e59e]"
+                  encryptedClassName="text-purple-400"
+                />
+              </div>
+              <div className="text-[#98e59e]">
+                <DecryptedText
+                  text="Discover the history of the Cypherpunks"
+                  animateOn="view"
+                  speed={50}
+                  maxIterations={15}
+                  revealDirection="center"
+                  className="text-[#98e59e]"
+                  encryptedClassName="text-purple-400"
+                />
+              </div>
+              <div className="text-[#98e59e]">
+                <DecryptedText
+                  text="Learn to write Solana Programs through gamified challenges."
+                  animateOn="view"
+                  speed={50}
+                  maxIterations={15}
+                  revealDirection="center"
+                  className="text-[#98e59e]"
+                  encryptedClassName="text-purple-400"
+                />
+              </div>
+              <div className="text-[#98e59e]">
+                <DecryptedText
+                  text="We are the builders"
+                  animateOn="view"
+                  speed={50}
+                  maxIterations={15}
+                  revealDirection="center"
+                  className="text-[#98e59e]"
+                  encryptedClassName="text-purple-400"
+                />
+              </div>
+            </div>
             <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
               <Link href="/lessons">
                 <WesternButton variant="primary" className="text-lg">
