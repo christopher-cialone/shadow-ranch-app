@@ -5,10 +5,17 @@
   font-size: inherit;
   color: inherit;
   display: inline;
+  white-space: normal;
+  word-wrap: break-word;
 }
 
 .char {
   will-change: transform;
   display: inline-block;
   transition: all 0.1s ease;
+}
+
+.char.space {
+  display: inline-block;
+  min-width: 0.25em;
 }

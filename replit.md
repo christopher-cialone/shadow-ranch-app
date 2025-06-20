@@ -112,6 +112,12 @@ The application implements a flexible storage interface pattern:
 
 ```
 Changelog:
+- June 20, 2025: Replaced DecryptedText with ScrambledText Animation
+  - Installed GSAP animation library for enhanced text effects
+  - Created new ScrambledText component with mouse-hover scramble effects
+  - Fixed word spacing and readability issues in text display
+  - Implemented character-by-character scrambling while preserving word boundaries
+  - Updated home page to use new interactive text animation
 - June 18, 2025: Enhanced V6 Interactive Ethos Implementation Complete
   - Rebuilt comprehensive cypherpunk ethos curriculum (Modules 0-3)
   - Added interactive quiz system with multiple question types (text-input, multiple-choice, true-false)

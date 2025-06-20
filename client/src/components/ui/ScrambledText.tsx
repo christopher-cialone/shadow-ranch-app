@@ -27,7 +27,7 @@ const ScrambledText = ({
   const originalText = children?.toString() || "";
 
   useEffect(() => {
-    // Split text into individual characters
+    // Split text into individual characters while preserving spaces
     setChars(originalText.split(''));
   }, [originalText]);
 
@@ -90,8 +90,13 @@ const ScrambledText = ({
       onMouseMove={handleMouseMove}
     >
       {chars.map((char, index) => (
-        <span key={index} className="char" data-original={char}>
-          {char}
+        <span 
+          key={index} 
+          className={char === ' ' ? 'char space' : 'char'} 
+          data-original={char}
+          style={char === ' ' ? { width: '0.25em' } : {}}
+        >
+          {char === ' ' ? '\u00A0' : char}
         </span>
       ))}
     </span>

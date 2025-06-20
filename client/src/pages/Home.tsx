@@ -33,7 +33,7 @@ export default function Home() {
                 speed={0.5}
                 scrambleChars=".:"
               >
-                Learn to write Solana programs through gamified challenges and discover the history of the cypherpunk movement that laid the foundation for our industry. We are the builders
+                Learn to write Solana Programs through gamified challenges and discover the history of the cypherpunk movement which laid the foundation for our industry. We are the builders
               </ScrambledText>
             </p>
             <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
