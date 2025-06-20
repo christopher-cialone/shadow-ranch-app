@@ -1,4 +1,4 @@
-// client/src/data/lessons.ts - DEFINITIVE CONTENT (V7 Ultimate System Rebuild)
+// client/src/data/lessons.ts - DEFINITIVE CONTENT V7 REBUILD
 export interface LessonData {
     id: number;
     title: string;
@@ -48,7 +48,9 @@ export const lessons: LessonData[] = [
                 {
                     id: 1,
                     title: "Echoes from the Old World",
-                    challenge: `Before the blockchain sun rose over this digital frontier, the Old World suffered under the thumb of centralized powers. Data was spied on, money controlled, and freedom often felt like a myth whispered in hushed tones. But some dreamed of a new kind of freedom – built not with guns, but with **code**.\n\n**Reflection:** What aspects of the 'Old World' (digital or otherwise) make you value privacy and control over your own data?`,
+                    challenge: `Before the blockchain sun rose over this digital frontier, the Old World suffered under the thumb of centralized powers. Data was spied on, money controlled, and freedom often felt like a myth whispered in hushed tones. But some dreamed of a new kind of freedom – built not with guns, but with **code**.
+
+**Reflection:** What aspects of the 'Old World' (digital or otherwise) make you value privacy and control over your own data?`,
                     successMessage: "Understood. The seeds of rebellion are often sown in the shadows of control. Click 'Next Step' to continue.",
                     failureMessage: "Please take a moment to reflect on the prompt. Click 'Deploy' to confirm understanding.",
                     initialCodeTemplateKey: 'ethos_lesson0_1',
@@ -65,7 +67,9 @@ export const lessons: LessonData[] = [
                 {
                     id: 2,
                     title: "The Whispers of Rebellion - Rise of the Cypherpunks",
-                    challenge: `In the shadows of early digital networks, a band of rebels emerged – the **Cypherpunks**. They weren't outlaws in the traditional sense, but digital freedom fighters who believed that cryptography, not legislation, was the key to true liberty. They met not in saloons, but in email lists, forging their manifestos in lines of encrypted text.\n\n**Reflection:** If code is a form of speech, and privacy is essential for free speech, how does strong cryptography protect democratic values?`,
+                    challenge: `In the shadows of early digital networks, a band of rebels emerged – the **Cypherpunks**. They weren't outlaws in the traditional sense, but digital freedom fighters who believed that cryptography, not legislation, was the key to true liberty. They met not in saloons, but in email lists, forging their manifestos in lines of encrypted text.
+
+**Reflection:** If code is a form of speech, and privacy is essential for free speech, how does strong encryption become a tool for freedom?`,
                     successMessage: "Confirmed. The digital whispers grew into a chorus. Click 'Next Step' to continue.",
                     failureMessage: "Please reflect on the concept of code and freedom. Click 'Deploy' to confirm understanding.",
                     initialCodeTemplateKey: 'ethos_lesson0_2',
@@ -96,7 +100,9 @@ export const lessons: LessonData[] = [
                 {
                     id: 1,
                     title: "The Cypherpunk Manifesto: Code, Not Trust",
-                    challenge: `Eric Hughes, a quiet frontier coder, penned the words that became our first law: 'Cypherpunks write code.' He argued that laws and regulations could never truly protect our freedom in the digital realm. Only **unbreakable code** could truly guarantee privacy and liberty. Our very first step in this adventure is to understand this fundamental truth.\n\n**Reflection:** Why do cypherpunks believe that code is a stronger guarantee of privacy than laws or regulations?`,
+                    challenge: `Eric Hughes, a quiet frontier coder, penned the words that became our first law: 'Cypherpunks write code.' He argued that laws and regulations could never truly protect our freedom in the digital realm. Only **unbreakable code** could truly guarantee privacy and liberty. Our very first step in this adventure is to understand this fundamental truth.
+
+**Reflection:** Why do cypherpunks believe that code is a stronger guarantee of privacy than laws or policies?`,
                     successMessage: "Manifesto understood. Trust in code is the first principle. Click 'Next Step' to continue.",
                     failureMessage: "Consider the inherent limitations of human promises versus mathematical guarantees. Click 'Deploy' to confirm understanding.",
                     initialCodeTemplateKey: 'ethos_lesson1_1',
@@ -112,7 +118,9 @@ export const lessons: LessonData[] = [
                 {
                     id: 2,
                     title: "The Crypto Anarchist Manifesto: Unstoppable Liberty",
-                    challenge: `Timothy C. May, a figure shrouded in digital mist, took the vision even further. His 'Crypto Anarchist Manifesto' painted a future where cryptography would dissolve the very power of the state, creating truly free and anonymous markets. This vision of an unstoppable, censorship-resistant digital realm is where the true heart of Web3 beats.\n\n**Reflection:** How does an 'anonymous, distributed digital cash system' fulfill the vision of a truly free market without central control?`,
+                    challenge: `Timothy C. May, a figure shrouded in digital mist, took the vision even further. His 'Crypto Anarchist Manifesto' painted a future where cryptography would dissolve the very power of the state, creating truly free and anonymous markets. This vision of an unstoppable, censorship-resistant digital realm is where the true heart of Web3 beats.
+
+**Reflection:** How does an 'anonymous, distributed digital cash system' fulfill the vision of a truly free and unstoppable market?`,
                     successMessage: "Vision embraced. A future without central gatekeepers. Click 'Next Step' to continue.",
                     failureMessage: "Think about how intermediaries can stop or control transactions. Click 'Deploy' to confirm understanding.",
                     initialCodeTemplateKey: 'ethos_lesson1_2',
@@ -142,125 +150,171 @@ export const lessons: LessonData[] = [
                 {
                     id: 1,
                     title: "The Fiat Chains - Why Bitcoin Was Born",
-                    challenge: `The Old World's money was a tool of control. Central banks printed currency at will, inflating away the value of honest work. Governments could freeze accounts, monitor every transaction, and deny financial services to those who dared to dissent. The system was built on trust – trust in institutions that had repeatedly betrayed that trust.\n\n**Reflection:** How do centralized financial systems limit individual freedom and economic sovereignty?`,
-                    successMessage: "Understanding confirmed. The chains of fiat were binding indeed. Click 'Next Step' to continue.",
-                    failureMessage: "Consider how central control over money affects personal liberty. Click 'Deploy' to confirm understanding.",
+                    challenge: `The old world's money, 'fiat currency,' was controlled by central banks and governments. It could be printed out of thin air, censored, or inflated away. This system felt like digital chains to those who valued financial freedom. The 2008 financial crisis exposed these flaws, and in the digital dust, a new idea was born.
+
+**Reflection:** How can a system where money supply is controlled by a single entity undermine individual freedom?`,
+                    successMessage: "Chains identified. The need for a new path. Click 'Next Step' to continue.",
+                    failureMessage: "Reflect on the power a centralized financial system holds over individuals. Click 'Deploy' to confirm understanding.",
                     initialCodeTemplateKey: 'ethos_lesson2_1',
                     visualEffectTrigger: 'bankBreaking',
-                    hintMessage: "When someone else controls your money, they control your choices. Think about what happens when banks freeze accounts or governments debase currency.",
+                    hintMessage: "Think about inflation, censorship, and access to funds. What happens when someone else has ultimate control over your money?",
                     isCodingChallenge: false,
                     quiz: {
-                        type: 'multiple-choice',
-                        question: "What is one major problem with centralized fiat currency systems?",
-                        options: ["High transaction fees", "Government control and surveillance", "Too many options", "Complex user interfaces"],
-                        correctAnswer: "Government control and surveillance",
+                        type: 'true-false',
+                        question: "True or False: Fiat currency is backed by physical gold.",
+                        correctAnswer: false,
                     },
                 },
                 {
                     id: 2,
                     title: "Bitcoin: A Peer-to-Peer Electronic Cash System",
-                    challenge: `In 2008, an anonymous figure known only as Satoshi Nakamoto published a white paper that would change the world: 'Bitcoin: A Peer-to-Peer Electronic Cash System.' This wasn't just another payment system – it was the first practical implementation of the cypherpunk dream. No central authority, no trusted third parties, just pure mathematical certainty.\n\n**Reflection:** How does Bitcoin's design eliminate the need for trust in human institutions?`,
-                    successMessage: "Bitcoin's revolutionary nature understood. Peer-to-peer freedom achieved. Click 'Next Step' to continue.",
-                    failureMessage: "Think about how mathematical proofs replace the need for human trust. Click 'Deploy' to confirm understanding.",
+                    challenge: `From the shadows, an anonymous figure, Satoshi Nakamoto, rode into the digital frontier with a revolutionary proposal: **Bitcoin**. It was the first true 'electronic cash' that didn't need a bank, a government, or any trusted middleman. It was a digital currency for the people, by the people, secured by pure cryptography.
+
+**Reflection:** How does eliminating the 'trusted third party' in financial transactions enhance privacy and decentralization?`,
+                    successMessage: "Bitcoin's core principle absorbed. Trustless transactions for a new new age. Click 'Next Step' to continue.",
+                    failureMessage: "Focus on the 'peer-to-peer' aspect. What does that remove from the equation? Click 'Deploy' to confirm understanding.",
                     initialCodeTemplateKey: 'ethos_lesson2_2',
                     visualEffectTrigger: 'decentralizedNodes',
-                    hintMessage: "Bitcoin uses cryptographic proof instead of trust. Every transaction is verified by math, not by a bank or government.",
+                    hintMessage: "When you send money directly to someone else, without a bank in the middle, who can stop it? No one.",
                     isCodingChallenge: false,
                     quiz: {
-                        type: 'true-false',
-                        question: "True or False: Bitcoin requires a central authority to validate transactions.",
-                        correctAnswer: false,
+                        type: 'multiple-choice',
+                        question: "What does 'peer-to-peer' mean in the context of Bitcoin?",
+                        options: ["Requires a central server", "Direct transactions between users", "Only for anonymous users", "Backed by government"],
+                        correctAnswer: "Direct transactions between users",
                     },
                 },
                 {
                     id: 3,
                     title: "The Blockchain: A Public, Immutable Ledger",
-                    challenge: `The blockchain was Bitcoin's secret weapon – a public ledger that anyone could verify but no one could tamper with. Every transaction, forever recorded in digital stone. This wasn't just transparency; this was radical accountability. For the first time in history, money itself became incorruptible.\n\n**Reflection:** How does a public, immutable ledger serve the principles of transparency and accountability?`,
-                    successMessage: "Blockchain's power understood. Immutability achieved through cryptography. Click 'Next Step' to continue.",
-                    failureMessage: "Consider how permanent, public records prevent fraud and corruption. Click 'Deploy' to confirm understanding.",
+                    challenge: `At the heart of Bitcoin was the **blockchain** – a revolutionary 'digital ledger' that recorded every transaction not in a bank's secret book, but openly and immutably across a vast network of computers. Once a transaction was carved into this digital stone, it couldn't be changed. This public, decentralized truth became the backbone of our new digital world.
+
+**Reflection:** How does a public and immutable ledger contribute to a more transparent and fair financial system, even if the users are pseudonymous?`,
+                    successMessage: "Blockchain principles secured. The unchangeable truth. Click 'Next Step' to continue.",
+                    failureMessage: "Consider what 'public' and 'immutable' mean for accountability. Click 'Deploy' to confirm understanding.",
                     initialCodeTemplateKey: 'ethos_lesson2_3',
                     visualEffectTrigger: 'blockchainBlocks',
-                    hintMessage: "When every transaction is public and permanent, it becomes impossible to hide corruption or create money from thin air.",
+                    hintMessage: "Even if you don't know *who* did something, you know *what* happened, and that it can't be covered up.",
                     isCodingChallenge: false,
                     quiz: {
                         type: 'text-input',
-                        question: "What property of blockchain makes it impossible to alter past transactions?",
+                        question: "What is the key characteristic of a blockchain that prevents past transactions from being altered?",
                         correctAnswer: "Immutability",
                     },
                 },
             ]
+          },
         },
-    },
-    // --- NEW: Module 3: The Crossroads - Web3's Path and Future (Lesson ID 4) ---
+        // Lesson 4
+        {
+          id: 4,
+          title: "The Crossroads: Web3's Path and Future",
+          description: "Understand the evolution of Web3 and re-align with core ideals.",
+          chapter: 3,
+          difficulty: 'beginner',
+          estimatedTime: 30,
+          isPremium: false,
+          content: {
+            steps: [
+              {
+                id: 1,
+                title: "Ethereum & Smart Contracts: Expanding the Vision",
+                challenge: `Bitcoin proved that decentralized money was possible. But soon, new pioneers arrived, pushing the frontier further. Ethereum, with its 'smart contracts,' allowed not just money, but **any kind of digital agreement** to be executed automatically and transparently on the blockchain. The digital Wild West just got a lot more sophisticated.
+
+**Reflection:** How do smart contracts enhance the idea of 'code is law' by making agreements self-enforcing without human intervention?`,
+                successMessage: "Smart Contracts understood. Code as unstoppable agreement. Click 'Next Step' to continue.",
+                failureMessage: "Think about what 'self-enforcing' means for trust and intermediaries. Click 'Deploy' to confirm understanding.",
+                initialCodeTemplateKey: 'ethos_lesson3_1',
+                visualEffectTrigger: 'smartContractGears',
+                hintMessage: "If the rules are written in code, and that code runs automatically, you don't need a judge or lawyer to enforce it.",
+                isCodingChallenge: false,
+                quiz: {
+                    type: 'multiple-choice',
+                    question: "What do smart contracts allow to be executed directly on the blockchain?",
+                    options: ["Legal documents", "Digital agreements", "Physical contracts", "Verbal promises"],
+                    correctAnswer: "Digital agreements",
+                },
+              },
+              {
+                id: 2,
+                title: "The Rise of DeFi & NFTs: Promises and Perils",
+                challenge: `The frontier exploded with innovation: Decentralized Finance (DeFi) offered banks made of code, and Non-Fungible Tokens (NFTs) gave us true digital ownership of art, collectibles, and even virtual land. But with this rapid growth came new challenges – the lure of easy riches, scams lurking in the shadows, and the constant threat of centralization creeping back into the decentralized dream.
+
+**Reflection:** How can we, as builders and users, ensure that the growth of Web3 (like DeFi and NFTs) remains true to the original cypherpunk ideals of decentralization and individual control?`,
+                successMessage: "Perils recognized, vigilance heightened. The fight for true decentralization continues. Click 'Next Step' to continue.",
+                failureMessage: "Consider where power can accumulate in new systems. How can we prevent that? Click 'Deploy' to confirm understanding.",
+                initialCodeTemplateKey: 'ethos_lesson3_2',
+                visualEffectTrigger: 'digitalMarketplace',
+                hintMessage: "Even in Web3, some services become very popular and centralize power. We need to actively choose decentralized alternatives and build them robustly.",
+                isCodingChallenge: false,
+                quiz: {
+                    type: 'text-input',
+                    question: "What is the primary risk to decentralization as Web3 grows?",
+                    correctAnswer: "Centralization",
+                },
+              },
+              {
+                id: 3,
+                title: "The Path Forward: Realigning with the Ethos",
+                challenge: `The digital frontier is vast and ever-changing. As new builders like you join the ranks, it's crucial to remember the code of honor established by the original cypherpunks. To truly build a decentralized future, we must constantly question centralization, champion privacy, and ensure that our innovations serve liberty, not control. Your journey is not just about writing code; it's about building a better digital world.
+
+**Reflection:** As a future Solana developer, how will you incorporate the principles of privacy, decentralization, and censorship resistance into the applications you build?`,
+                successMessage: "Ethos embraced! Your journey as a builder aligned with the true spirit of Web3 begins now. Click 'Next' to move to your first coding challenge!",
+                failureMessage: "Reflect on your role in shaping the decentralized future. What principles will guide your work? Click 'Deploy' to confirm understanding.",
+                initialCodeTemplateKey: 'ethos_lesson3_3',
+                visualEffectTrigger: 'glowingPath',
+                hintMessage: "Every piece of code you write, every decision you make, can either reinforce centralization or push towards more freedom and privacy.",
+                isCodingChallenge: false,
+                quiz: {
+                    type: 'multiple-choice',
+                    question: "Which of these is NOT a core cypherpunk principle?",
+                    options: ["Privacy", "Decentralization", "Censorship Resistance", "Centralized Control"],
+                    correctAnswer: "Centralized Control",
+                },
+              },
+            ]
+          },
+        },
+    // --- ORIGINAL Solana Lessons (IDs SHIFTED and chapter updated) ---
     {
-        id: 4,
-        title: "The Crossroads: Web3's Path and Future",
-        description: "Navigate the promises and perils of the decentralized web.",
-        chapter: 3,
+        id: 5, // Original Lesson 1 (Solana Basics & Wallet Setup)
+        title: "Solana Basics & Wallet Setup",
+        description: "Learn the fundamentals of Solana and set up your Web3 wallet",
+        chapter: 4, // Chapter adjusted
         difficulty: 'beginner',
-        estimatedTime: 25,
+        estimatedTime: 30,
         isPremium: false,
         content: {
             steps: [
                 {
                     id: 1,
-                    title: "Ethereum & Smart Contracts: Expanding the Vision",
-                    challenge: `Ethereum took Bitcoin's foundation and built a world computer on top of it. Smart contracts – code that executes automatically without human intervention – brought the cypherpunk dream of 'code is law' to life. But with great power came great complexity, and not all who entered this new frontier understood the responsibility that came with it.\n\n**Reflection:** How do smart contracts embody the cypherpunk principle of 'code is law'?`,
-                    successMessage: "Smart contracts understood. Code becomes unstoppable law. Click 'Next Step' to continue.",
-                    failureMessage: "Think about how self-executing code eliminates the need for human enforcement. Click 'Deploy' to confirm understanding.",
-                    initialCodeTemplateKey: 'ethos_lesson3_1',
-                    visualEffectTrigger: 'smartContractGears',
-                    hintMessage: "Smart contracts execute exactly as programmed, with no possibility of human interference or interpretation.",
-                    isCodingChallenge: false,
-                    quiz: {
-                        type: 'multiple-choice',
-                        question: "What makes smart contracts 'smart'?",
-                        options: ["They use AI", "They execute automatically", "They're written by experts", "They're very complex"],
-                        correctAnswer: "They execute automatically",
-                    },
-                },
-                {
-                    id: 2,
-                    title: "The Rise of DeFi & NFTs: Promises and Perils",
-                    challenge: `As Web3 grew, new innovations emerged: Decentralized Finance (DeFi) promised to recreate the entire financial system without banks, while Non-Fungible Tokens (NFTs) offered true digital ownership. But success brought new challenges – many projects became centralized in practice, speculation overtook utility, and the original cypherpunk values sometimes got lost in the gold rush.\n\n**Reflection:** How can the Web3 space maintain its commitment to decentralization while achieving mainstream adoption?`,
-                    successMessage: "The challenges of growth understood. Balance is key to true progress. Click 'Next Step' to continue.",
-                    failureMessage: "Consider the tension between growth and principles in emerging technologies. Click 'Deploy' to confirm understanding.",
-                    initialCodeTemplateKey: 'ethos_lesson3_2',
-                    visualEffectTrigger: 'digitalMarketplace',
-                    hintMessage: "Success can sometimes corrupt original ideals. The challenge is growing while staying true to founding principles.",
-                    isCodingChallenge: false,
-                    quiz: {
-                        type: 'true-false',
-                        question: "True or False: All Web3 projects successfully maintain decentralization as they grow.",
-                        correctAnswer: false,
-                    },
-                },
-                {
-                    id: 3,
-                    title: "The Path Forward: Realigning with the Ethos",
-                    challenge: `Now you stand at the crossroads. The cypherpunk ethos that started this revolution calls to you: Build systems that are truly decentralized. Protect privacy by design. Create tools that empower individuals, not institutions. As a Solana developer, you have the power to shape the future of this digital frontier. The question is: Will you build for freedom or for control?\n\n**Reflection:** How will you apply cypherpunk principles in your own development work?`,
-                    successMessage: "The path is clear. You are ready to build the future. Welcome to Solana development!",
-                    failureMessage: "Take a moment to consider your role as a builder in this movement. Click 'Deploy' to confirm understanding.",
-                    initialCodeTemplateKey: 'ethos_lesson3_3',
-                    visualEffectTrigger: 'glowingPath',
-                    hintMessage: "Every line of code you write is a choice between freedom and control. Choose wisely.",
-                    isCodingChallenge: false,
-                    quiz: {
-                        type: 'text-input',
-                        question: "Complete this cypherpunk principle: 'Every line of code is a choice between ______ and control.'",
-                        correctAnswer: "freedom",
-                    },
+                    title: "Ping the Blockchain: Your First Transmission",
+                    challenge: `Welcome, new recruit! Your mission begins now. This isn't just a game; it's a training simulation in the digital frontier. Your first task is to establish a connection with the Solana Devnet – think of it as sending a tiny digital "ping" to see if the network is alive and responding.
+
+                    Below, you'll see your **Code Terminal**, a powerful tool for writing Solana programs. It starts with some basic program structure. Don't worry about understanding all of it yet! We'll guide you.
+
+                    **Your Task:**
+                    1.  Find the special area in your **Code Terminal** marked with comments like \`// Your code goes here\` or \`# Your code goes here\`.
+                    2.  Type the following command into that area: \`get_network_status()\`
+                    3.  Click the **"Deploy"** button to send your command.
+
+                    Watch the "Console Output" below your code for a response! This is how your program communicates with the Solana network.`,
+                    expectedCodePattern: { rust: 'get_network_status\\(\\)', python: 'get_network_status\\(\\)' },
+                    successMessage: "Transmission received! Network Status: Connected! Ping: {ping}ms | Current Slot: {slot}. You've made your first connection!",
+                    failureMessage: "Transmission failed. The `get_network_status()` command was not found or is misspelled. Please ensure you typed it exactly as shown in the designated area. Double-check for typos!",
+                    initialCodeTemplateKey: 'default',
+                    visualEffectTrigger: 'networkPing',
+                    hintMessage: "Hey there! To complete this first step, type `get_network_status()` exactly as you see it into the designated section of your Code Terminal. Then, click the 'Deploy' button. This function call is like pressing a big red button to check the network!",
+                    isCodingChallenge: true, // Mark as coding challenge
                 },
             ]
         },
     },
-    // --- TECHNICAL LESSONS START HERE (Lesson ID 5+) ---
-    // --- Module 4: Ranch Management - Your First Solana Program (Lesson ID 5) ---
     {
-        id: 5,
-        title: "Ranch Management: Your First Solana Program",
-        description: "Build a basic ranch management system using Anchor framework.",
-        chapter: 4,
+        id: 6, // Original Lesson 2
+        title: "Creating Your Ranch Account",
+        description: "Build your first Solana program to manage ranch data",
+        chapter: 5, // Chapter adjusted
         difficulty: 'beginner',
         estimatedTime: 45,
         isPremium: false,
@@ -268,108 +322,110 @@ export const lessons: LessonData[] = [
             steps: [
                 {
                     id: 1,
-                    title: "Initialize Ranch Owner",
-                    challenge: "Set up the basic ranch structure and assign ownership. Your ranch needs an owner to manage it properly.",
-                    expectedCodePattern: {
-                        rust: "ranch.owner = ctx.accounts.owner.key();",
-                        python: "ranch.owner = owner.key()"
-                    },
-                    successMessage: "Great! You've successfully assigned an owner to your ranch. Every decentralized system needs clear ownership.",
-                    failureMessage: "Make sure to assign the owner's public key to the ranch.owner field.",
+                    title: "Define Ranch Owner Field",
+                    challenge: "Your ranch needs an owner! In the `Ranch` struct (Rust) or `Ranch` class (Python), add a `pubkey` field named `owner`. This will identify who controls the ranch. Don't forget the comma for Rust!",
+                    expectedCodePattern: { rust: 'pub\\s+owner:\\s*Pubkey,', python: 'owner:\\s*Pubkey' },
+                    successMessage: "Excellent! The `owner` field has been added. Your ranch now knows who its rightful owner is!",
+                    failureMessage: "Not quite. Make sure you've added 'pub owner: Pubkey,' (Rust) or 'owner: Pubkey' (Python) exactly inside the Ranch definition. Check for typos and correct capitalization!",
                     initialCodeTemplateKey: 'ranch_management_initial',
                     visualEffectTrigger: 'sparkle',
-                    hintMessage: "Remember to set ranch.owner = ctx.accounts.owner.key() in Rust, or ranch.owner = owner.key() in Python.",
-                    isCodingChallenge: true
+                    hintMessage: "Look for the comment that says 'USER ADDS PUB OWNER: PUBKEY HERE' and replace it with the owner field definition.",
+                    isCodingChallenge: true,
                 },
                 {
                     id: 2,
-                    title: "Program Derived Address (PDA)",
-                    challenge: "Implement a PDA for your ranch account to ensure each user has one unique ranch.",
-                    expectedCodePattern: {
-                        rust: "seeds = [b\"ranch\", owner.key().as_ref()], bump",
-                        python: "seeds=[b\"ranch\", bytes(owner.key())], bump=bump"
-                    },
-                    successMessage: "Excellent! You've mastered PDAs - the foundation of secure Solana programs.",
-                    failureMessage: "Make sure to implement the PDA with the correct seeds and bump.",
+                    title: "Assign Owner in Initialize Function",
+                    challenge: "Now set the ranch owner when creating a new ranch! In the `initialize_ranch` function, assign the owner by setting `ranch.owner = ctx.accounts.owner.key()` (Rust) or `ranch.owner = owner.key()` (Python).",
+                    expectedCodePattern: { rust: 'ranch\\.owner\\s*=\\s*ctx\\.accounts\\.owner\\.key\\(\\)', python: 'ranch\\.owner\\s*=\\s*owner\\.key\\(\\)' },
+                    successMessage: "Perfect! Your ranch now properly assigns ownership when created. The owner field is set correctly!",
+                    failureMessage: "The owner assignment is missing or incorrect. Make sure to set 'ranch.owner = ctx.accounts.owner.key()' (Rust) or 'ranch.owner = owner.key()' (Python) in the initialize function.",
                     initialCodeTemplateKey: 'ranch_management_step1_complete',
-                    visualEffectTrigger: 'dataStream',
-                    hintMessage: "PDAs use seeds to generate deterministic addresses. Use [b\"ranch\", owner.key().as_ref()] as seeds.",
-                    isCodingChallenge: true
+                    visualEffectTrigger: 'transaction',
+                    hintMessage: "Look for the TODO comment about assigning the owner field. Replace it with the owner assignment line.",
+                    isCodingChallenge: true,
                 },
                 {
                     id: 3,
-                    title: "Ranch Upgrades",
-                    challenge: "Add upgrade functionality to improve your ranch over time.",
-                    expectedCodePattern: {
-                        rust: "ranch.level += 1;",
-                        python: "ranch.level += 1"
-                    },
-                    successMessage: "Perfect! Your ranch can now grow and evolve. Progress is the key to success.",
-                    failureMessage: "Implement the upgrade logic by incrementing the ranch level.",
+                    title: "Add PDA Seeds and Bump",
+                    challenge: "Make your ranch account deterministic using Program Derived Addresses (PDAs)! Add the seeds and bump to the ranch account definition. Use seeds = [b\"ranch\", owner.key().as_ref()] and bump for Rust, or seeds=['ranch', owner] and bump for Python.",
+                    expectedCodePattern: { rust: 'seeds\\s*=\\s*\\[b\"ranch\",\\s*owner\\.key\\(\\)\\.as_ref\\(\\)\\]', python: 'seeds\\s*=\\s*\\[.ranch.,\\s*owner\\]' },
+                    successMessage: "Brilliant! Your ranch is now a PDA - a deterministic address that can be found by anyone who knows the seeds. This is a fundamental Solana concept!",
+                    failureMessage: "The PDA configuration is missing or incorrect. Make sure to add the seeds and bump parameters correctly in the account definition.",
                     initialCodeTemplateKey: 'ranch_management_step2_complete',
-                    visualEffectTrigger: 'blueprint',
-                    hintMessage: "Increment the ranch level to show progression: ranch.level += 1",
-                    isCodingChallenge: true
-                }
+                    visualEffectTrigger: 'dataStream',
+                    hintMessage: "Look for the comment about adding seeds and bump. Uncomment those lines and ensure they're properly formatted.",
+                    isCodingChallenge: true,
+                },
             ]
-        }
+        },
     },
-    // --- Module 5: Token Economics - SPL Token Integration (Lesson ID 6) ---
     {
-        id: 6,
-        title: "Token Economics: SPL Token Integration",
-        description: "Create and manage SPL tokens for your ranch economy.",
-        chapter: 5,
+        id: 7, // Original Lesson 3
+        title: "Ranch Building System",
+        description: "Implement building construction and management",
+        chapter: 6, // Chapter adjusted
         difficulty: 'intermediate',
         estimatedTime: 60,
         isPremium: false,
         content: {
             steps: [
-                {
-                    id: 1,
-                    title: "Create Ranch Token",
-                    challenge: "Set up your own SPL token to power the ranch economy.",
-                    expectedCodePattern: {
-                        rust: "token::mint_to",
-                        python: "mint_to"
-                    },
-                    successMessage: "Outstanding! You've created your first SPL token. Economic sovereignty achieved!",
-                    failureMessage: "Make sure to use the token::mint_to instruction to create tokens.",
-                    initialCodeTemplateKey: 'token_economics_initial',
-                    visualEffectTrigger: 'coinFall',
-                    hintMessage: "Use the mint_to instruction to create new tokens for your ranch economy.",
-                    isCodingChallenge: true
-                },
-                {
-                    id: 2,
-                    title: "Token Transfer System",
-                    challenge: "Implement a system to transfer tokens between accounts.",
-                    expectedCodePattern: {
-                        rust: "token::transfer",
-                        python: "transfer"
-                    },
-                    successMessage: "Excellent! Token transfers are working. Commerce can now flow freely.",
-                    failureMessage: "Implement the token transfer functionality using the transfer instruction.",
-                    initialCodeTemplateKey: 'token_economics_step1_complete',
-                    visualEffectTrigger: 'transaction',
-                    hintMessage: "Use the transfer instruction to move tokens between accounts.",
-                    isCodingChallenge: true
-                },
-                {
-                    id: 3,
-                    title: "Staking Mechanism",
-                    challenge: "Create a staking system where users can lock tokens for rewards.",
-                    expectedCodePattern: {
-                        rust: "stake_account.amount = amount;",
-                        python: "stake_account.amount = amount"
-                    },
-                    successMessage: "Perfect! Staking implemented. Passive income through code - the cypherpunk dream!",
-                    failureMessage: "Set up the staking logic by tracking the staked amount.",
-                    initialCodeTemplateKey: 'token_economics_step2_complete',
-                    visualEffectTrigger: 'networkPing',
-                    hintMessage: "Track the staked amount in the stake_account structure.",
-                    isCodingChallenge: true
-                }
+                { id: 1, title: "Coming Soon...", challenge: "This lesson is under development.", expectedCodePattern: {}, successMessage: "", failureMessage: "", initialCodeTemplateKey: 'default', isCodingChallenge: true }
+            ]
+        }
+    },
+    {
+        id: 8, // Original Lesson 4
+        title: "RanchCoin Token Creation",
+        description: "Deploy your own SPL token for in-game economy",
+        chapter: 7, // Chapter adjusted
+        difficulty: 'intermediate',
+        estimatedTime: 50,
+        isPremium: true,
+        content: {
+            steps: [
+                { id: 1, title: "Coming Soon...", challenge: "This lesson is under development.", expectedCodePattern: {}, successMessage: "", failureMessage: "", initialCodeTemplateKey: 'default', isCodingChallenge: true }
+            ]
+        }
+    },
+    {
+        id: 9, // Original Lesson 5
+        title: "Saloon Dueling System",
+        description: "Program interactive duels and betting mechanics",
+        chapter: 8, // Chapter adjusted
+        difficulty: 'advanced',
+        estimatedTime: 75,
+        isPremium: true,
+        content: {
+            steps: [
+                { id: 1, title: "Coming Soon...", challenge: "This lesson is under development.", expectedCodePattern: {}, successMessage: "", failureMessage: "", initialCodeTemplateKey: 'default', isCodingChallenge: true }
+            ]
+        }
+    },
+    {
+        id: 10, // Original Lesson 6
+        title: "Security & Ranch Defense",
+        description: "Implement security measures against shadow beasts",
+        chapter: 9, // Chapter adjusted
+        difficulty: 'advanced',
+        estimatedTime: 90,
+        isPremium: true,
+        content: {
+            steps: [
+                { id: 1, title: "Coming Soon...", challenge: "This lesson is under development.", expectedCodePattern: {}, successMessage: "", failureMessage: "", initialCodeTemplateKey: 'default', isCodingChallenge: true }
+            ]
+        }
+    },
+    {
+        id: 11, // Original Lesson 7
+        title: "Ether Range Expeditions",
+        description: "Master cross-program invocations and external integrations",
+        chapter: 10, // Chapter adjusted
+        difficulty: 'advanced',
+        estimatedTime: 120,
+        isPremium: true,
+        content: {
+            steps: [
+                { id: 1, title: "Coming Soon...", challenge: "This lesson is under development.", expectedCodePattern: {}, successMessage: "", failureMessage: "", initialCodeTemplateKey: 'default', isCodingChallenge: true }
             ]
         }
     }
