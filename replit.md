@@ -133,4 +133,6 @@ Changelog:
 
 ```
 Preferred communication style: Simple, everyday language.
+Animation preferences: DecryptedText animation for home page paragraph text with sequential reveal.
+Text content: Updated to concise "We are builders" messaging.
 ```
