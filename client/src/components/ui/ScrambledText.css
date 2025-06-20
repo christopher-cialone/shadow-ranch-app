@@ -1,21 +1,25 @@
 .text-block {
   margin: 0;
-  max-width: 800px;
   font-family: inherit;
   font-size: inherit;
   color: inherit;
   display: inline;
   white-space: normal;
-  word-wrap: break-word;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  hyphens: none;
+  line-height: inherit;
 }
 
 .char {
   will-change: transform;
   display: inline-block;
   transition: all 0.1s ease;
+  white-space: pre;
 }
 
 .char.space {
   display: inline-block;
-  min-width: 0.25em;
+  min-width: 0.3em;
+  white-space: pre;
 }

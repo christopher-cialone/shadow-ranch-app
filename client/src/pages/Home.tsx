@@ -25,7 +25,7 @@ export default function Home() {
             <h1 className="font-western text-6xl md:text-8xl text-desert-400 mb-6 animate-glow-pulse">
               Welcome to Shadow Ranch
             </h1>
-            <p className="font-deputy md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto text-[22px] font-medium">
+            <p className="font-deputy md:text-2xl text-gray-300 mb-8 max-w-4xl mx-auto text-[22px] font-medium leading-relaxed">
               <ScrambledText
                 className="scrambled-text-demo"
                 radius={100}
@@ -33,7 +33,7 @@ export default function Home() {
                 speed={0.5}
                 scrambleChars=".:"
               >
-                Learn to write Solana Programs through gamified challenges and discover the history of the cypherpunk movement which laid the foundation for our industry. We are the builders
+                Learn to write Solana Programs through gamified challenges & discover the history of the cypherpunk movement which laid the foundation for our industry. We are the builders of today.
               </ScrambledText>
             </p>
             <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
