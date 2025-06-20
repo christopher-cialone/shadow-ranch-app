@@ -134,6 +134,6 @@ Changelog:
 ```
 Preferred communication style: Simple, everyday language.
 Animation preferences: DecryptedText animation for home page paragraph text with sequential reveal (1.75 seconds duration).
-Text content: Updated to concise "We are builders" messaging.
+Text content: Updated to "We are those builders" and "We are the builders" messaging emphasizing builder identity.
 Performance: Faster decryption animation with 12ms speed and 8 iterations.
 ```
