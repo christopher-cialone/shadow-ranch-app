@@ -138,8 +138,7 @@ export default function LessonDetail() {
       
       // Trigger visual effects based on the step's configuration
       if (currentStepData.visualEffectTrigger) {
-        visualEffects.triggerEffect(currentStepData.visualEffectTrigger);
-        console.code('Visual effect triggered', currentStepData.visualEffectTrigger);
+        triggerSparkleAnimation();
       }
       
       const rewardNftUrl = nftRobotUrl;
@@ -175,10 +174,7 @@ export default function LessonDetail() {
 
   const handleCodeValidate = (data: any) => {
     setValidationResults(data);
-    
-    // Log to enhanced console
     if (data.success) {
-      console.success('Code validation passed', data.message);
       updateLessonAttempt(lessonId, currentStep);
       completeStep(lessonId, currentStep); // Mark this step as completed
       
@@ -208,7 +204,6 @@ export default function LessonDetail() {
         description: "Step validated successfully. NFT reward unlocked!",
       });
     } else {
-      console.error('Code validation failed', data.message || 'Unknown error');
       // Progressive hint system for failed attempts
       const attemptCount = (progress?.attempts || 0) + 1;
       if (attemptCount >= 2) {
@@ -275,7 +270,7 @@ export default function LessonDetail() {
 
   if (!lesson) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-purple-900/20 to-cyan-900/20">
+      <div className="min-h-screen flex items-center justify-center">
         <TechCard className="p-8 text-center">
           <span className="text-4xl mb-4 block">⚠️</span>
           <h2 className="font-tech text-2xl text-gray-300 mb-4">LESSON NOT FOUND</h2>
