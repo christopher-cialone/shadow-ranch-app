@@ -474,6 +474,11 @@ export class MemStorage implements IStorage {
   }
 }
 
+// Use Firestore if available, fallback to memory storage
+const USE_FIRESTORE = process.env.NODE_ENV === 'production' && 
+                     process.env.FIREBASE_API_KEY && 
+                     process.env.FIREBASE_PROJECT_ID;
+
 // Dynamic storage selection
 let storageInstance: IStorage;
 
