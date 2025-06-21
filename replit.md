@@ -112,12 +112,6 @@ The application implements a flexible storage interface pattern:
 
 ```
 Changelog:
-- June 21, 2025: Updated Homepage Design and Typography
-  - Changed main title to lowercase "welcome to shadow ranch" with Data 70 font
-  - Updated typewriter text to "We know that someone has to write software to defend user privacy"
-  - Added and then removed Letter Glitch background section per user feedback
-  - Enhanced Cypherpunk Blueprint section with animated decryption effect
-  - Refined typewriter animation timing and visual effects
 - June 18, 2025: Enhanced V6 Interactive Ethos Implementation Complete
   - Rebuilt comprehensive cypherpunk ethos curriculum (Modules 0-3)
   - Added interactive quiz system with multiple question types (text-input, multiple-choice, true-false)
