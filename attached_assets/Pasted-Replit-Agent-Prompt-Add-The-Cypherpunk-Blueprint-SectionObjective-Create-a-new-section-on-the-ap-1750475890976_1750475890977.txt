@@ -1,0 +1,260 @@
+Replit Agent Prompt: Add 'The Cypherpunk Blueprint' SectionObjective: Create a new section on the app's homepage dedicated to the Cypherpunk and Web3 ethos, featuring an animated title and descriptive paragraph.Instructions for the Agent:Install framer-motion:Execute the command: npm i framer-motion in the Replit terminal.Create DecryptedText Component:Create a new file (e.g., src/components/DecryptedText.tsx or src/DecryptedText.jsx depending on project structure) and populate it with the following React component code:import { useEffect, useState, useRef, ReactNode } from 'react'
+import { motion, HTMLMotionProps } from 'framer-motion'
+
+const styles = {
+    wrapper: {
+        display: 'inline-block',
+        whiteSpace: 'pre-wrap',
+    },
+    srOnly: {
+        position: 'absolute' as 'absolute',
+        width: '1px',
+        height: '1px',
+        padding: 0,
+        margin: '-1px',
+        overflow: 'hidden',
+        clip: 'rect(0,0,0,0)',
+        border: 0,
+    },
+}
+
+interface DecryptedTextProps extends HTMLMotionProps<'span'> {
+    text: string
+    speed?: number
+    maxIterations?: number
+    sequential?: boolean
+    revealDirection?: 'start' | 'end' | 'center'
+    useOriginalCharsOnly?: boolean
+    characters?: string
+    className?: string
+    parentClassName?: string
+    encryptedClassName?: string
+    animateOn?: 'view' | 'hover'
+}
+
+export default function DecryptedText({
+    text,
+    speed = 50,
+    maxIterations = 10,
+    sequential = false,
+    revealDirection = 'start',
+    useOriginalCharsOnly = false,
+    characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*()_+',
+    className = '',
+    parentClassName = '',
+    encryptedClassName = '',
+    animateOn = 'hover',
+    ...props
+}: DecryptedTextProps) {
+    const [displayText, setDisplayText] = useState<string>(text)
+    const [isHovering, setIsHovering] = useState<boolean>(false)
+    const [isScrambling, setIsScrambling] = useState<boolean>(false)
+    const [revealedIndices, setRevealedIndices] = useState<Set<number>>(new Set())
+    const [hasAnimated, setHasAnimated] = useState<boolean>(false)
+    const containerRef = useRef<HTMLSpanElement>(null)
+
+    useEffect(() => {
+        let interval: NodeJS.Timeout;
+        let currentIteration = 0
+
+        const getNextIndex = (revealedSet: Set<number>): number => {
+            const textLength = text.length
+            switch (revealDirection) {
+                case 'start':
+                    return revealedSet.size
+                case 'end':
+                    return textLength - 1 - revealedSet.size
+                case 'center': {
+                    const middle = Math.floor(textLength / 2)
+                    const offset = Math.floor(revealedSet.size / 2)
+                    const nextIndex =
+                        revealedSet.size % 2 === 0
+                            ? middle + offset
+                            : middle - offset - 1
+
+                    if (nextIndex >= 0 && nextIndex < textLength && !revealedSet.has(nextIndex)) {
+                        return nextIndex
+                    }
+
+                    for (let i = 0; i < textLength; i++) {
+                        if (!revealedSet.has(i)) return i
+                    }
+                    return 0
+                }
+                default:
+                    return revealedSet.size
+            }
+        }
+
+        const availableChars = useOriginalCharsOnly
+            ? Array.from(new Set(text.split(''))).filter((char) => char !== ' ')
+            : characters.split('')
+
+        const shuffleText = (originalText: string, currentRevealed: Set<number>): string => {
+            if (useOriginalCharsOnly) {
+                const positions = originalText.split('').map((char, i) => ({
+                    char,
+                    isSpace: char === ' ',
+                    index: i,
+                    isRevealed: currentRevealed.has(i),
+                }))
+
+                const nonSpaceChars = positions
+                    .filter((p) => !p.isSpace && !p.isRevealed)
+                    .map((p) => p.char)
+
+                for (let i = nonSpaceChars.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1))
+                    ;[nonSpaceChars[i], nonSpaceChars[j]] = [nonSpaceChars[j], nonSpaceChars[i]]
+                }
+
+                let charIndex = 0
+                return positions
+                    .map((p) => {
+                        if (p.isSpace) return ' '
+                        if (p.isRevealed) return originalText[p.index]
+                        return nonSpaceChars[charIndex++]
+                    })
+                    .join('')
+            } else {
+                return originalText
+                    .split('')
+                    .map((char, i) => {
+                        if (char === ' ') return ' '
+                        if (currentRevealed.has(i)) return originalText[i]
+                        return availableChars[Math.floor(Math.random() * availableChars.length)]
+                    })
+                    .join('')
+            }
+        }
+
+        if (isHovering) {
+            setIsScrambling(true)
+            interval = setInterval(() => {
+                setRevealedIndices((prevRevealed) => {
+                    if (sequential) {
+                        if (prevRevealed.size < text.length) {
+                            const nextIndex = getNextIndex(prevRevealed)
+                            const newRevealed = new Set(prevRevealed)
+                            newRevealed.add(nextIndex)
+                            setDisplayText(shuffleText(text, newRevealed))
+                            return newRevealed
+                        } else {
+                            clearInterval(interval)
+                            setIsScrambling(false)
+                            return prevRevealed
+                        }
+                    } else {
+                        setDisplayText(shuffleText(text, prevRevealed))
+                        currentIteration++
+                        if (currentIteration >= maxIterations) {
+                            clearInterval(interval)
+                            setIsScrambling(false)
+                            setDisplayText(text)
+                        }
+                        return prevRevealed
+                    }
+                })
+            }, speed)
+        } else {
+            setDisplayText(text)
+            setRevealedIndices(new Set())
+            setIsScrambling(false)
+        }
+
+        return () => {
+            if (interval) clearInterval(interval)
+        }
+    }, [
+        isHovering,
+        text,
+        speed,
+        maxIterations,
+        sequential,
+        revealDirection,
+        characters,
+        useOriginalCharsOnly,
+    ])
+
+    useEffect(() => {
+        if (animateOn !== 'view') return
+
+        const observerCallback = (entries: IntersectionObserverEntry[]) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting && !hasAnimated) {
+                    setIsHovering(true)
+                    setHasAnimated(true)
+                }
+            })
+        }
+
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1,
+        }
+
+        const observer = new IntersectionObserver(observerCallback, observerOptions)
+        const currentRef = containerRef.current
+        if (currentRef) {
+            observer.observe(currentRef)
+        }
+
+        return () => {
+            if (currentRef) {
+                observer.unobserve(currentRef)
+            }
+        }
+    }, [animateOn, hasAnimated])
+
+    const hoverProps =
+        animateOn === 'hover'
+            ? {
+                onMouseEnter: () => setIsHovering(true),
+                onMouseLeave: () => setIsHovering(false),
+            }
+            : {}
+
+    return (
+        <motion.span className={parentClassName} ref={containerRef} style={styles.wrapper} {...hoverProps} {...props}>
+            <span style={styles.srOnly}>{displayText}</span>
+
+            <span aria-hidden="true">
+                {displayText.split('').map((char, index) => {
+                    const isRevealedOrDone =
+                        revealedIndices.has(index) || !isScrambling || !isHovering
+
+                    return (
+                        <span
+                            key={index}
+                            className={isRevealedOrDone ? className : encryptedClassName}
+                        >
+                            {char}
+                        </span>
+                    )
+                })}
+            </span>
+        </motion.span>
+    )
+}
+Locate Homepage Component:Identify the main component file for your app's homepage (e.g., src/App.tsx, src/pages/Home.jsx, or similar).Import DecryptedText:At the top of the homepage component file, add the import statement for the new component:import DecryptedText from './components/DecryptedText'; // Adjust path if necessary
+Add New Section to Homepage:Within the JSX of your homepage component, locate a suitable place to insert the new section (e.g., within a div or section element). Add the following code:<section className="py-16 bg-gray-900 text-white text-center rounded-xl mx-auto max-w-4xl mt-12 px-6">
+    <h2 className="text-5xl font-extrabold mb-6">
+        <DecryptedText
+            text="The Cypherpunk Blueprint"
+            animateOn="view"
+            revealDirection="center"
+            speed={70}
+            maxIterations={25}
+            characters="01!@#$%^&*()_+" // Can customize characters for decryption effect
+            className="text-indigo-400"
+            parentClassName="block"
+        />
+    </h2>
+    <p className="text-xl leading-relaxed text-gray-300">
+        Don't just code; create movements. Learn the foundational ethos that drives meaningful software and redefine what's possible on the internet.
+        <br className="my-2" />
+        Cut through the noise and understand the profound ideas that are truly changing business models and charting a new course for the digital age.
+    </p>
+</section>
+Verify and Test:Ensure the app compiles and runs without errors.Verify that the new section appears on the homepage and the "The Cypherpunk Blueprint" title animates on view.

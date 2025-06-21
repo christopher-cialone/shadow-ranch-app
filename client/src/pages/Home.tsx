@@ -2,6 +2,7 @@ import { Link } from "wouter";
 import { WesternButton } from "@/components/ui/WesternButton";
 import { WesternCard } from "@/components/ui/WesternCard";
 import { TypewriterText } from "@/components/ui/TypewriterText";
+import DecryptedText from "@/components/ui/DecryptedText";
 import { useGameStore } from "@/hooks/use-game-store";
 import { formatRanchCoin } from "@/lib/utils";
 
@@ -90,40 +91,25 @@ export default function Home() {
           </div>
         </div>
       </section>
-      {/* Stats Section */}
-      <section className="py-20 bg-gradient-to-b from-gray-800 to-gray-900">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="font-western text-4xl md:text-5xl text-rust-400 mb-6">Your Progress</h2>
-          </div>
-
-          <div className="grid md:grid-cols-4 gap-8 max-w-4xl mx-auto">
-            <div className="text-center">
-              <div className="text-4xl font-deputy text-desert-400 mb-2">
-                {formatRanchCoin(ranchData.coins)}
-              </div>
-              <div className="font-mono text-gray-400">Ranch Coins</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-deputy text-sage-400 mb-2">
-                {ranchData.experience}
-              </div>
-              <div className="font-mono text-gray-400">Experience</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-deputy text-sunset-400 mb-2">
-                {ranchData.level}
-              </div>
-              <div className="font-mono text-gray-400">Level</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-deputy text-mystic-400 mb-2">
-                0
-              </div>
-              <div className="font-mono text-gray-400">Lessons Complete</div>
-            </div>
-          </div>
-        </div>
+      {/* Cypherpunk Blueprint Section */}
+      <section className="py-16 bg-gray-900 text-white text-center rounded-xl mx-auto max-w-4xl mt-12 px-6">
+        <h2 className="text-5xl font-extrabold mb-6">
+          <DecryptedText
+            text="The Cypherpunk Blueprint"
+            animateOn="view"
+            revealDirection="center"
+            speed={70}
+            maxIterations={25}
+            characters="01!@#$%^&*()_+"
+            className="text-indigo-400"
+            parentClassName="block"
+          />
+        </h2>
+        <p className="text-xl leading-relaxed text-gray-300">
+          Don't just code; create movements. Learn the foundational ethos that drives meaningful software and redefine what's possible on the internet.
+          <br className="my-2" />
+          Cut through the noise and understand the profound ideas that are truly changing business models and charting a new course for the digital age.
+        </p>
       </section>
     </div>
   );
