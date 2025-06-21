@@ -3,6 +3,7 @@ import { WesternButton } from "@/components/ui/WesternButton";
 import { WesternCard } from "@/components/ui/WesternCard";
 import { TypewriterText } from "@/components/ui/TypewriterText";
 import DecryptedText from "@/components/ui/DecryptedText";
+import LetterGlitch from "@/components/ui/LetterGlitch";
 import { useGameStore } from "@/hooks/use-game-store";
 import { formatRanchCoin } from "@/lib/utils";
 
@@ -91,6 +92,22 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Letter Glitch Background Section */}
+      <section className="relative w-full h-96 overflow-hidden">
+        <LetterGlitch
+          glitchSpeed={50}
+          centerVignette={true}
+          outerVignette={false}
+          smooth={true}
+        />
+        <div className="absolute inset-0 flex items-center justify-center z-10 text-white text-center">
+          <h1 className="font-data70 text-6xl font-bold leading-tight text-shadow-lg drop-shadow-2xl tracking-wider">
+            Code <br/> Forge
+          </h1>
+        </div>
+      </section>
+
       {/* Cypherpunk Blueprint Section */}
       <section className="py-16 bg-gray-900 text-white text-center rounded-xl mx-auto max-w-4xl mt-12 px-6">
         <h2 className="text-5xl font-extrabold mb-6">
