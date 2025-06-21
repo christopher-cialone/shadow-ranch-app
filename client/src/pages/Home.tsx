@@ -28,7 +28,7 @@ export default function Home() {
             </h1>
             <p className="font-deputy md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto text-[22px] font-medium">
               <TypewriterText 
-                text="Cypherpunks write code. We know that someone has to write software to defend privacy. We are builders. Discover the history of the Cypherpunk! Learn to write Solana Programs through gamified challenges. We are all Cypherpunks"
+                text="We know that someone has to write software to defend privacy. We are builders. Learn to write Solana Programs through gamified challenges. Cypherpunks write code. "
                 speed={60}
                 delay={1000}
               />
@@ -98,8 +98,8 @@ export default function Home() {
             text="The Cypherpunk Blueprint"
             animateOn="view"
             revealDirection="center"
-            speed={70}
-            maxIterations={25}
+            speed={100}
+            sequential={true}
             characters="01!@#$%^&*()_+"
             className="text-indigo-400"
             parentClassName="block"
@@ -107,8 +107,6 @@ export default function Home() {
         </h2>
         <p className="text-xl leading-relaxed text-gray-300">
           Don't just code; create movements. Learn the foundational ethos that drives meaningful software and redefine what's possible on the internet.
-          <br className="my-2" />
-          Cut through the noise and understand the profound ideas that are truly changing business models and charting a new course for the digital age.
         </p>
       </section>
     </div>
