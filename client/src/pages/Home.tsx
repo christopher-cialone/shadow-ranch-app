@@ -29,7 +29,7 @@ export default function Home() {
             </h1>
             <p className="font-deputy md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto text-[22px] font-medium">
               <TypewriterText 
-                text="We know that someone has to write software to defend privacy. We are builders. Learn to write Solana Programs through gamified challenges. Cypherpunks write code. "
+                text="We know that someone has to write software to defend user privacy. Learn to write Solana Programs through gamified challenges. Cypherpunks write code. "
                 speed={60}
                 delay={1000}
               />
@@ -101,11 +101,7 @@ export default function Home() {
           outerVignette={false}
           smooth={true}
         />
-        <div className="absolute inset-0 flex items-center justify-center z-10 text-white text-center">
-          <h1 className="font-data70 text-6xl font-bold leading-tight text-shadow-lg drop-shadow-2xl tracking-wider">
-            Code <br/> Forge
-          </h1>
-        </div>
+        
       </section>
 
       {/* Cypherpunk Blueprint Section */}
