@@ -24,9 +24,7 @@ export default function Home() {
         
         <div className="container mx-auto px-4 text-center relative z-10">
           <div className="animate-fade-in">
-            <h1 className="font-data70 text-6xl md:text-8xl text-desert-400 mb-6 animate-glow-pulse font-bold tracking-wider">
-              Welcome to Shadow Ranch
-            </h1>
+            <h1 className="font-data70 text-6xl md:text-8xl text-desert-400 mb-6 animate-glow-pulse font-bold tracking-wider">welcome to shadow ranch</h1>
             <p className="font-deputy md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto text-[22px] font-medium">
               <TypewriterText 
                 text="We know that someone has to write software to defend user privacy.Learn to write Solana Programs through gamified challenges. Cypherpunks write code. "
@@ -92,7 +90,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
       {/* Letter Glitch Background Section */}
       <section className="relative w-full h-96 overflow-hidden">
         <LetterGlitch
@@ -103,7 +100,6 @@ export default function Home() {
         />
         
       </section>
-
       {/* Cypherpunk Blueprint Section */}
       <section className="py-16 bg-gray-900 text-white text-center rounded-xl mx-auto max-w-4xl mt-12 px-6">
         <h2 className="text-5xl font-extrabold mb-6">
