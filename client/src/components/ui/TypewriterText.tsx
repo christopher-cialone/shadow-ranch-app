@@ -34,7 +34,7 @@ export function TypewriterText({ text, speed = 50, delay = 0, className = '' }: 
   }, [currentIndex, text, speed, isTyping]);
 
   return (
-    <span className="text-[#34dce9]">
+    <span className="text-[#34dce9] font-light text-center ml-[0px] mr-[0px] mt-[0px] mb-[0px] pl-[0px] pr-[0px] pt-[0px] pb-[0px]">
       {displayText}
       {currentIndex < text.length && (
         <span className="animate-pulse">|</span>
