@@ -29,7 +29,7 @@ export default function Home() {
             </h1>
             <p className="font-deputy md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto text-[22px] font-medium">
               <TypewriterText 
-                text="We know that someone has to write software to defend user privacy. Learn to write Solana Programs through gamified challenges. Cypherpunks write code. "
+                text="We know that someone has to write software to defend user privacy.Learn to write Solana Programs through gamified challenges. Cypherpunks write code. "
                 speed={60}
                 delay={1000}
               />

@@ -102,7 +102,7 @@ export default {
       fontFamily: {
         titulo: ['Archivo Black', 'sans-serif'],
         tech: ['Orbitron', 'sans-serif'],
-        data70: ['Orbitron', 'sans-serif'],
+        data70: ['Data70EF', 'Orbitron', 'sans-serif'],
         code: ['Fira Code', 'monospace'],
         sans: ["Inter", "sans-serif"],
         mono: ["JetBrains Mono", "monospace"],
