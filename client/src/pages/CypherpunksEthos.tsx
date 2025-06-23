@@ -14,7 +14,7 @@ export default function CypherpunksEthos() {
           </Link>
           
           <h1 className="text-5xl md:text-6xl font-bold mb-8 text-center bg-gradient-to-r from-tech-cyan-400 to-tech-purple-400 bg-clip-text text-transparent font-data70">
-            The Cypherpunk Ethos
+            the cypherpunk ethos
           </h1>
         </div>
 
