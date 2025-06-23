@@ -6,6 +6,7 @@ import { useLessonStore } from "@/hooks/use-lesson-store";
 import { useToast } from "@/hooks/use-toast";
 import { RewardNftGallery } from "@/components/ranch/RewardNftGallery";
 import { formatRanchCoin, getRarityColor, getRarityBorder } from "@/lib/utils";
+import { usePageLoader } from "@/hooks/use-page-loader";
 
 interface ShopItem {
   id: string;

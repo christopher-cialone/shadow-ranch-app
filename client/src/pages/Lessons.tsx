@@ -4,9 +4,11 @@ import { WesternCard, WesternCardContent, WesternCardHeader, WesternCardTitle } 
 import { useLessonStore } from "@/hooks/use-lesson-store";
 import { formatRanchCoin, getRarityColor } from "@/lib/utils";
 import { lessons, type LessonData } from "@/data/lessons";
+import { usePageLoader } from "@/hooks/use-page-loader";
 
 export default function Lessons() {
   const { getLessonProgress, isLessonUnlocked } = useLessonStore();
+  usePageLoader();
 
 
 

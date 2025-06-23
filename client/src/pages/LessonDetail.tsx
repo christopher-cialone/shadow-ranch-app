@@ -13,6 +13,7 @@ import { useGameStore } from "@/hooks/use-enhanced-game-store";
 import { useToast } from "@/hooks/use-toast";
 import { formatRanchCoin } from "@/lib/utils";
 import { lessons, type LessonData } from "@/data/lessons";
+import { usePageLoader } from "@/hooks/use-page-loader";
 import { codeTemplates } from "@/data/code-templates";
 import nftRobotUrl from "@assets/brb-nft-ai-robot.png";
 
@@ -28,6 +29,8 @@ export default function LessonDetail() {
   const [quizAnswer, setQuizAnswer] = useState("");
   const [selectedOption, setSelectedOption] = useState("");
   const [quizSubmitted, setQuizSubmitted] = useState(false);
+  
+  usePageLoader();
   
   const hintCharacterRef = useRef<HintCharacterRef>(null);
 
