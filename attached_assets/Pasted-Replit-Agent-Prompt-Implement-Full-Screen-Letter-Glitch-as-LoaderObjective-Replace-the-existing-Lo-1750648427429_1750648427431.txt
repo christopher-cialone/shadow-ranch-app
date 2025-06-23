@@ -1,0 +1,348 @@
+Replit Agent Prompt: Implement Full-Screen Letter Glitch as LoaderObjective: Replace the existing LoadingSpinner with a full-screen LetterGlitch component that acts as a splash screen during page loading. The LetterGlitch should display for a set duration before the main page content is revealed.Instructions for the Agent:Remove LoadingSpinner Component Usage:Locate the file src/pages/CypherpunksEthos.jsx (or whichever page component currently implements the loading state and uses LoadingSpinner).Remove the import statement: import LoadingSpinner from '../components/LoadingSpinner';Remove the LoadingSpinner component from the JSX within the conditional rendering logic ({isLoading ? (<LoadingSpinner />) : (pageContent)}).Ensure LetterGlitch Component Exists and is Imported:Verify that src/components/LetterGlitch.jsx (or .tsx) exists and contains the correct LetterGlitch component code as previously provided. If it was removed, please recreate it with the code you provided:// src/components/LetterGlitch.jsx
+import { useRef, useEffect } from "react";
+
+const LetterGlitch = ({
+  glitchColors = ["#2b4539", "#61dca3", "#61b3dc"],
+  glitchSpeed = 50,
+  centerVignette = false,
+  outerVignette = true,
+  smooth = true,
+}: {
+  glitchColors?: string[];
+  glitchSpeed?: number;
+  centerVignette?: boolean;
+  outerVignette?: boolean;
+  smooth?: boolean;
+}) => {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const animationRef = useRef<number | null>(null);
+  const letters = useRef<
+    {
+      char: string;
+      color: string;
+      targetColor: string;
+      colorProgress: number;
+    }[]
+  >([]);
+  const grid = useRef({ columns: 0, rows: 0 });
+  const context = useRef<CanvasRenderingContext2D | null>(null);
+  const lastGlitchTime = useRef(Date.now());
+
+  const fontSize = 16;
+  const charWidth = 10;
+  const charHeight = 20;
+
+  const lettersAndSymbols = [
+    "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+    "!", "@", "#", "$", "&", "*", "(", ")", "-", "_", "+", "=", "/", "[", "]", "{", "}", ";", ":", "<", ">", ",",
+    "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+  ];
+
+  const getRandomChar = () => {
+    return lettersAndSymbols[
+      Math.floor(Math.random() * lettersAndSymbols.length)
+    ];
+  };
+
+  const getRandomColor = () => {
+    return glitchColors[Math.floor(Math.random() * glitchColors.length)];
+  };
+
+  const hexToRgb = (hex: string) => {
+    const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    hex = hex.replace(shorthandRegex, (m, r, g, b) => {
+      return r + r + g + g + b + b;
+    });
+
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result
+      ? {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16),
+        }
+      : null;
+  };
+
+  const interpolateColor = (
+    start: { r: number; g: number; b: number },
+    end: { r: number; g: number; b: number },
+    factor: number
+  ) => {
+    const result = {
+      r: Math.round(start.r + (end.r - start.r) * factor),
+      g: Math.round(start.g + (end.g - start.g) * factor),
+      b: Math.round(start.b + (end.b - start.b) * factor),
+    };
+    return `rgb(${result.r}, ${result.g}, ${result.b})`;
+  };
+
+  const calculateGrid = (width: number, height: number) => {
+    const columns = Math.ceil(width / charWidth);
+    const rows = Math.ceil(height / charHeight);
+    return { columns, rows };
+  };
+
+  const initializeLetters = (columns: number, rows: number) => {
+    grid.current = { columns, rows };
+    const totalLetters = columns * rows;
+    letters.current = Array.from({ length: totalLetters }, () => ({
+      char: getRandomChar(),
+      color: getRandomColor(),
+      targetColor: getRandomColor(),
+      colorProgress: 1,
+    }));
+  };
+
+  const resizeCanvas = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const parent = canvas.parentElement;
+    if (!parent) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    const rect = parent.getBoundingClientRect();
+
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+
+    canvas.style.width = `${rect.width}px`;
+    canvas.style.height = `${rect.height}px`;
+
+    if (context.current) {
+      context.current.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    const { columns, rows } = calculateGrid(rect.width, rect.height);
+    initializeLetters(columns, rows);
+    drawLetters();
+  };
+
+  const drawLetters = () => {
+    if (!context.current || letters.current.length === 0) return;
+    const ctx = context.current;
+    const { width, height } = canvasRef.current!.getBoundingClientRect();
+    ctx.clearRect(0, 0, width, height);
+    ctx.font = `${fontSize}px monospace`;
+    ctx.textBaseline = "top";
+
+    letters.current.forEach((letter, index) => {
+      const x = (index % grid.current.columns) * charWidth;
+      const y = Math.floor(index / grid.current.columns) * charHeight;
+      ctx.fillStyle = letter.color;
+      ctx.fillText(letter.char, x, y);
+    });
+  };
+
+  const updateLetters = () => {
+    if (!letters.current || letters.current.length === 0) return;
+
+    const updateCount = Math.max(1, Math.floor(letters.current.length * 0.05));
+
+    for (let i = 0; i < updateCount; i++) {
+      const index = Math.floor(Math.random() * letters.current.length);
+      if (!letters.current[index]) continue;
+
+      letters.current[index].char = getRandomChar();
+      letters.current[index].targetColor = getRandomColor();
+
+      if (!smooth) {
+        letters.current[index].color = letters.current[index].targetColor;
+        letters.current[index].colorProgress = 1;
+      } else {
+        letters.current[index].colorProgress = 0;
+      }
+    }
+  };
+
+  const handleSmoothTransitions = () => {
+    let needsRedraw = false;
+    letters.current.forEach((letter) => {
+      if (letter.colorProgress < 1) {
+        letter.colorProgress += 0.05;
+        if (letter.colorProgress > 1) letter.colorProgress = 1;
+
+        const startRgb = hexToRgb(letter.color);
+        const endRgb = hexToRgb(letter.targetColor);
+        if (startRgb && endRgb) {
+          letter.color = interpolateColor(
+            startRgb,
+            endRgb,
+            letter.colorProgress
+          );
+          needsRedraw = true;
+        }
+      }
+    });
+
+    if (needsRedraw) {
+      drawLetters();
+    }
+  };
+
+  const animate = () => {
+    const now = Date.now();
+    if (now - lastGlitchTime.current >= glitchSpeed) {
+      updateLetters();
+      drawLetters();
+      lastGlitchTime.current = now;
+    }
+
+    if (smooth) {
+      handleSmoothTransitions();
+    }
+
+    animationRef.current = requestAnimationFrame(animate);
+  };
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    context.current = canvas.getContext("2d");
+    resizeCanvas();
+    animate();
+
+    let resizeTimeout: NodeJS.Timeout;
+
+    const handleResize = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        cancelAnimationFrame(animationRef.current as number);
+        resizeCanvas();
+        animate();
+      }, 100);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      cancelAnimationFrame(animationRef.current!);
+      window.removeEventListener("resize", handleResize);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [glitchSpeed, smooth]);
+
+  const containerStyle = {
+    position: "relative",
+    width: "100%",
+    height: "100%",
+    backgroundColor: "#000000",
+    overflow: "hidden",
+  };
+
+  const canvasStyle = {
+    display: "block",
+    width: "100%",
+    height: "100%",
+  };
+
+  const outerVignetteStyle = {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    pointerEvents: "none",
+    background:
+      "radial-gradient(circle, rgba(0,0,0,0) 60%, rgba(0,0,0,1) 100%)",
+  };
+
+  const centerVignetteStyle = {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    pointerEvents: "none",
+    background:
+      "radial-gradient(circle, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 60%)",
+  };
+
+  return (
+    <div style={containerStyle as React.CSSProperties}>
+      <canvas ref={canvasRef} style={canvasStyle} />
+      {outerVignette && (
+        <div style={outerVignetteStyle as React.CSSProperties}></div>
+      )}
+      {centerVignette && (
+        <div style={centerVignetteStyle as React.CSSProperties}></div>
+      )}
+    </div>
+  );
+};
+
+export default LetterGlitch;
+Import LetterGlitch: Add the import statement to the target page component:import LetterGlitch from '../components/LetterGlitch'; // Adjust path as necessary
+Modify Loading Logic in CypherpunksEthos.jsx (or target page):Update the useState and useEffect hooks to control the display of LetterGlitch and the main content.Rule for Slow Load: The LetterGlitch component will be shown initially (isLoading: true). It will then remain on screen for a fixed duration (e.g., 2000 milliseconds = 2 seconds) to simulate loading, after which the actual page content will be rendered. This duration should be set based on the typical expected load time or a minimum desired display time for the glitch effect.Example Modification to src/pages/CypherpunksEthos.jsx:import React, { useState, useEffect } from 'react';
+import LetterGlitch from '../components/LetterGlitch'; // Make sure path is correct
+
+const CypherpunksEthos = () => {
+  const [isLoading, setIsLoading] = useState(true); // Start as loading
+  const [pageContent, setPageContent] = useState(null); // To hold loaded content
+
+  useEffect(() => {
+    // Simulate data fetching or component mounting time
+    const contentLoadTimer = setTimeout(() => {
+      setPageContent(
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-5xl md:text-6xl font-bold mb-8 text-center text-indigo-400 font-data70">
+            The Cypherpunk Ethos
+          </h1>
+
+          {/* Embedded YouTube Video */}
+          <div className="relative aspect-video w-full mb-12 rounded-lg overflow-hidden shadow-xl">
+            <iframe
+              className="absolute top-0 left-0 w-full h-full"
+              src="https://www.youtube.com/embed/9vM0oIEhMag?si=9wEUfCc1bmp9orU" // Ensure this is the correct URL
+              title="YouTube video player"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+            ></iframe>
+          </div>
+
+          {/* Cypherpunk Ethos Text Content */}
+          <div className="text-lg leading-relaxed space-y-6 text-gray-300">
+            <p>
+              The term "Cypherpunk" describes a collective of activists who, in the late 1980s and early 1990s, advocated for the widespread use of strong cryptography and privacy-enhancing technologies as a means to achieve social and political change. They believed that privacy was essential for a free society in the digital age, fearing that government surveillance and corporate control over information would erode civil liberties. Their motto, "Cypherpunks write code," emphasized that practical implementation of cryptographic tools was the most effective way to secure individual freedom.
+            </p>
+            <p>
+              Prominent figures like Eric Hughes, Timothy C. May, and John Gilmore formed informal groups, communicating primarily through mailing lists where they discussed ideas ranging from digital cash to anonymous communication systems. They foresaw many of the challenges that later emerged with the rise of the internet, including data exploitation, mass surveillance, and centralized control. Their radical proposals for cryptographic solutions were often dismissed as fringe ideas, yet they laid much of the theoretical and philosophical groundwork for what we now understand as modern cryptography and decentralized systems.
+            </p>
+            <p>
+              The Cypherpunk movement's enduring legacy is deeply intertwined with the very genesis of Web3. Concepts like decentralization, censorship resistance, digital identity, and peer-to-peer networks—core tenets of blockchain technology and Web3—can be traced directly back to their early manifestos and experiments. Bitcoin, for instance, is often seen as the culmination of the Cypherpunks' vision for digital cash, providing a way for individuals to transact without intermediaries, relying solely on cryptographic proof.
+            </p>
+            <p>
+              For Web3 builders today, understanding the Cypherpunk ethos isn't just a historical curiosity; it's a moral imperative. It reminds us that the primary goal isn't just about building new financial instruments or decentralized applications, but about fundamentally re-architecting the internet to empower users, protect privacy, and resist centralization. Embracing this original spirit means focusing on open-source, community-driven development, ensuring true user ownership, and building systems that are resilient against control, thereby fulfilling the promise of a more equitable and free digital future.
+            </p>
+          </div>
+        </div>
+      );
+      setIsLoading(false); // Content is ready, stop loading state
+    }, 2000); // Simulate 2 seconds of loading / splash screen duration
+
+    return () => clearTimeout(contentLoadTimer); // Cleanup timer
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-gray-900 text-white p-8 md:p-12 lg:p-16 flex flex-col justify-center items-center">
+      {isLoading ? (
+        <div className="fixed inset-0 z-50"> {/* Full-screen overlay for glitch */}
+          <LetterGlitch
+            glitchSpeed={50}
+            centerVignette={true}
+            outerVignette={false}
+            smooth={true}
+          />
+        </div>
+      ) : (
+        pageContent
+      )}
+    </div>
+  );
+};
+
+export default CypherpunksEthos;
+Explanation of setTimeout: The 2000 (milliseconds) in setTimeout determines how long the LetterGlitch will be visible before the pageContent is displayed. Adjust this value (2000 for 2 seconds, 3000 for 3 seconds, etc.) to your desired splash screen duration.Verify and Test:Ensure the app compiles and runs without errors.Navigate to the Cypherpunks Ethos page.Observe the full-screen LetterGlitch effect displaying for the set duration (e.g., 2 seconds) before the page content appears.Adjust the setTimeout duration as needed to fine-tune the user experience.

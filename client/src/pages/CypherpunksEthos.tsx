@@ -1,7 +1,34 @@
 import { Link } from "wouter";
 import { WesternButton } from "@/components/ui/WesternButton";
+import { useState, useEffect } from "react";
+import LetterGlitch from "@/components/ui/LetterGlitch";
 
 export default function CypherpunksEthos() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Show LetterGlitch loader for 2 seconds as splash screen
+    const loadTimer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(loadTimer);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 z-50 bg-black">
+        <LetterGlitch
+          glitchColors={["#34d399", "#06b6d4", "#8b5cf6"]} // Tech cyan, purple colors
+          glitchSpeed={30}
+          centerVignette={false}
+          outerVignette={true}
+          smooth={true}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-tech-purple-900 via-slate-900 to-tech-cyan-900 text-gray-100 p-8 md:p-12 lg:p-16">
       <div className="max-w-4xl mx-auto">
