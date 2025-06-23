@@ -114,9 +114,17 @@ export default function Home() {
             parentClassName="block"
           />
         </h2>
-        <p className="text-xl leading-relaxed text-gray-300">
+        <p className="text-xl leading-relaxed text-gray-300 mb-8">
           Don't just code; create movements. Learn the foundational ethos that drives meaningful software and redefine what's possible on the internet.
         </p>
+        <div className="flex justify-center">
+          <Link href="/cypherpunks-ethos">
+            <WesternButton variant="primary" className="bg-gradient-to-r from-tech-cyan-600 to-tech-purple-600 hover:from-tech-cyan-500 hover:to-tech-purple-500">
+              <i className="fas fa-shield-alt mr-2" />
+              Explore the Ethos
+            </WesternButton>
+          </Link>
+        </div>
       </section>
     </div>
   );
