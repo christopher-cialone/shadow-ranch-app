@@ -100,7 +100,7 @@ export default function LessonDetail() {
   const canGoToNextLesson = isLastStepOfCurrentLesson && currentStepCompleted;
   
   const hasPrevious = currentStep > 1;
-  const hasNext = canGoToNextStep || canGoToNextLesson;
+  const hasNext = (currentStepCompleted || validationResults?.success) && (currentStep < totalStepsInCurrentLesson);
   const nextButtonText = canGoToNextStep ? "Next Step" : (canGoToNextLesson ? "Next Lesson" : "Next");
   const canGoNext = currentStepCompleted || validationResults?.success || false;
   const isCompleted = isLastStepOfCurrentLesson && currentStepCompleted;
