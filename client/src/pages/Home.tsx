@@ -33,16 +33,16 @@ export default function Home() {
               />
             </p>
             <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
-              <Link href="/lessons">
-                <WesternButton variant="primary" className="text-lg">
-                  <i className="fas fa-play mr-2" />
-                  Start Your Adventure
+              <Link href="/cypherpunks-ethos">
+                <WesternButton variant="primary" className="text-lg bg-gradient-to-r from-tech-cyan-600 to-tech-purple-600 hover:from-tech-cyan-500 hover:to-tech-purple-500">
+                  <i className="fas fa-shield-alt mr-2" />
+                  Learn the Ethos
                 </WesternButton>
               </Link>
               <Link href="/lessons">
                 <WesternButton variant="secondary" className="text-lg">
-                  <i className="fas fa-book mr-2" />
-                  Browse Lessons
+                  <i className="fas fa-code mr-2" />
+                  Start Coding
                 </WesternButton>
               </Link>
             </div>

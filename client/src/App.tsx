@@ -12,6 +12,7 @@ import Lessons from "@/pages/Lessons";
 import LessonDetail from "@/pages/LessonDetail";
 import Ranch from "@/pages/Ranch";
 import Playground from "@/pages/Playground";
+import CypherpunksEthos from "@/pages/CypherpunksEthos";
 
 function Router() {
   return (
@@ -21,6 +22,7 @@ function Router() {
       <Route path="/lessons/:id" component={LessonDetail} />
       <Route path="/ranch" component={Ranch} />
       <Route path="/playground" component={Playground} />
+      <Route path="/cypherpunks-ethos" component={CypherpunksEthos} />
       <Route component={NotFound} />
     </Switch>
   );
