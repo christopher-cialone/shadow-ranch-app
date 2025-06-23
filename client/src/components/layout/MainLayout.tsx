@@ -3,6 +3,8 @@ import { Header } from "./Header";
 import { useGameStore } from "@/hooks/use-game-store";
 import { GameCanvas } from "@/components/game/GameCanvas";
 import { useTheme } from "next-themes";
+import { GlobalLoader } from "@/components/ui/GlobalLoader";
+import { useLoadingManager } from "@/hooks/use-loading-manager";
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -12,6 +14,7 @@ export function MainLayout({ children }: MainLayoutProps) {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const gameState = useGameStore();
+  const { showLoader } = useLoadingManager();
 
   useEffect(() => {
     setMounted(true);
@@ -79,6 +82,8 @@ export function MainLayout({ children }: MainLayoutProps) {
         transactionActive={gameState.transactionActive}
         lastStoredMessage={gameState.lastStoredMessage}
       />
+      {/* Global Loader */}
+      <GlobalLoader show={showLoader} />
       {/* Compact Footer */}
       <footer className="bg-tech-purple-900/30 border-t border-tech-cyan-600/20 py-4 backdrop-blur-sm mt-auto">
         <div className="container mx-auto px-4">

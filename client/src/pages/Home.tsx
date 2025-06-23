@@ -6,9 +6,11 @@ import DecryptedText from "@/components/ui/DecryptedText";
 import LetterGlitch from "@/components/ui/LetterGlitch";
 import { useGameStore } from "@/hooks/use-game-store";
 import { formatRanchCoin } from "@/lib/utils";
+import { usePageLoader } from "@/hooks/use-page-loader";
 
 export default function Home() {
   const { ranchData } = useGameStore();
+  usePageLoader();
 
   return (
     <div>
